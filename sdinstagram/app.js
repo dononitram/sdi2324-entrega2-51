@@ -31,6 +31,7 @@ require("./routes/publications")(app, publicationsRepository);
 const userSessionRouter = require('./routes/userSessionRouter');
 const usersRouter = require('./routes/users');
 const friendshipRequestsRouter = require("./routes/friendshipRequestsRouter")
+const publicationsRouter = require("./routes/publications");
 app.use("/publications/add", userSessionRouter);
 app.use("/request/send", friendshipRequestsRouter);
 

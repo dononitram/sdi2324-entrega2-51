@@ -21,5 +21,20 @@ module.exports = {
             })
             .catch(err => callbackFunction({error: err.message}));
 
+    },
+    getPublicationsPg: async function(filter, options, page) {
+        try {
+            const limit = 5;
+            await this.dbClient.connect();
+            const database = this.dbClient.db(this.database);
+            const publicationsCollection = database.collection(this.collectionName);
+            const publicationsCollectionCount = await publicationsCollection.count();
+            const cursor = publicationsCollection.find(filter, options).skip((page - 1) * limit).limit(limit)
+            const publications = await cursor.toArray();
+            const result = {publications: publications, total: publicationsCollectionCount};
+            return result;
+        } catch (error) {
+            throw (error);
+        }
     }
 }

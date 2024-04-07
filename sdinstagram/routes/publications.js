@@ -2,8 +2,36 @@ const {ObjectId} = require("mongodb");
 module.exports = function (app, publicationsRepository) {
     app.get("/publications", function(req, res) {
         let filter = {};
-        let options = {sort: {title: 1}};
+        let options = {sort: {title:1}};
+        if(req.query.search != null && typeof(req.query.search) != "undefined" && req.query.search != ""){
+            filter = {"title": {$regex: ".*" + req.query.search + ".*"}};
+        }
+        let page = parseInt(req.query.page); // Es String !!!
+        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
+            //Puede no venir el param
+            page = 1;
+        }
 
+        publicationsRepository.getPublicationsPg(filter, options, page).then(result => {
+            let lastPage = result.total / 4;
+            if (result.total % 4 > 0) { // Sobran decimales
+                lastPage = lastPage + 1;
+            }
+            let pages = []; // paginas mostrar
+            for (let i = page - 2; i <= page + 2; i++) {
+                if (i > 0 && i <= lastPage) {
+                    pages.push(i);
+                }
+            }
+            let response = {
+                publications: result.publications,
+                pages: pages,
+                currentPage: page
+            }
+            res.render("publications.twig", response);
+        }).catch(error => {
+            res.render("Error when listing publications "+ error)
+        });
     });
 
     app.get('/publications/add', function (req, res) {
