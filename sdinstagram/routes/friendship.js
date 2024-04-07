@@ -13,7 +13,8 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
 
         friendshipRequestRepository.insertFriendshipRequest(friendshipRequest).then(ressult =>{
             if (result.insertedId === null || typeof (result.insertedId) === undefined){
-
+                res.redirect("" + '?message=Se ha producido un error al enviar la petición de amistad.'+
+                    "&messageType=alert-danger") //completar con ruta al listado de usuarios
             }
         })
 

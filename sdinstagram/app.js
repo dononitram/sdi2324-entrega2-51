@@ -25,7 +25,11 @@ friendshipRequestRepository.init(app, dbClient);
 require("./routes/friendship")(app, friendshipRepository, friendshipRequestRepository);
 require("./routes/users")(app, usersRepository);
 
-// view engine setup
+// MiddleWares
+const friendshipRequestsRouter = require("./routes/friendshipRequestsRouter")
+app.use("/request/send", friendshipRequestsRouter);
+
+// View engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'twig');
 
@@ -38,12 +42,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-// catch 404 and forward to error handler
+// Catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// error handler
+// Error Handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
