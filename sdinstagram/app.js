@@ -5,7 +5,6 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 
 var app = express();
 
@@ -19,14 +18,20 @@ const dbClient = new MongoClient(connectionStrings);
 let usersRepository = require("./repositories/usersRepository");
 let friendshipRepository = require("./repositories/friendshipRepository");
 let friendshipRequestRepository = require("./repositories/friendshipRequestRepository");
+let publicationsRepository = require("./repositories/publicationsRepository");
 friendshipRequestRepository.init(app, dbClient);
+publicationsRepository.init(app, dbClient);
 
 //Routes
 require("./routes/friendship")(app, friendshipRepository, friendshipRequestRepository);
 require("./routes/users")(app, usersRepository);
+require("./routes/publications")(app, publicationsRepository);
 
 // MiddleWares
+const userSessionRouter = require('./routes/userSessionRouter');
+const usersRouter = require('./routes/users');
 const friendshipRequestsRouter = require("./routes/friendshipRequestsRouter")
+app.use("/publications/add", userSessionRouter);
 app.use("/request/send", friendshipRequestsRouter);
 
 // View engine setup
@@ -40,7 +45,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 
 // Catch 404 and forward to error handler
 app.use(function(req, res, next) {
