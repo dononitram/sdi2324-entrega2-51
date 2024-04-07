@@ -94,7 +94,7 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
         friendshipRepository.findFriend(filter, options).then(friend => {
             let filter = {_id: new ObjectId(req.params.id)};
             let options = {};
-            const publications = publicationsRepository.findPublications(filter, options)
+            publicationsRepository.findPublications(filter, options)
                 .then(publications => {
                     res.render("friendships/friend.twig", {friend:friend, publications:publications});
                 })
