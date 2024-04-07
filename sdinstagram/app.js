@@ -16,14 +16,14 @@ const dbClient = new MongoClient(connectionStrings);
 
 // Repositories
 let usersRepository = require("./repositories/usersRepository");
-let friendshipRepository = require("./repositories/friendshipRepository");
-let friendshipRequestRepository = require("./repositories/friendshipRequestRepository");
 let publicationsRepository = require("./repositories/publicationsRepository");
+let friendshipRepository = require("./repositories/friendshipsRepository");
+let friendshipRequestRepository = require("./repositories/friendshipRequestsRepository");
 friendshipRequestRepository.init(app, dbClient);
 publicationsRepository.init(app, dbClient);
 
 //Routes
-require("./routes/friendship")(app, friendshipRepository, friendshipRequestRepository);
+require("./routes/friendships")(app, friendshipRepository, friendshipRequestRepository, usersRepository);
 require("./routes/users")(app, usersRepository);
 require("./routes/publications")(app, publicationsRepository);
 
