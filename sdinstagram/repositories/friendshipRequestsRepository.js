@@ -17,5 +17,16 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
-    }
+    },
+    getFriendshipRequests: async function (filter, options) {
+        try {
+            await this.dbClient.connect();
+            const database = this.dbClient.db(this.database);
+            const friendshipRequestsCollection = database.collection('friendshipRequests');
+            const friendshipRequests = await friendshipRequestsCollection.find(filter, options).toArray();
+            return friendshipRequests;
+        } catch (error) {
+            throw (error);
+        }
+    },
 };

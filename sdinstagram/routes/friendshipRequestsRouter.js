@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require("path");
 const {ObjectId} = require("mongodb");
-const friendshipRequestRepository = require("../repositories/friendshipRequestRepository");
+const friendshipRequestRepository = require("../repositories/friendshipRequestsRepository");
 const friendshipRequestsRouter = express.Router();
 friendshipRequestsRouter.use(function (req,
                                        res, next) {
