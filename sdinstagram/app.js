@@ -9,6 +9,22 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
+// BBDD MongoDB Cloud
+const { MongoClient } = require("mongodb");
+const connectionStrings = 'mongodb+srv://admin:sdi51@sdinstagram.ynufmme.mongodb.net/?retryWrites=true&w=' +
+    'majority&appName=sdinstagram'; //Samuel bbdd conecction
+const dbClient = new MongoClient(connectionStrings);
+
+// Repositories
+let usersRepository = require("./repositories/usersRepository");
+let friendshipRepository = require("./repositories/friendshipRepository");
+let friendshipRequestRepository = require("./repositories/friendshipRequestRepository");
+friendshipRequestRepository.init(app, dbClient);
+
+//Routes
+require("./routes/friendship")(app, friendshipRepository, friendshipRequestRepository);
+require("./routes/users")(app, usersRepository);
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'twig');
