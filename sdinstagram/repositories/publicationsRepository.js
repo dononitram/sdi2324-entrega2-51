@@ -36,5 +36,16 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
+    },
+    findPublications: async function(filter, options) {
+        try {
+            await this.dbClient.connect();
+            const database = this.dbClient.db(this.database);
+            const publicationsCollection = database.collection('publications');
+            const publications = await publicationsCollection.find(filter, options).toArray();
+            return publications;
+        } catch (error) {
+            throw (error);
+        }
     }
 }

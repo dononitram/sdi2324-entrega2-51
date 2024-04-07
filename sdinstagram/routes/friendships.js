@@ -1,5 +1,5 @@
 const {ObjectId} = require("mongodb");
-module.exports = function (app, friendshipRepository, friendshipRequestRepository, usersRepository) {
+module.exports = function (app, friendshipRepository, friendshipRequestRepository, usersRepository, publicationsRepository) {
 
     app.post('/request/send/:id', function (req, res) {
         let receiver = new ObjectId(req.params.id);
@@ -86,6 +86,24 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
             }
         })
 
+    });
+
+    app.get('/friendships/:id', function (req, res) {
+        let filter = {_id: new ObjectId(req.params.id)};
+        let options = {};
+        friendshipRepository.findFriend(filter, options).then(friend => {
+            let filter = {_id: new ObjectId(req.params.id)};
+            let options = {};
+            const publications = publicationsRepository.findPublications(filter, options)
+                .then(publications => {
+                    res.render("friendships/friend.twig", {friend:friend, publications:publications});
+                })
+                .catch(error => {
+                    res.render("friendships/friend.twig", {friend: friend});
+                })
+        }).catch(error => {
+            res.send("Se ha producido un error al buscar la canción " + error)
+        });
     });
 
 }
