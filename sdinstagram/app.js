@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
 
 var app = express();
 
@@ -21,6 +22,7 @@ let friendshipRepository = require("./repositories/friendshipsRepository");
 let friendshipRequestRepository = require("./repositories/friendshipRequestsRepository");
 friendshipRequestRepository.init(app, dbClient);
 publicationsRepository.init(app, dbClient);
+friendshipRepository.init(app, dbClient);
 
 //Routes
 require("./routes/friendships")(app, friendshipRepository, friendshipRequestRepository, usersRepository);
@@ -46,6 +48,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/users', usersRouter);
 
 // Catch 404 and forward to error handler
 app.use(function(req, res, next) {
