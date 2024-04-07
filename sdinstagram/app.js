@@ -20,6 +20,7 @@ let usersRepository = require("./repositories/usersRepository");
 let friendshipRepository = require("./repositories/friendshipsRepository");
 let friendshipRequestRepository = require("./repositories/friendshipRequestsRepository");
 friendshipRequestRepository.init(app, dbClient);
+friendshipRepository.init(app, dbClient);
 
 //Routes
 require("./routes/friendships")(app, friendshipRepository, friendshipRequestRepository, usersRepository);
