@@ -10,8 +10,7 @@ var app = express();
 
 // BBDD MongoDB Cloud
 const { MongoClient } = require("mongodb");
-const connectionStrings = 'mongodb+srv://admin:sdi51@sdinstagram.ynufmme.mongodb.net/?retryWrites=true&w=' +
-    'majority&appName=sdinstagram'; //Samuel bbdd conecction
+const connectionStrings = 'mongodb://158.179.219.219:27017/sdinstagram'; // Connection to cloud virtual machine
 const dbClient = new MongoClient(connectionStrings);
 
 // Repositories
