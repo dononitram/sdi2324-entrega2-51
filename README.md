@@ -49,7 +49,7 @@ Miembros del equipo de desarrollo.
 | Donato   | UO288787@uniovi.es       |
 | Teresa   | UOXXXXXX@uniovi.es       |
 | Samuel   | UOXXXXXX@uniovi.es       |
-| Pedro    | UOXXXXXX@uniovi.es       |
+| Pedro    | UO288120@uniovi.es       |
 | David    | UOXXXXXX@uniovi.es       |
 
 ## División del trabajo
