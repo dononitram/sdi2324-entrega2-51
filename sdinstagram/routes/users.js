@@ -9,8 +9,6 @@ module.exports = function (app, usersRepository) {
     })
   
     app.post('/users/signup', function (req, res) {
-
-      console.log(req.body)
       
       let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
       .update(req.body.password).digest('hex');
@@ -23,6 +21,7 @@ module.exports = function (app, usersRepository) {
       usersRepository.insertUser(user).then(userId => {
         res.redirect("/users/login" + "?message=Usuario registrado correctamente" + "&messageType=alert-info");
       }).catch(error => {
+        console.log(error)
         res.redirect("/users/signup" + "?message=Error al registrar el usuario" + "&messageType=alert-danger");
       });
     })
