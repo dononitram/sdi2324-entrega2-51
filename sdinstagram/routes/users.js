@@ -5,6 +5,7 @@ module.exports = function (app, usersRepository) {
     })
   
     app.get('/users/signup', function (req, res) {
+      console.log("signup");
       res.render("signup.twig");
     })
   

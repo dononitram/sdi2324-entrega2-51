@@ -10,17 +10,22 @@ var app = express();
 
 // BBDD MongoDB Cloud
 const { MongoClient } = require("mongodb");
-const connectionStrings = 'mongodb://sdi51:g1PqYBrJug94nHRNBV9k@158.179.219.219:27017/'; // Connection to cloud virtual machine
+const connectionStrings = 'mongodb://sdi51:g1PqYBrJug94nHRNBV9k@158.179.219.219:27017/sdinstagram'; // Connection to cloud virtual machine
 const dbClient = new MongoClient(connectionStrings);
 
 // Repositories
 let usersRepository = require("./repositories/usersRepository");
+usersRepository.init(app, dbClient);
+
 let publicationsRepository = require("./repositories/publicationsRepository");
+publicationsRepository.init(app, dbClient);
+
 let friendshipRepository = require("./repositories/friendshipsRepository");
+friendshipRepository.init(app, dbClient);
+
 let friendshipRequestRepository = require("./repositories/friendshipRequestsRepository");
 friendshipRequestRepository.init(app, dbClient);
-publicationsRepository.init(app, dbClient);
-friendshipRepository.init(app, dbClient);
+
 
 //Routes
 require("./routes/friendships")(app, friendshipRepository, friendshipRequestRepository, usersRepository);
