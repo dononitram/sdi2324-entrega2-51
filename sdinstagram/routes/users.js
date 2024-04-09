@@ -5,14 +5,15 @@ module.exports = function (app, usersRepository) {
     })
   
     app.get('/users/signup', function (req, res) {
-      console.log("signup");
       res.render("signup.twig");
     })
   
     app.post('/users/signup', function (req, res) {
-  
+
+      console.log(req.body)
+      
       let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
-          .update(req.body.password).digest('hex');
+      .update(req.body.password).digest('hex');
   
       let user = {
         email: req.body.email,

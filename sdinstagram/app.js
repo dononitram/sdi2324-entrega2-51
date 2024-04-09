@@ -1,12 +1,27 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+let createError = require('http-errors');
+let express = require('express');
+let path = require('path');
+let cookieParser = require('cookie-parser');
+let logger = require('morgan');
 
-var indexRouter = require('./routes/index');
+let indexRouter = require('./routes/index');
 
-var app = express();
+let app = express();
+
+let crypto = require('crypto');
+app.set('clave', 'abcdefg');
+app.set('crypto', crypto);
+
+const expressSession = require('express-session');
+app.use(expressSession({
+  secret: 'abcdefg',
+  resave: true,
+  saveUninitialized: true
+}));
+
+let bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // BBDD MongoDB Cloud
 const { MongoClient } = require("mongodb");
@@ -25,7 +40,6 @@ friendshipRepository.init(app, dbClient);
 
 let friendshipRequestRepository = require("./repositories/friendshipRequestsRepository");
 friendshipRequestRepository.init(app, dbClient);
-
 
 //Routes
 require("./routes/friendships")(app, friendshipRepository, friendshipRequestRepository, usersRepository);
