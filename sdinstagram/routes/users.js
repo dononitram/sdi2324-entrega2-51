@@ -15,6 +15,9 @@ module.exports = function (app, usersRepository) {
   
       let user = {
         email: req.body.email,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        birthdate: req.body.birthdate,
         password: securePassword
       }
   
