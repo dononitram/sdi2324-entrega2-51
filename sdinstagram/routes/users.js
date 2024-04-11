@@ -3,16 +3,39 @@
  * @param {Object} app - The Express application object.
  * @param {Object} usersRepository - The repository object for user data access.
  */
+const {ObjectId} = require("mongodb");
 module.exports = function (app, usersRepository) {
 
+
 	/**
-	 * GET /users
+	 * GET /users/system
 	 * Returns a list of users.
 	 * @param {Object} req - The request object.
 	 * @param {Object} res - The response object.
 	 */
-	app.get('/users', function (req, res) {
-		res.send('lista de usuarios');
+	app.get('/users/system', function (req, res) {
+		res.send('lista de usuarios sistema');
+	})
+
+	/**
+	 * GET /users/social
+	 * Returns a list of users except admins and the user logged in.
+	 * @param {Object} req - The request object.
+	 * @param {Object} res - The response object.
+	 */
+	app.get('/users/social', function (req, res) {
+		let connectedUser = req.session.user;
+		if(!connectedUser || !connectedUser._id){
+			res.send("Error you have to be logged to see users");
+			return;
+		}
+		let userId = new ObjectId(connectedUser._id);
+		let filter = {role: { $ne:"admin"}, _id:{ $ne: userId}};
+		usersRepository.findUsers(filter, {}).then(result => {
+			res.render("users/users-social.twig",{users:result});
+		}).catch(error => {
+			res.send("Error when searching social users: "+error);
+		});
 	})
 
 	/**
