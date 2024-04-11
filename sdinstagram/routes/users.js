@@ -128,9 +128,8 @@ module.exports = function (app, usersRepository) {
 	app.post('/users/login', function (req, res) {
 
 		validateLogin(req,res).then(errors => {
-
-			/*
-			if (errors.length > 0) {
+			
+			/*if (errors.length > 0) {
 				errors.splice(0, 0, "<b>Validation errors:</b>");
 				res.redirect("/users/login" + "?message=" + errors.join("<br>") + "&messageType=alert-danger");
 				return;
