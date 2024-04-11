@@ -37,6 +37,21 @@ module.exports = {
             throw (error);
         }
     },
+    getUsersPg: async function(filter, options, page) {
+        try {
+            const limit = 5;
+            await this.dbClient.connect();
+            const database = this.dbClient.db(this.database);
+            const usersCollection = database.collection(this.collectionName);
+            const cursor = usersCollection.find(filter, options).skip((page - 1) * limit).limit(limit)
+            const users = await cursor.toArray();
+            const usersCollectionCount = users.length;
+            const result = {users: users, total: usersCollectionCount};
+            return result;
+        } catch (error) {
+            throw (error);
+        }
+    },
     insertUser: async function (user) {
         try {
             await this.dbClient.connect();

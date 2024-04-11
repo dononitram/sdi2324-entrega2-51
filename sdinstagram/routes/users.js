@@ -31,8 +31,29 @@ module.exports = function (app, usersRepository) {
 		}
 		let userId = new ObjectId(connectedUser._id);
 		let filter = {role: { $ne:"admin"}, _id:{ $ne: userId}};
-		usersRepository.findUsers(filter, {}).then(result => {
-			res.render("users/users-social.twig",{users:result});
+
+		let page = parseInt(req.query.page); // Es String !!!
+		if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") { //
+			//Puede no venir el param
+			page = 1;
+		}
+		usersRepository.getUsersPg(filter, {}, page).then(result => {
+			let lastPage = result.total / 5;
+			if (result.total % 5 > 0) { // Sobran decimales
+				lastPage = lastPage + 1;
+			}
+			let pages = []; // paginas mostrar
+			for (let i = page - 2; i <= page + 2; i++) {
+				if (i > 0 && i <= lastPage) {
+					pages.push(i);
+				}
+			}
+			let response = {
+				users: result.users,
+				pages: pages,
+				currentPage: page
+			}
+			res.render("users/users-social.twig", response);
 		}).catch(error => {
 			res.send("Error when searching social users: "+error);
 		});
