@@ -106,11 +106,11 @@ module.exports = function (app, usersRepository) {
 
 		validateLogin(req,res).then(errors => {
 			
-			if (errors.length > 0) {
+			/*if (errors.length > 0) {
 				errors.splice(0, 0, "<b>Validation errors:</b>");
 				res.redirect("/users/login" + "?message=" + errors.join("<br>") + "&messageType=alert-danger");
 				return;
-			}
+			}*/
 
 			let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
 			.update(req.body.password).digest('hex');

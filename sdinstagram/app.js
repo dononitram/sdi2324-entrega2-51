@@ -23,6 +23,18 @@ let bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// MiddleWares. They need to be placed here.
+const userSessionRouter = require('./routes/userSessionRouter');
+const userFriendRouter = require('./routes/userFriendRouter');
+const usersRouter = require('./routes/users');
+const friendshipRequestsRouter = require("./routes/friendshipRequestsRouter");
+app.use("/publications/add", userSessionRouter);
+app.use("/publications", userSessionRouter);
+app.use("/friendships", userSessionRouter);
+app.use("/friendships", userFriendRouter);
+app.use("/request/send", friendshipRequestsRouter);
+
+
 // BBDD MongoDB Cloud
 const { MongoClient } = require("mongodb");
 const connectionStrings = 'mongodb://sdi51:g1PqYBrJug94nHRNBV9k@158.179.219.219:27017/'; // Connection to cloud virtual machine
@@ -45,14 +57,6 @@ friendshipRequestRepository.init(app, dbClient);
 require("./routes/friendships")(app, friendshipRepository, friendshipRequestRepository, usersRepository);
 require("./routes/users")(app, usersRepository);
 require("./routes/publications")(app, publicationsRepository);
-
-// MiddleWares
-const userSessionRouter = require('./routes/userSessionRouter');
-const usersRouter = require('./routes/users');
-const friendshipRequestsRouter = require("./routes/friendshipRequestsRouter")
-const publicationsRouter = require("./routes/publications");
-app.use("/publications/add", userSessionRouter);
-app.use("/request/send", friendshipRequestsRouter);
 
 // View engine setup
 app.set('views', path.join(__dirname, 'views'));

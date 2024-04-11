@@ -39,6 +39,21 @@ module.exports = function (app, publicationsRepository) {
     });
 
     app.post('/publications/add',function (req,res) {
+        console.log(req);
+        if(req.session.user == null || typeof(req.session.user) == "undefined") {
+            res.send("Error when inserting new publication: Invalid user");
+            return;
+        }
+        if(req.body.title == null || typeof(req.body.title) == "undefined"
+            || req.body.title.length() <= 4) {
+            res.send("Error when inserting new publication: Invalid title " + req.body.title);
+            return;
+        }
+        if(req.body.description == null || typeof(req.body.description) == "undefined"
+            || req.body.description.length() <= 4) {
+            res.send("Error when inserting new publication: Invalid description");
+            return;
+        }
         let publication = {
             title: req.body.title,
             description: req.body.description,
@@ -49,24 +64,6 @@ module.exports = function (app, publicationsRepository) {
             if (result.toString() !== null && result.toString() !== undefined) {
                 //res.send("Agregada la canción ID: " + result.songId);
                 res.redirect("/publications")
-                if (req.files != null) {
-                    let image = req.files.cover;
-                    image.mv(app.get("uploadPath") + '/public/covers/' + result.toString() + '.png')
-                        .then(() => {
-                            if (req.files.audio != null) {
-                                let audio = req.files.audio;
-                                audio.mv(app.get("uploadPath") + '/public/audios/' + result.toString() + '.mp3')
-                                    .then(res.redirect("/publications"))
-                                    .catch(error => res.send("Error al subir el audio de la canción"))
-                            }else {
-                                //res.send("Agregada la canción ID: " + result.toString())
-                                res.redirect("/publications");
-                            }
-                        })
-                        .catch(error => res.send("Error al subir la portada de la canción") )
-                } else {
-                    res.send("Agregada la canción ID: " + result.toString())
-                }
             } else {
                 res.send("Error when inserting new publication " + result.error);
             }
