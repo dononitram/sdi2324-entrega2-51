@@ -1,7 +1,7 @@
 const {ObjectId} = require("mongodb");
 module.exports = function (app, friendshipRepository, friendshipRequestRepository, usersRepository, publicationsRepository) {
 
-    app.post('/request/send/:id', function (req, res) {
+    app.post('/friendships/request/send/:id', function (req, res) {
         let receiver = new ObjectId(req.params.id);
         let requester = req.session.user;
         let friendshipRequest = {
@@ -21,14 +21,14 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
         });
     });
 
-    app.get('/requests', function (req, res){
+    app.get('/friendships/requests', function (req, res){
         let page = parseInt(req.query.page);
         if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
             page = 1;
         }
 
         let filter = {receiver: req.session.user};
-        let options = {projection: {_id: 0, receiver:0, requester: 1, date: 1}};
+        let options = { projection: { _id: 0, receiver: 0} };
         friendshipRequestRepository.getFriendshipRequestsPg(filter, options, page).then(result => {
             let lastPage = result.total / 5;
             if (result.total % 5 > 0) { // Sobran decimales
@@ -48,16 +48,16 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
             usersRepository.getUsers(filter, options).then(requesters => {
                 res.render("requests.twig", {requesters: requesters, dates:dates, pages:pages, currentPage: page});
             }).catch(error => {
-                res.redirect("" + '?message=There has been an error listing the senders of the friendship requests.'+
-                    "&messageType=alert-danger"); //completar con ruta a una página home
+                res.redirect("/publications" + '?message=There has been an error listing the senders of the friendship requests.'+
+                    + error + "&messageType=alert-danger");
             });
         }).catch(error => {
-            res.redirect("" + '?message=There has been an error listing the friendship requests.'+
-                "&messageType=alert-danger"); //completar con ruta a una página home
+            res.redirect("/publications" + '?message=There has been an error listing the friendship requests.' + error +
+                "&messageType=alert-danger");
         });
     });
 
-    app.post('/request/accept/:id', function (req, res) {
+    app.post('/friendships/request/accept/:id', function (req, res) {
         let filter = {receiver: new ObjectId(req.params.id)};
         let options = {};
         friendshipRequestRepository.deleteFriendshipRequest(filter, options).then(result => {

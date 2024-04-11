@@ -7,6 +7,7 @@ friendshipRequestsRouter.use(function (req,
                                        res, next) {
     receiver = new ObjectId(path.basename(req.originalUrl));
     requester = req.session.user;
+    next();
     // Si se envía una invitación de amistad a un usuario amigo o hay una solicitud de amistad en curso
     // entre ambos usuarios, el sistema validará del lado del servidor y mostrará un mensaje de error
     // indicando que no se puede realizar dicha solicitud, indicando cuál es la causa
