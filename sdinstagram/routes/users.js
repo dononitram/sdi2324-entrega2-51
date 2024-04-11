@@ -30,7 +30,21 @@ module.exports = function (app, usersRepository) {
 			return;
 		}
 		let userId = new ObjectId(connectedUser._id);
-		let filter = {role: { $ne:"admin"}, _id:{ $ne: userId}};
+		let filter =
+			{
+				role: { $ne:"admin"},
+				_id:{ $ne: userId},
+			};
+		//Búsqueda
+		let busquedaStr = "";//Vacía por defecto
+		if(req.query.search != null && typeof(req.query.search) != "undefined" && req.query.search != ""){
+			busquedaStr = req.query.search;
+			filter.$or = [
+				{"email": {$regex: ".*" + req.query.search + ".*"}},
+				{"firstName": {$regex: ".*" + req.query.search + ".*"}},
+				{"lastName": {$regex: ".*" + req.query.search + ".*"}}
+			];
+		}
 
 		let page = parseInt(req.query.page); // Es String !!!
 		if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") { //
@@ -51,7 +65,8 @@ module.exports = function (app, usersRepository) {
 			let response = {
 				users: result.users,
 				pages: pages,
-				currentPage: page
+				currentPage: page,
+				busquedaStr: busquedaStr
 			}
 			res.render("users/users-social.twig", response);
 		}).catch(error => {
