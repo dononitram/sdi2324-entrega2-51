@@ -1,6 +1,18 @@
 {
+  "name": "sdinstagram",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
   "dependencies": {
-    "express": "^4.19.2",
-    "express-session": "^1.18.0"
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "^4.18.3",
+    "express-session": "^1.18.0",
+    "http-errors": "~1.6.3",
+    "mongodb": "^6.5.0",
+    "morgan": "~1.9.1",
+    "twig": "~0.10.3"
   }
 }
