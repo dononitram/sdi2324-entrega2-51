@@ -4,6 +4,7 @@
  * @param {Object} usersRepository - The repository object for user data access.
  */
 const {ObjectId} = require("mongodb");
+const friendshipRepository = require("../repositories/friendshipsRepository");
 module.exports = function (app, usersRepository) {
 
 
@@ -23,35 +24,37 @@ module.exports = function (app, usersRepository) {
 	 * @param {Object} req - The request object.
 	 * @param {Object} res - The response object.
 	 */
-	app.get('/users/social', function (req, res) {
-		let connectedUser = req.session.user;
-		if(!connectedUser || !connectedUser._id){
-			res.send("Error you have to be logged to see users");
-			return;
-		}
-		let userId = new ObjectId(connectedUser._id);
-		let filter =
-			{
-				role: { $ne:"admin"},
-				_id:{ $ne: userId},
-			};
-		//Búsqueda
-		let busquedaStr = "";//Vacía por defecto
-		if(req.query.search != null && typeof(req.query.search) != "undefined" && req.query.search != ""){
-			busquedaStr = req.query.search;
-			filter.$or = [
-				{"email": {$regex: ".*" + req.query.search + ".*"}},
-				{"firstName": {$regex: ".*" + req.query.search + ".*"}},
-				{"lastName": {$regex: ".*" + req.query.search + ".*"}}
-			];
-		}
+	app.get('/users/social', async function (req, res) {
+		try {
+			let connectedUser = req.session.user;
+			if (!connectedUser || !connectedUser._id) {
+				res.send("Error you have to be logged to see users");
+				return;
+			}
+			let userId = new ObjectId(connectedUser._id);
+			let filter =
+				{
+					role: { $ne:"admin"},
+					_id:{ $ne: userId},
+				};
+			//Búsqueda
+			let busquedaStr = "";//Vacía por defecto
+			if(req.query.search != null && typeof(req.query.search) != "undefined" && req.query.search != ""){
+				busquedaStr = req.query.search;
+				filter.$or = [
+					{"email": {$regex: ".*" + req.query.search + ".*"}},
+					{"firstName": {$regex: ".*" + req.query.search + ".*"}},
+					{"lastName": {$regex: ".*" + req.query.search + ".*"}}
+				];
+			}
 
-		let page = parseInt(req.query.page); // Es String !!!
-		if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") { //
-			//Puede no venir el param
-			page = 1;
-		}
-		usersRepository.getUsersPg(filter, {}, page).then(result => {
+			let page = parseInt(req.query.page); // Es String !!!
+			if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") { //
+				//Puede no venir el param
+				page = 1;
+			}
+			const result = await usersRepository.getUsersPg(filter, {}, page);
+
 			let lastPage = result.total / 5;
 			if (result.total % 5 > 0) { // Sobran decimales
 				lastPage = lastPage + 1;
@@ -62,17 +65,38 @@ module.exports = function (app, usersRepository) {
 					pages.push(i);
 				}
 			}
+
 			let response = {
 				users: result.users,
 				pages: pages,
 				currentPage: page,
 				busquedaStr: busquedaStr
+			};
+
+			for (const user of result.users) {
+				const filter = { user1: new ObjectId(user._id), user2: req.session.user };
+				const options = {};
+				const result = await friendshipRepository.findFriend(filter, options);
+				if (result === null || typeof result === "undefined") {
+					const filter = { user1: req.session.user, user2: new ObjectId(user._id) };
+					const options = {};
+					const result = await friendshipRepository.findFriend(filter, options);
+					if (result === null || typeof result === "undefined") {
+						user.areFriends = false;
+					}
+					else {
+						user.areFriends = true;
+					}
+				} else {
+					user.areFriends = true;
+				}
 			}
+
 			res.render("users/users-social.twig", response);
-		}).catch(error => {
-			res.send("Error when searching social users: "+error);
-		});
-	})
+		} catch (error) {
+			res.send("Error when searching social users: " + error);
+		}
+	});
 
 	/**
 	 * GET /users/signup

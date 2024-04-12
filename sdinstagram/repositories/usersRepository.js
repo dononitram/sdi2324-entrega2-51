@@ -52,6 +52,17 @@ module.exports = {
             throw (error);
         }
     },
+    getUsers: async function (filter, options) {
+        try {
+            await this.dbClient.connect();
+            const database = this.dbClient.db(this.database);
+            const usersCollection = database.collection(this.collectionName);
+            const users = await usersCollection.find(filter, options).toArray();
+            return users;
+        } catch (error) {
+            throw (error);
+        }
+    },
     insertUser: async function (user) {
         try {
             await this.dbClient.connect();

@@ -16,13 +16,16 @@
 				</tr>
 			</thead>
 			<tbody>
-			{% for index, requester in requesters %}
+			{% for index, request in requests %}
 				<tr>
-					<td>{{ dates[index] }}</td>
-					<td>{{ requester.email }}</td>
-					<td>{{ requester.name }}</td>
-					<td>{{ requester.surname }}</td>
-					<td><a href="/friendships/request/accept/{{ requester._id }}">Accept</a></td>
+					<td>{{ request.date }}</td>
+					<td>{{ request.requester.email }}</td>
+					<td>{{ request.requester.name }}</td>
+					<td>{{ request.requester.surname }}</td>
+					<td>
+						<form class="form-horizontal" method="post" action="/friendships/request/accept/{{ request._id }}/{{ request.requester._id }}">
+							<button type="submit" class="btn btn-primary">Accept</button>
+						</form>
 				</tr>
 			{% endfor %}
 			</tbody>

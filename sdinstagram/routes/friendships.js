@@ -11,12 +11,12 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
         }
         friendshipRequestRepository.insertFriendshipRequest(friendshipRequest).then(result =>{
             if (result.insertedId === null || typeof (result.insertedId) === undefined){
-                res.redirect("" + '?message=There was an error sending the friend request.'+
-                    "&messageType=alert-danger"); //completar con ruta al listado de usuarios
+                res.redirect("/users/social" + '?message=There was an error sending the friend request.'+
+                    "&messageType=alert-danger");
             }
             else {
-                res.redirect("" + '?message=Invitation successfully sent.'+
-                    "&messageType=alert-info"); //completar con ruta al listado de usuarios
+                res.redirect("/users/social" + '?message=Invitation successfully sent.'+
+                    "&messageType=alert-info");
             }
         });
     });
@@ -27,9 +27,10 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
             page = 1;
         }
 
-        let filter = {receiver: req.session.user};
-        let options = { projection: { _id: 0, receiver: 0} };
-        friendshipRequestRepository.getFriendshipRequestsPg(filter, options, page).then(result => {
+        let filter = {receiver: new ObjectId(req.session.user._id)};
+        let options = {};
+        friendshipRequestRepository.getFriendshipRequestsPg(filter, options).then(result => {
+
             let lastPage = result.total / 5;
             if (result.total % 5 > 0) { // Sobran decimales
                 lastPage = lastPage + 1;
@@ -41,38 +42,27 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
                 }
             }
 
-            const requesters = result.requests.map(request => request.requester);
-            const dates = result.requests.map(request => request.date);
-            let filter = {"_id": {$in: requesters}}
-            let options = {};
-            usersRepository.getUsers(filter, options).then(requesters => {
-                res.render("requests.twig", {requesters: requesters, dates:dates, pages:pages, currentPage: page});
-            }).catch(error => {
-                res.redirect("/publications" + '?message=There has been an error listing the senders of the friendship requests.'+
-                    + error + "&messageType=alert-danger");
-            });
+            res.render("friendships/requests.twig", {requests: result.requests, pages:pages, currentPage: page});
         }).catch(error => {
-            res.redirect("/publications" + '?message=There has been an error listing the friendship requests.' + error +
+            res.redirect("/publications" + '?message=There has been an error listing the friendship requests.' +
                 "&messageType=alert-danger");
         });
     });
 
-    app.post('/friendships/request/accept/:id', function (req, res) {
-        let filter = {receiver: new ObjectId(req.params.id)};
+    app.post('/friendships/request/accept/:id/:requester', function (req, res) {
+        let filter = {_id: new ObjectId(req.params.id)};
         let options = {};
         friendshipRequestRepository.deleteFriendshipRequest(filter, options).then(result => {
             if (result === null || result.deletedCount === 0) {
-                res.redirect("" + '?message=There has been an error accepting the friendship invitation.'+
+                res.redirect("/friendships/requests" + '?message=There has been an error accepting the friendship invitation.'+
                     "&messageType=alert-danger");
-            } else {
-                res.redirect("/requests" + '?message=Invitation correctly accepted.'+
-                    "&messageType=alert-info");
             }
         }).catch(error => {
-            res.send("There has been an error accepting the friendship invitation: " + error)
+            res.redirect("/friendships/requests" + '?message=There has been an error accepting the friendship invitation.'+ error +
+                "&messageType=alert-danger");
         });
 
-        let requester = new ObjectId(req.params.id);
+        let requester = new ObjectId(req.params.requester);
         let receiver = req.session.user;
         let friendship = {
             user1: receiver,
@@ -81,8 +71,11 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
         }
         friendshipRepository.insertFriendship(friendship).then(result =>{
             if (result.insertedId === null || typeof (result.insertedId) === undefined){
-                res.redirect("/requests" + '?message=There was an error accepting the friendship request.'+
+                res.redirect("/friendships/requests" + '?message=There was an error accepting the friendship request.'+
                     "&messageType=alert-danger"); //completar con ruta al listado de usuarios
+            } else {
+                res.redirect("/friendships/requests" + '?message=Invitation correctly accepted.'+
+                    "&messageType=alert-info");
             }
         })
 

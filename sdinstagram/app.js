@@ -30,9 +30,10 @@ const usersRouter = require('./routes/users');
 const friendshipRequestsRouter = require("./routes/friendshipRequestsRouter");
 app.use("/publications/add", userSessionRouter);
 app.use("/publications", userSessionRouter);
+app.use("/friendships/request/send", friendshipRequestsRouter);
 app.use("/friendships", userSessionRouter);
-app.use("/friendships", userFriendRouter);
-app.use("/request/send", friendshipRequestsRouter);
+//app.use("/friendships", userFriendRouter);
+
 
 
 // BBDD MongoDB Cloud

@@ -18,6 +18,17 @@ module.exports = {
             throw (error);
         }
     },
+    findFriendshipRequest: async function (filter, options) {
+        try {
+            await this.dbClient.connect();
+            const database = this.dbClient.db(this.database);
+            const friendshipRequestsCollection = database.collection(this.collectionName);
+            const result = await friendshipRequestsCollection.findOne(filter, options);
+            return result;
+        } catch (error) {
+            throw (error);
+        }
+    },
     deleteFriendshipRequest: async function (filter, options) {
         try {
             await this.dbClient.connect();
@@ -46,8 +57,8 @@ module.exports = {
             await this.dbClient.connect();
             const database = this.dbClient.db(this.database);
             const friendshipRequestsCollection = database.collection(this.collectionName);
-            const friendshipRequestsCollectionCount = await friendshipRequestsCollection.count();
             const cursor = friendshipRequestsCollection.find(filter, options).skip((page - 1) * limit).limit(limit)
+            const friendshipRequestsCollectionCount = await cursor.count();
             const requests = await cursor.toArray();
             const result = {requests: requests, total: friendshipRequestsCollectionCount};
             return result;
