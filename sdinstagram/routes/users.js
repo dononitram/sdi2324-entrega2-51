@@ -13,7 +13,7 @@ module.exports = function (app, usersRepository) {
    * Returns all system users.
    * @param {Object} req - The request object.
    * @param {Object} res - The response object.
-   * @param {} res - The page number.
+   * @param {int} res - The page number.
    */
   app.get('/users/system', async function (req, res) {
     let page = parseInt(req.query.page);
@@ -30,6 +30,40 @@ module.exports = function (app, usersRepository) {
         pages.push(i);
     res.render('users/users-system.twig', { users: usersResponse.users, pages: pages, currentPage: page });
   })
+
+    /**
+   * GET /users/edit
+   * Renders edit user form view.
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
+    app.get('/users/edit/:id', async function (req, res) {
+      // Retrieve user
+      const user = await usersRepository.findUser({ _id: new ObjectId(req.params.id) }, {});
+      res.render('users/users-edit.twig', { user: user });
+    });
+
+  /**
+   * POST /users/edit
+   * Edits an user.
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
+        app.post('/users/edit/:id', async function (req, res) {
+          res.redirect('users/system');
+        });
+
+    
+    /**
+   * GET /users/roles
+   * Returns all roles available in the system.
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
+    app.get('/users/roles', async function (req, res) {
+      res.json({roles: ["admin", "user"]});
+    });
+
 
   /**
    * GET /users/social
