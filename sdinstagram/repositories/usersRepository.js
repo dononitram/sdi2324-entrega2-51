@@ -43,9 +43,9 @@ module.exports = {
             await this.dbClient.connect();
             const database = this.dbClient.db(this.database);
             const usersCollection = database.collection(this.collectionName);
+            const usersCollectionCount = await usersCollection.countDocuments(filter, options);
             const cursor = usersCollection.find(filter, options).skip((page - 1) * limit).limit(limit)
             const users = await cursor.toArray();
-            const usersCollectionCount = users.length;
             const result = {users: users, total: usersCollectionCount};
             return result;
         } catch (error) {
