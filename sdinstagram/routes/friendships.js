@@ -2,22 +2,25 @@ const {ObjectId} = require("mongodb");
 module.exports = function (app, friendshipRepository, friendshipRequestRepository, usersRepository, publicationsRepository) {
 
     app.post('/friendships/request/send/:id', function (req, res) {
-        let receiver = new ObjectId(req.params.id);
+        let receiverID = new ObjectId(req.params.id);
         let requester = req.session.user;
-        let friendshipRequest = {
-            receiver: receiver,
-            requester: requester,
-            date: new Date()
-        }
-        friendshipRequestRepository.insertFriendshipRequest(friendshipRequest).then(result =>{
-            if (result.insertedId === null || typeof (result.insertedId) === undefined){
-                res.redirect("/users/social" + '?message=There was an error sending the friend request.'+
-                    "&messageType=alert-danger");
+        usersRepository.findUser({_id:receiverID},{}).then(receiver => {
+
+            let friendshipRequest = {
+                receiver: receiver,
+                requester: requester,
+                date: new Date()
             }
-            else {
-                res.redirect("/users/social" + '?message=Invitation successfully sent.'+
-                    "&messageType=alert-info");
-            }
+            friendshipRequestRepository.insertFriendshipRequest(friendshipRequest).then(result =>{
+                if (result.insertedId === null || typeof (result.insertedId) === undefined){
+                    res.redirect("/users/social" + '?message=There was an error sending the friend request.'+
+                        "&messageType=alert-danger");
+                }
+                else {
+                    res.redirect("/users/social" + '?message=Invitation successfully sent.'+
+                        "&messageType=alert-info");
+                }
+            });
         });
     });
 
@@ -27,7 +30,7 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
             page = 1;
         }
 
-        let filter = {receiver: new ObjectId(req.session.user._id)};
+        let filter = {'receiver._id': new ObjectId(req.session.user._id)};
         let options = {};
         friendshipRequestRepository.getFriendshipRequestsPg(filter, options).then(result => {
 
@@ -62,23 +65,24 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
                 "&messageType=alert-danger");
         });
 
-        let requester = new ObjectId(req.params.requester);
-        let receiver = req.session.user;
-        let friendship = {
-            user1: receiver,
-            user2: requester,
-            date: new Date()
-        }
-        friendshipRepository.insertFriendship(friendship).then(result =>{
-            if (result.insertedId === null || typeof (result.insertedId) === undefined){
-                res.redirect("/friendships/requests" + '?message=There was an error accepting the friendship request.'+
-                    "&messageType=alert-danger"); //completar con ruta al listado de usuarios
-            } else {
-                res.redirect("/friendships/requests" + '?message=Invitation correctly accepted.'+
-                    "&messageType=alert-info");
+        let requesterId = new ObjectId(req.params.requester);
+        usersRepository.findUser({_id:requesterId},{}).then(requester => {
+            let receiver = req.session.user;
+            let friendship = {
+                user1: receiver,
+                user2: requester,
+                date: new Date()
             }
-        })
-
+            friendshipRepository.insertFriendship(friendship).then(result =>{
+                if (result.insertedId === null || typeof (result.insertedId) === undefined){
+                    res.redirect("/friendships/requests" + '?message=There was an error accepting the friendship request.'+
+                        "&messageType=alert-danger"); //completar con ruta al listado de usuarios
+                } else {
+                    res.redirect("/friendships/requests" + '?message=Invitation correctly accepted.'+
+                        "&messageType=alert-info");
+                }
+            });
+        });
     });
 
     /**

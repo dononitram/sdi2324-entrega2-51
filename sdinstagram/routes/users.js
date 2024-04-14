@@ -121,11 +121,11 @@ module.exports = function (app, usersRepository) {
       };
 
       for (const user of result.users) {
-        const filter = { user1: new ObjectId(user._id), user2: req.session.user };
+        const filter = { 'user1._id': new ObjectId(user._id), user2: req.session.user };
         const options = {};
         const result = await friendshipRepository.findFriend(filter, options);
         if (result === null || typeof result === "undefined") {
-          const filter = { user1: req.session.user, user2: new ObjectId(user._id) };
+          const filter = { user1: req.session.user, 'user2._id': new ObjectId(user._id) };
           const options = {};
           const result = await friendshipRepository.findFriend(filter, options);
           if (result === null || typeof result === "undefined") {
