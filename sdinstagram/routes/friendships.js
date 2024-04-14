@@ -81,6 +81,13 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
 
     });
 
+    /**
+     * Shows all the friends of the user in session
+     */
+    app.get('/friendships/', function (req, res) {
+        //TO-DO PEDRO
+    });
+
     app.get('/friendships/:id', function (req, res) {
         let filter = {_id: new ObjectId(req.params.id)};
         let options = {};
@@ -98,5 +105,4 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
             res.send("Se ha producido un error al buscar la canción " + error)
         });
     });
-
 }

@@ -1,0 +1,48 @@
+{% extends "layout.twig" %}
+{% block title %} Friends {% endblock %}
+{% block main_container %}
+    <h2>My friends</h2>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Friends since</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!--
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.firstName }}</td>
+                    <td>{{ user.lastName }}</td>
+                    <td>
+                        {% if not user.areFriends %}
+                            <form class="form-horizontal" method="post" action="/friendships/request/send/{{ user._id }}">
+                                <button type="submit" class="btn btn-primary">Add friend</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            -->
+            </tbody>
+        </table>
+    </div>
+    <!--Pagination block-->
+    <div class="row text-center">
+        <ul class="pagination">
+            {%for page in pages%}
+                <li class="page-item" id="pi-{{ page }}">
+                    <a class="page-link" href="/friendships/?page={{ page }}">{{ page }}</a>
+                </li>
+            {%endfor%}
+            <script>
+                $("#pi-"+"{{ currentPage }}").addClass("active");
+            </script>
+        </ul>
+    </div>
+{% endblock %}
