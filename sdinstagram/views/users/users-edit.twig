@@ -9,19 +9,32 @@
 		<div class="form-group">
 			<label class="control-label col-sm-2" for="email">Email:</label>
 			<div class="col-sm-10">
-				<input id="email" type="email" class="form-control" name="email" placeholder="email@email.com" required="true" value={{user.email}}/>
+				<input id="email" type="email" class="form-control" name="email" placeholder="email@email.com" required="true" value={{user.email}} />
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="control-label col-sm-2" for="name">Name:</label>
 			<div class="col-sm-10">
-				<input id="password" type="text" class="form-control" name="name" placeholder="name" required="true" value={{user.firstName}}/>
+				<input id="password" type="text" class="form-control" name="name" placeholder="name" required="true" value={{user.firstName}} />
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="control-label col-sm-2" for="surname">Surname:</label>
 			<div class="col-sm-10">
-				<input id="password" type="text" class="form-control" name="surname" placeholder="surname" required="true" value={{user.lastName}}/>
+				<input id="password" type="text" class="form-control" name="surname" placeholder="surname" required="true" value={{user.lastName}} />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-2" for="birthdate">Date of Birth:</label>
+			<div class="col-sm-10">
+				<input id="birthdate" type="date" class="form-control" name="birthdate" placeholder="Date of Birth" value={{user.birthdate}} />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-2" for="birthdate">Role:</label>
+			<div class="col-sm-10">
+				<select id="role" class="form-control" name="role" placeholder="Date of Birth"/>
+
 			</div>
 		</div>
 		<div class="form-group">
@@ -30,5 +43,20 @@
 			</div>
 		</div>
 	</form>
+
+	
+
+	<script>
+	console.log('{{user}}')
+		$.get('/users/roles', function (response) {
+			response.roles.forEach(function (role) {
+			if (role == '{{ user.role }}') 
+				$('#role').append('<option value="' + role + '" selected>' + role + '</option>');
+			else 
+				$('#role').append('<option value="' + role + '">' + role + '</option>');
+
+		});
+		});
+	</script>
 
 {% endblock %}
