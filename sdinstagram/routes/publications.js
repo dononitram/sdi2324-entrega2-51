@@ -45,12 +45,12 @@ module.exports = function (app, publicationsRepository) {
             return;
         }
         if(req.body.title == null || typeof(req.body.title) == "undefined"
-            || req.body.title.length() <= 4) {
+            || req.body.title.length <= 4) {
             res.send("Error when inserting new publication: Invalid title " + req.body.title);
             return;
         }
         if(req.body.description == null || typeof(req.body.description) == "undefined"
-            || req.body.description.length() <= 4) {
+            || req.body.description.length <= 4) {
             res.send("Error when inserting new publication: Invalid description");
             return;
         }
@@ -58,8 +58,10 @@ module.exports = function (app, publicationsRepository) {
             title: req.body.title,
             description: req.body.description,
             author: req.session.user,
-            date: new Date()
+            date: getFormattedDate()
         }
+
+        console.log(publication);
         publicationsRepository.insertPublication(publication, function (result) {
             if (result.toString() !== null && result.toString() !== undefined) {
                 //res.send("Agregada la canción ID: " + result.songId);
@@ -70,4 +72,20 @@ module.exports = function (app, publicationsRepository) {
         });
     });
 
+    function getFormattedDate() {
+        // Current Date
+        const currentDate = new Date();
+
+        // Obtiene los componentes de la fecha
+        const day = currentDate.getDate();
+        const month = currentDate.getMonth() + 1; // Los meses son base 0, por lo que se suma 1
+        const year = currentDate.getFullYear();
+
+        // Obtiene los componentes de la hora
+        const hours = currentDate.getHours();
+        const minutes = currentDate.getMinutes();
+        const seconds = currentDate.getSeconds();
+
+        return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+    }
 }
