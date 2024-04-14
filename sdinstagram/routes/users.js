@@ -50,7 +50,8 @@ module.exports = function (app, usersRepository) {
    * @param {Object} res - The response object.
    */
         app.post('/users/edit/:id', async function (req, res) {
-          res.redirect('users/system');
+          await usersRepository.updateUser({ _id: new ObjectId(req.params.id) }, req.body);
+          res.redirect('/users/edit/' + req.params.id +'?message=User updated successfully&messageType=alert-info');
         });
 
     

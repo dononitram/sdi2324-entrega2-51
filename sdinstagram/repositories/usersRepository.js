@@ -73,5 +73,16 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
-    }
+    },
+    updateUser: async function (filter, update) {
+        try {
+            await this.dbClient.connect();
+            const database = this.dbClient.db(this.database);
+            const usersCollection = database.collection(this.collectionName);
+            const result = await usersCollection.updateOne(filter, {$set: update});
+            return result;
+        } catch (error) {
+            throw (error);
+        }
+    },
 };
