@@ -87,6 +87,11 @@ module.exports = function (app, usersRepository) {
    */
   app.post('/users/delete', async function (req, res) {
 
+    if(!admin(req)){
+      res.json({ message: 'You don\'t have permission to delete users', messageType: 'alert-danger' });
+      return;
+    }
+
     // Users to delete
     const ids = req.body.ids;
     //Check current user is not included
