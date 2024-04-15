@@ -3,7 +3,7 @@ module.exports = {
     app: null,
     database: "sdinstagram",
     collectionName: "users",
-    init: function (app, dbClient) {
+    init: function (app, dbClient, publicationRepository, friendshipRepository, friendshipRequestRepository) {
         this.dbClient = dbClient;
         this.app = app;
     },
@@ -97,4 +97,19 @@ module.exports = {
             throw (error);
         }
     },
+    deleteUsersData: async function (userIds) {
+        try {
+
+            // Delete publications
+            //await publicationRepository.deletePublicationsOfUsers(userIds);
+            //Delete friendships
+            //Delete friendship requests
+            // Delete users
+            const response = await this.deleteUsers(userIds);
+
+            return response;
+        } catch (error) {
+            throw (error);
+        }
+    }
 };

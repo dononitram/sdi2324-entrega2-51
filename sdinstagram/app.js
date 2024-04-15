@@ -42,9 +42,6 @@ const connectionStrings = 'mongodb://sdi51:g1PqYBrJug94nHRNBV9k@158.179.219.219:
 const dbClient = new MongoClient(connectionStrings);
 
 // Repositories
-let usersRepository = require("./repositories/usersRepository");
-usersRepository.init(app, dbClient);
-
 let publicationsRepository = require("./repositories/publicationsRepository");
 publicationsRepository.init(app, dbClient);
 
@@ -53,6 +50,9 @@ friendshipRepository.init(app, dbClient);
 
 let friendshipRequestRepository = require("./repositories/friendshipRequestsRepository");
 friendshipRequestRepository.init(app, dbClient);
+
+let usersRepository = require("./repositories/usersRepository");
+usersRepository.init(app, dbClient, publicationsRepository, friendshipRepository, friendshipRequestRepository);
 
 //Routes
 require("./routes/friendships")(app, friendshipRepository, friendshipRequestRepository, usersRepository);

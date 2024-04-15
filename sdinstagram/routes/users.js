@@ -101,7 +101,7 @@ module.exports = function (app, usersRepository) {
 
     //Perform delete
     try {
-      const result = await usersRepository.deleteUsers(objectIds);
+      const result = await usersRepository.deleteUsersData(objectIds);
       res.json({ message: `${result.deletedCount} users deleted successfully`, messageType: 'alert-info' });
       return;
     } catch (error) {
