@@ -7,11 +7,11 @@ module.exports = {
         this.dbClient = dbClient;
         this.app = app;
     },
-    findUser: async function(filter, options) {
+    findUser: async function (filter, options) {
         try {
             await this.dbClient.connect();
             const database = this.dbClient.db(this.database);
-            const usersCollection  = database.collection(this.collectionName);
+            const usersCollection = database.collection(this.collectionName);
             return await usersCollection.findOne(filter, options);
         } catch (error) {
             throw (error);
@@ -24,11 +24,11 @@ module.exports = {
      * @param options
      * @returns {Promise<*>}
      */
-    findUsers: async function(filter, options) {
+    findUsers: async function (filter, options) {
         try {
             await this.dbClient.connect();
             const database = this.dbClient.db(this.database);
-            const usersCollection  = database.collection(this.collectionName);
+            const usersCollection = database.collection(this.collectionName);
 
             let result = await usersCollection.find(filter, options).toArray();
             return result;
@@ -37,7 +37,7 @@ module.exports = {
             throw (error);
         }
     },
-    getUsersPg: async function(filter, options, page) {
+    getUsersPg: async function (filter, options, page) {
         try {
             const limit = 5;
             await this.dbClient.connect();
@@ -46,7 +46,7 @@ module.exports = {
             const usersCollectionCount = await usersCollection.countDocuments(filter, options);
             const cursor = usersCollection.find(filter, options).skip((page - 1) * limit).limit(limit)
             const users = await cursor.toArray();
-            const result = {users: users, total: usersCollectionCount};
+            const result = { users: users, total: usersCollectionCount };
             return result;
         } catch (error) {
             throw (error);
@@ -79,7 +79,19 @@ module.exports = {
             await this.dbClient.connect();
             const database = this.dbClient.db(this.database);
             const usersCollection = database.collection(this.collectionName);
-            const result = await usersCollection.updateOne(filter, {$set: update});
+            const result = await usersCollection.updateOne(filter, { $set: update });
+            return result;
+        } catch (error) {
+            throw (error);
+        }
+    },
+    deleteUsers: async function (userIds) {
+        try {
+            await this.dbClient.connect();
+            const database = this.dbClient.db(this.database);
+            const usersCollection = database.collection(this.collectionName);
+            const filter = { _id: { $in: userIds } };
+            const result = await usersCollection.deleteMany(filter);
             return result;
         } catch (error) {
             throw (error);

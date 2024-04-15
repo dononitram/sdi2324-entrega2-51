@@ -28,6 +28,7 @@ module.exports = function (app, usersRepository) {
     for (let i = page - 2; i <= page + 2; i++)
       if (i > 0 && i <= lastPage)
         pages.push(i);
+
     res.render('users/users-system.twig', { users: usersResponse.users, pages: pages, currentPage: page });
   })
 
@@ -65,7 +66,6 @@ module.exports = function (app, usersRepository) {
       res.redirect('/users/edit/' + req.params.id + '?message=User updated successfully&messageType=alert-info');
     } else
       res.redirect('/users/edit/' + req.params.id + `?message=You don't have permission to edit users&messageType=alert-danger`);
-
   });
 
 
@@ -79,6 +79,36 @@ module.exports = function (app, usersRepository) {
     res.json({ roles: ["admin", "user"] });
   });
 
+  /**
+   * POST /users/delete
+   * Deletes several users.
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
+  app.post('/users/delete', async function (req, res) {
+
+    // Users to delete
+    const ids = req.body.ids;
+    //Check current user is not included
+    const currentId = req.session.user._id;
+    if (currentId && ids && ids.includes(currentId)) {
+      res.json({ message: 'You cannot delete yourself', messageType: 'alert-danger' });
+      return;
+    }
+
+    //Convert to ObjectIds
+    const objectIds = ids.map(id => new ObjectId(id));
+
+    //Perform delete
+    try {
+      const result = await usersRepository.deleteUsers(objectIds);
+      res.json({ message: `${result.deletedCount} users deleted successfully`, messageType: 'alert-info' });
+      return;
+    } catch (error) {
+      res.json({ message: 'Error deleting users', messageType: 'alert-danger' });
+    }
+
+  });
 
   /**
    * GET /users/social
