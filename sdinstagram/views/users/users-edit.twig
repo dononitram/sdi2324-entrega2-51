@@ -30,12 +30,14 @@
 				<input id="birthdate" type="date" class="form-control" name="birthdate" placeholder="Date of Birth" value={{user.birthdate}} />
 			</div>
 		</div>
+		{% if admin %}
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="birthdate">Role:</label>
 				<div class="col-sm-10">
 					<select id="role" class="form-control" name="role" placeholder="Date of Birth"></select>
 				</div>
 			</div>
+		{% endif %}
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-sm-10">
 				<button type="submit" class="btn btn-primary">Send</button>
@@ -46,15 +48,15 @@
 
 	<script>
 		console.log('{{ user }}');
-		$.get('/users/roles', function (response) {
-			response.roles.forEach(function (role) {
-				if (role == '{{ user.role }}') {
-					$('#role').append('<option value="' + role + '" selected>' + role + '</option>');
-				} else {
-					$('#role').append('<option value="' + role + '">' + role + '</option>');
-				}
-			});
-		});
+$.get('/users/roles', function (response) {
+response.roles.forEach(function (role) {
+if (role == '{{ user.role }}') {
+$('#role').append('<option value="' + role + '" selected>' + role + '</option>');
+} else {
+$('#role').append('<option value="' + role + '">' + role + '</option>');
+}
+});
+});
 	</script>
 
 {% endblock %}

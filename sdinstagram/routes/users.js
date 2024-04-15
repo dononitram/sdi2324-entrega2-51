@@ -31,17 +31,16 @@ module.exports = function (app, usersRepository) {
     res.render('users/users-system.twig', { users: usersResponse.users, pages: pages, currentPage: page });
   })
 
-    /**
-   * GET /users/edit
-   * Renders edit user form view.
-   * @param {Object} req - The request object.
-   * @param {Object} res - The response object.
-   */
-    app.get('/users/edit/:id', async function (req, res) {
-      // Retrieve user
-      const user = await usersRepository.findUser({ _id: new ObjectId(req.params.id) }, {});
-      res.render('users/users-edit.twig', { user: user });
-    });
+  /**
+ * GET /users/edit
+ * Renders edit user form view.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
+  app.get('/users/edit/:id', async function (req, res) {
+    const user = await usersRepository.findUser({ _id: new ObjectId(req.params.id) }, {});
+    res.render('users/users-edit.twig', { user: user, admin: admin(req) });
+  });
 
   /**
    * POST /users/edit
@@ -49,21 +48,25 @@ module.exports = function (app, usersRepository) {
    * @param {Object} req - The request object.
    * @param {Object} res - The response object.
    */
-        app.post('/users/edit/:id', async function (req, res) {
-          await usersRepository.updateUser({ _id: new ObjectId(req.params.id) }, req.body);
-          res.redirect('/users/edit/' + req.params.id +'?message=User updated successfully&messageType=alert-info');
-        });
+  app.post('/users/edit/:id', async function (req, res) {
+    if (admin(req)) {
+      await usersRepository.updateUser({ _id: new ObjectId(req.params.id) }, req.body);
+      res.redirect('/users/edit/' + req.params.id + '?message=User updated successfully&messageType=alert-info');
+    } else
+      res.redirect('/users/edit/' + req.params.id + `?message=You don't have permission to edit users&messageType=alert-danger`);
 
-    
-    /**
-   * GET /users/roles
-   * Returns all roles available in the system.
-   * @param {Object} req - The request object.
-   * @param {Object} res - The response object.
-   */
-    app.get('/users/roles', async function (req, res) {
-      res.json({roles: ["admin", "user"]});
-    });
+  });
+
+
+  /**
+ * GET /users/roles
+ * Returns all roles available in the system.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
+  app.get('/users/roles', async function (req, res) {
+    res.json({ roles: ["admin", "user"] });
+  });
 
 
   /**
@@ -316,5 +319,14 @@ async function validateLogin(req, res) {
   validate(errors, req.body.email !== null && req.body.email !== undefined && req.body.email.trim() !== '', "Email cannot be blank");
   validate(errors, req.body.password !== null && req.body.password !== undefined && req.body.password.trim() !== '', "Password cannot be blank");
 
+}
+
+function admin(req) {
+  try {
+    const role = req.session.user.role;
+    return role === 'admin' ? true : false;
+  } catch (e) {
+    return false;
+  }
 }
 
