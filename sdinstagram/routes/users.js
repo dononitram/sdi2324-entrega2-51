@@ -49,6 +49,17 @@ module.exports = function (app, usersRepository) {
    * @param {Object} res - The response object.
    */
   app.post('/users/edit/:id', async function (req, res) {
+
+    // Validate fields
+    const errors = validateUserEdit(req, res)
+
+    if (errors && errors.length > 0) {
+      errors.splice(0, 0, "<b>Validation errors:</b>");
+      res.redirect("/users/edit/" + req.params.id + "?message=" + errors.join("<br>") + "&messageType=alert-danger");
+      return;
+    }
+
+    // Check role
     if (admin(req)) {
       await usersRepository.updateUser({ _id: new ObjectId(req.params.id) }, req.body);
       res.redirect('/users/edit/' + req.params.id + '?message=User updated successfully&messageType=alert-info');
@@ -318,7 +329,17 @@ async function validateLogin(req, res) {
 
   validate(errors, req.body.email !== null && req.body.email !== undefined && req.body.email.trim() !== '', "Email cannot be blank");
   validate(errors, req.body.password !== null && req.body.password !== undefined && req.body.password.trim() !== '', "Password cannot be blank");
+}
 
+function validateUserEdit(req, res) {
+  let errors = [];
+
+  validate(errors, req.body.email !== null && req.body.email !== undefined && req.body.email.trim() !== '', "Email cannot be blank");
+  validate(errors, req.body.firstName !== null && req.body.firstName !== undefined && req.body.firstName.trim() !== '', "First name cannot be blank");
+  validate(errors, req.body.lastName !== null && req.body.lastName !== undefined && req.body.lastName.trim() !== '', "Last name cannot be blank");
+  validate(errors, req.body.birthdate !== null && req.body.birthdate !== undefined && req.body.birthdate.trim() !== '', "Birthdate cannot be blank");
+
+  return errors;
 }
 
 function admin(req) {
