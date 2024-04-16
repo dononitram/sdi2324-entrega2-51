@@ -68,6 +68,7 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
         let requesterId = new ObjectId(req.params.requester);
         usersRepository.findUser({_id:requesterId},{}).then(requester => {
             let receiver = req.session.user;
+            receiver._id = new ObjectId(receiver._id);
             let friendship = {
                 user1: receiver,
                 user2: requester,
