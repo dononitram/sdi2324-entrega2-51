@@ -322,7 +322,6 @@ module.exports = function (app, usersRepository) {
       });
 
     }).catch(error => {
-      console.log(error);
       res.redirect("/users/login" + "?message=Error validating fields" + "&messageType=alert-danger");
     });
 

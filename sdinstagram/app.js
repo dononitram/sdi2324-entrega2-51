@@ -24,17 +24,25 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // MiddleWares. They need to be placed here.
-const userSessionRouter = require('./routes/userSessionRouter');
-const userFriendRouter = require('./routes/userFriendRouter');
-const usersRouter = require('./routes/users');
-const friendshipRequestsRouter = require("./routes/friendshipRequestsRouter");
+const userSessionRouter = require('./middlewares/userSessionRouter');
+app.use("/friendships", userSessionRouter);
 app.use("/publications/add", userSessionRouter);
 app.use("/publications", userSessionRouter);
-app.use("/friendships/request/send", friendshipRequestsRouter);
-app.use("/friendships", userSessionRouter);
+
+const adminSessionRouter = require('./middlewares/adminSessionRouter');
+app.use("/log/list", adminSessionRouter);
+app.use("/users/system", adminSessionRouter);
+app.use("/users/delete", adminSessionRouter);
+app.use("/users/edit", adminSessionRouter)
+
+const notAdminSessionRouter = require('./middlewares/notAdminSessionRouter');
+// TODO: fill with the routes an administrator can't access
+
+const userFriendRouter = require('./middlewares/userFriendRouter');
 //app.use("/friendships", userFriendRouter);
 
-
+const friendshipRequestsRouter = require("./middlewares/friendshipRequestsRouter");
+app.use("/friendships/request/send", friendshipRequestsRouter);
 
 // BBDD MongoDB Cloud
 const { MongoClient } = require("mongodb");
