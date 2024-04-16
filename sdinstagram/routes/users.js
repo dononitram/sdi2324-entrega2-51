@@ -33,6 +33,87 @@ module.exports = function (app, usersRepository) {
   })
 
   /**
+   * GET /users/social
+   * Returns a list of users except admins and the user logged in.
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
+  app.get('/users/social', async function (req, res) {
+    try {
+      let connectedUser = req.session.user;
+      if (!connectedUser || !connectedUser._id) {
+        res.send("Error you have to be logged to see users");
+        return;
+      }
+      let userId = new ObjectId(connectedUser._id);
+      let filter =
+      {
+        role: { $ne: "admin" },
+        _id: { $ne: userId },
+      };
+      //Búsqueda
+      let busquedaStr = "";//Vacía por defecto
+      if (req.query.search != null && typeof (req.query.search) != "undefined" && req.query.search != "") {
+        busquedaStr = req.query.search;
+        filter.$or = [
+          { "email": { $regex: ".*" + req.query.search + ".*" } },
+          { "firstName": { $regex: ".*" + req.query.search + ".*" } },
+          { "lastName": { $regex: ".*" + req.query.search + ".*" } }
+        ];
+      }
+
+      let page = parseInt(req.query.page); // Es String !!!
+      if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") { //
+        //Puede no venir el param
+        page = 1;
+      }
+      const result = await usersRepository.getUsersPg(filter, {}, page);
+
+      let lastPage = result.total / 5;
+      if (result.total % 5 > 0) { // Sobran decimales
+        lastPage = lastPage + 1;
+      }
+      let pages = []; // paginas mostrar
+      for (let i = page - 2; i <= page + 2; i++) {
+        if (i > 0 && i <= lastPage) {
+          pages.push(i);
+        }
+      }
+
+      let response = {
+        users: result.users,
+        pages: pages,
+        currentPage: page,
+        busquedaStr: busquedaStr,
+        user: req.session.user
+      };
+
+      for (const user of result.users) {
+        const filter = { 'user1._id': new ObjectId(user._id), user2: req.session.user };
+        const options = {};
+        const result = await friendshipRepository.findFriend(filter, options);
+        if (result === null || typeof result === "undefined") {
+          const filter = { user1: req.session.user, 'user2._id': new ObjectId(user._id) };
+          const options = {};
+          const result = await friendshipRepository.findFriend(filter, options);
+          if (result === null || typeof result === "undefined") {
+            user.areFriends = false;
+          }
+          else {
+            user.areFriends = true;
+          }
+        } else {
+          user.areFriends = true;
+        }
+      }
+
+      res.render("users/users-social.twig", response);
+    } catch (error) {
+      res.send("Error when searching social users: " + error);
+    }
+  });
+
+  /**
  * GET /users/edit
  * Renders edit user form view.
  * @param {Object} req - The request object.
@@ -113,87 +194,6 @@ module.exports = function (app, usersRepository) {
       res.json({ message: 'Error deleting users', messageType: 'alert-danger' });
     }
 
-  });
-
-  /**
-   * GET /users/social
-   * Returns a list of users except admins and the user logged in.
-   * @param {Object} req - The request object.
-   * @param {Object} res - The response object.
-   */
-  app.get('/users/social', async function (req, res) {
-    try {
-      let connectedUser = req.session.user;
-      if (!connectedUser || !connectedUser._id) {
-        res.send("Error you have to be logged to see users");
-        return;
-      }
-      let userId = new ObjectId(connectedUser._id);
-      let filter =
-      {
-        role: { $ne: "admin" },
-        _id: { $ne: userId },
-      };
-      //Búsqueda
-      let busquedaStr = "";//Vacía por defecto
-      if (req.query.search != null && typeof (req.query.search) != "undefined" && req.query.search != "") {
-        busquedaStr = req.query.search;
-        filter.$or = [
-          { "email": { $regex: ".*" + req.query.search + ".*" } },
-          { "firstName": { $regex: ".*" + req.query.search + ".*" } },
-          { "lastName": { $regex: ".*" + req.query.search + ".*" } }
-        ];
-      }
-
-      let page = parseInt(req.query.page); // Es String !!!
-      if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") { //
-        //Puede no venir el param
-        page = 1;
-      }
-      const result = await usersRepository.getUsersPg(filter, {}, page);
-
-      let lastPage = result.total / 5;
-      if (result.total % 5 > 0) { // Sobran decimales
-        lastPage = lastPage + 1;
-      }
-      let pages = []; // paginas mostrar
-      for (let i = page - 2; i <= page + 2; i++) {
-        if (i > 0 && i <= lastPage) {
-          pages.push(i);
-        }
-      }
-
-      let response = {
-        users: result.users,
-        pages: pages,
-        currentPage: page,
-        busquedaStr: busquedaStr,
-        user: req.session.user
-      };
-
-      for (const user of result.users) {
-        const filter = { 'user1._id': new ObjectId(user._id), user2: req.session.user };
-        const options = {};
-        const result = await friendshipRepository.findFriend(filter, options);
-        if (result === null || typeof result === "undefined") {
-          const filter = { user1: req.session.user, 'user2._id': new ObjectId(user._id) };
-          const options = {};
-          const result = await friendshipRepository.findFriend(filter, options);
-          if (result === null || typeof result === "undefined") {
-            user.areFriends = false;
-          }
-          else {
-            user.areFriends = true;
-          }
-        } else {
-          user.areFriends = true;
-        }
-      }
-
-      res.render("users/users-social.twig", response);
-    } catch (error) {
-      res.send("Error when searching social users: " + error);
-    }
   });
 
   /**
@@ -287,11 +287,11 @@ module.exports = function (app, usersRepository) {
 
     validateLogin(req, res).then(errors => {
 
-      /*if (errors.length > 0) {
+      if (errors.length > 0) {
         errors.splice(0, 0, "<b>Validation errors:</b>");
         res.redirect("/users/login" + "?message=" + errors.join("<br>") + "&messageType=alert-danger");
         return;
-      }*/
+      }
 
       let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
         .update(req.body.password).digest('hex');
@@ -309,7 +309,11 @@ module.exports = function (app, usersRepository) {
           res.redirect("/users/login" + "?message=Email o Contraseña incorrectos" + "&messageType=alert-danger");
         } else {
           req.session.user = user;
-          res.redirect("/publications");
+          if (user.role === "admin") {
+            res.redirect("/users/system");
+          } else {
+            res.redirect("/users/social") 
+          }
         }
 
       }).catch(error => {
@@ -365,6 +369,8 @@ async function validateLogin(req, res) {
 
   validate(errors, req.body.email !== null && req.body.email !== undefined && req.body.email.trim() !== '', "Email cannot be blank");
   validate(errors, req.body.password !== null && req.body.password !== undefined && req.body.password.trim() !== '', "Password cannot be blank");
+
+  return errors;
 }
 
 function validateUserEdit(req, res) {
