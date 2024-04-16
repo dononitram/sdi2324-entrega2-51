@@ -45,7 +45,7 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
                 }
             }
 
-            res.render("friendships/requests.twig", {requests: result.requests, pages:pages, currentPage: page});
+            res.render("friendships/requests.twig", {requests: result.requests, pages:pages, currentPage: page, user: req.session.user });
         }).catch(error => {
             res.redirect("/publications" + '?message=There has been an error listing the friendship requests.' +
                 "&messageType=alert-danger");
@@ -160,7 +160,8 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
             let response = {
             friends: filteredFriendship,
             pages: pages,
-            currentPage: page
+            currentPage: page,
+            user: req.session.user
         };
 
         //Buscar su última publicación
@@ -186,7 +187,7 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
             let options = {};
             publicationsRepository.findPublications(filter, options)
                 .then(publications => {
-                    res.render("friendships/friend.twig", {friend:friend, publications:publications});
+                    res.render("friendships/friend.twig", {friend:friend, publications:publications, user: req.session.user});
                 })
                 .catch(error => {
                     res.render("friendships/friend.twig", {friend: friend});

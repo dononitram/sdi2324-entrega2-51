@@ -26,11 +26,12 @@ module.exports = function (app, publicationsRepository) {
             let response = {
                 publications: result.publications,
                 pages: pages,
-                currentPage: page
+                currentPage: page,
+                user: req.session.user
             }
             res.render("publications.twig", response);
         }).catch(error => {
-            res.render("Error when listing publications "+ error)
+            res.render("Error when listing publications "+ error, { user: req.session.user }) // TODO: Are you sure about this?
         });
     });
 

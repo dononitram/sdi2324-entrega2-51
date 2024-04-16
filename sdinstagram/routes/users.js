@@ -29,7 +29,7 @@ module.exports = function (app, usersRepository) {
       if (i > 0 && i <= lastPage)
         pages.push(i);
 
-    res.render('users/users-system.twig', { users: usersResponse.users, pages: pages, currentPage: page });
+    res.render('users/users-system.twig', { users: usersResponse.users, pages: pages, currentPage: page, user: req.session.user });
   })
 
   /**
@@ -40,7 +40,7 @@ module.exports = function (app, usersRepository) {
  */
   app.get('/users/edit/:id', async function (req, res) {
     const user = await usersRepository.findUser({ _id: new ObjectId(req.params.id) }, {});
-    res.render('users/users-edit.twig', { user: user, admin: admin(req) });
+    res.render('users/users-edit.twig', { user: user, admin: admin(req) }); // TODO: change user to userEdit
   });
 
   /**
@@ -167,7 +167,8 @@ module.exports = function (app, usersRepository) {
         users: result.users,
         pages: pages,
         currentPage: page,
-        busquedaStr: busquedaStr
+        busquedaStr: busquedaStr,
+        user: req.session.user
       };
 
       for (const user of result.users) {
@@ -202,7 +203,7 @@ module.exports = function (app, usersRepository) {
    * @param {Object} res - The response object.
    */
   app.get('/users/signup', function (req, res) {
-    res.render("signup.twig");
+    res.render("signup.twig", { user: req.session.user });
   })
 
   /**
@@ -273,7 +274,7 @@ module.exports = function (app, usersRepository) {
    * @param {Object} res - The response object.
    */
   app.get('/users/login', function (req, res) {
-    res.render("login.twig");
+    res.render("login.twig", { user: req.session.user});
   })
 
   /**
@@ -331,7 +332,7 @@ module.exports = function (app, usersRepository) {
    */
   app.get('/users/logout', function (req, res) {
     req.session.user = null;
-    res.send("El usuario se ha desconectado correctamente");
+    res.redirect("/users/login" + "?message=Logged out successfully" + "&messageType=alert-info");
   })
 
 }
