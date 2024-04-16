@@ -39,7 +39,6 @@ module.exports = function (app, publicationsRepository) {
     });
 
     app.post('/publications/add',function (req,res) {
-        console.log(req);
         if(req.session.user == null || typeof(req.session.user) == "undefined") {
             res.send("Error when inserting new publication: Invalid user");
             return;
