@@ -89,7 +89,6 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
      * Shows all the friends of the user in session
      */
     app.get('/friendships/', async function (req, res) {
-        //TO-DO PEDRO FILTRO
         try {
             let connectedUser = req.session.user;
             if (!connectedUser || !connectedUser._id) {
@@ -99,8 +98,12 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
         let userId = new ObjectId(connectedUser._id);
         let filter =
             {
-                _id: { $ne: userId },
+                $or: [
+                    {"user1._id": userId},
+                    {"user2._id": userId}
+                    ]
             };
+
         let page = parseInt(req.query.page); // Es String !!!
         if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") { //
             //Puede no venir el param
@@ -119,14 +122,54 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
             }
         }
 
-        let response = {
-            friends: result.friends,
+        //Converts to list of one
+        let filteredFriendship = [];
+
+        result.friendships.forEach(friendRelation => {
+            let str = friendRelation.user1._id.toString();
+            if(str === connectedUser._id){
+                let day = friendRelation.date.getDate();
+                let month = friendRelation.date.toLocaleDateString('en-GB', { month: 'short' }); // Obtener el nombre abreviado del mes
+                let year = friendRelation.date.getFullYear();
+
+                friendRelation.user2.initFriendship = `${day} ${month} ${year}`;
+                filteredFriendship.push(friendRelation.user2)
+            }else{
+                let day = friendRelation.date.getDate();
+                let month = friendRelation.date.toLocaleDateString('en-GB', { month: 'short' }); // Obtener el nombre abreviado del mes
+                let year = friendRelation.date.getFullYear();
+
+                friendRelation.user1.initFriendship = `${day} ${month} ${year}`;
+                filteredFriendship.push(friendRelation.user1)
+            }
+        })
+        //Search last publication for each friend
+        for (const friend of filteredFriendship) {
+            let filter2 = {
+                "author._id": friend._id.toString()
+            };
+            const publication = await publicationsRepository.getLastPublicationOf(filter2, {});
+            if(publication.length === 0){
+                friend.lastPublicationTitle = "Nothing published";
+            }else{
+                friend.lastPublicationTitle = publication[0].title;
+            }
+        }
+
+            let response = {
+            friends: filteredFriendship,
             pages: pages,
             currentPage: page
         };
 
         //Buscar su última publicación
 
+            /**
+        filter2 = {
+            "author._id":
+        }
+            */
+        //.sort({ date: -1 }).limit(1);
         res.render("friendships/friends.twig", response);
 
         }catch (error) {

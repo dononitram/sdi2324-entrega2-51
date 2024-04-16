@@ -55,7 +55,7 @@ let usersRepository = require("./repositories/usersRepository");
 usersRepository.init(app, dbClient, publicationsRepository, friendshipRepository, friendshipRequestRepository);
 
 //Routes
-require("./routes/friendships")(app, friendshipRepository, friendshipRequestRepository, usersRepository);
+require("./routes/friendships")(app, friendshipRepository, friendshipRequestRepository, usersRepository, publicationsRepository);
 require("./routes/users")(app, usersRepository);
 require("./routes/publications")(app, publicationsRepository);
 

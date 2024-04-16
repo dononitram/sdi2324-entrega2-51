@@ -10,7 +10,7 @@
                 <th>Name</th>
                 <th>Surname</th>
                 <th>Friends since</th>
-                <th>Last publication</th>
+                <th>Last publication title</th>
             </tr>
             </thead>
             <tbody>
@@ -19,7 +19,8 @@
                     <td>{{ friend.email }}</td>
                     <td>{{ friend.firstName }}</td>
                     <td>{{ friend.lastName }}</td>
-                    <td> friend.lastPublication </td>
+                    <td> {{ friend.initFriendship }} </td>
+                    <td> {{ friend.lastPublicationTitle }} </td>
                 </tr>
             {% endfor %}
             </tbody>

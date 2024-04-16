@@ -38,6 +38,17 @@ module.exports = {
             throw (error);
         }
     },
+    getLastPublicationOf : async function(filter, options){
+        try {
+            await this.dbClient.connect();
+            const database = this.dbClient.db(this.database);
+            const publicationsCollection = database.collection(this.collectionName);
+            let result = await publicationsCollection.find(filter, options).sort({ date: -1 }).limit(1).toArray();
+            return result;
+        } catch (error) {
+            throw (error);
+        }
+    },
     findPublications: async function(filter, options) {
         try {
             await this.dbClient.connect();
