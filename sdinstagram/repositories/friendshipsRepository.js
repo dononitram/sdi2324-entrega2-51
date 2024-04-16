@@ -28,5 +28,20 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
+    },
+    getFriendshipsPg: async function (filter, options, page) {
+        try {
+            const limit = 5;
+            await this.dbClient.connect();
+            const database = this.dbClient.db(this.database);
+            const friendshipCollection = database.collection(this.collectionName);
+            const friendshipCollectionCount = await friendshipCollection.countDocuments(filter, options);
+            const cursor = friendshipCollection.find(filter, options).skip((page-1) * limit).limit(limit);
+            const friendships = await cursor.toArray();
+            const result = { friendships:friendships, total: friendshipCollectionCount};
+            return result;
+        } catch (error) {
+            throw (error);
+        }
     }
 };

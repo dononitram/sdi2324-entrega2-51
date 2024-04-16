@@ -88,8 +88,50 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
     /**
      * Shows all the friends of the user in session
      */
-    app.get('/friendships/', function (req, res) {
-        //TO-DO PEDRO
+    app.get('/friendships/', async function (req, res) {
+        //TO-DO PEDRO FILTRO
+        try {
+            let connectedUser = req.session.user;
+            if (!connectedUser || !connectedUser._id) {
+                res.send("Error you have to be logged to see users");
+                return;
+            }
+        let userId = new ObjectId(connectedUser._id);
+        let filter =
+            {
+                _id: { $ne: userId },
+            };
+        let page = parseInt(req.query.page); // Es String !!!
+        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") { //
+            //Puede no venir el param
+            page = 1;
+        }
+        const result = await friendshipRepository.getFriendshipsPg(filter, {}, page);
+
+        let lastPage = result.total / 5;
+        if (result.total % 5 > 0) { // Sobran decimales
+            lastPage = lastPage + 1;
+        }
+        let pages = []; // paginas mostrar
+        for (let i = page - 2; i <= page + 2; i++) {
+            if (i > 0 && i <= lastPage) {
+                pages.push(i);
+            }
+        }
+
+        let response = {
+            friends: result.friends,
+            pages: pages,
+            currentPage: page
+        };
+
+        //Buscar su última publicación
+
+        res.render("friendships/friends.twig", response);
+
+        }catch (error) {
+            res.send("Error when making the user friend's list")
+        }
     });
 
     app.get('/friendships/:id', function (req, res) {

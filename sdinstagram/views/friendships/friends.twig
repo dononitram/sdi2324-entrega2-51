@@ -10,25 +10,18 @@
                 <th>Name</th>
                 <th>Surname</th>
                 <th>Friends since</th>
+                <th>Last publication</th>
             </tr>
             </thead>
             <tbody>
-            <!--
-            {% for user in users %}
+            {% for friend in friends %}
                 <tr>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.firstName }}</td>
-                    <td>{{ user.lastName }}</td>
-                    <td>
-                        {% if not user.areFriends %}
-                            <form class="form-horizontal" method="post" action="/friendships/request/send/{{ user._id }}">
-                                <button type="submit" class="btn btn-primary">Add friend</button>
-                            </form>
-                        {% endif %}
-                    </td>
+                    <td>{{ friend.email }}</td>
+                    <td>{{ friend.firstName }}</td>
+                    <td>{{ friend.lastName }}</td>
+                    <td> friend.lastPublication </td>
                 </tr>
             {% endfor %}
-            -->
             </tbody>
         </table>
     </div>
