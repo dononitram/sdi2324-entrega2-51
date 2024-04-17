@@ -8,6 +8,21 @@ let indexRouter = require('./routes/index');
 
 let app = express();
 
+let rest = require('request');
+app.set('rest', rest);
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Methods", "POST, GET, DELETE, UPDATE, PUT");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, token");
+// Debemos especificar todas las headers que se aceptan. Content-Type , token
+  next();
+});
+
+let jwt = require('jsonwebtoken');
+app.set('jwt', jwt);
+
 let crypto = require('crypto');
 app.set('clave', 'abcdefg');
 app.set('crypto', crypto);
@@ -59,6 +74,9 @@ app.use("/users/system", adminSessionRouter);
 app.use("/users/delete", adminSessionRouter);
 app.use("/users/edit", adminSessionRouter)
 
+const userTokenRouter = require('./middlewares/userTokenRouter');
+app.use("/api/v1.0/friendships", userTokenRouter);
+
 const notAdminSessionRouter = require('./middlewares/notAdminSessionRouter');
 // TODO: fill with the routes an administrator can't access
 
@@ -73,6 +91,8 @@ require("./routes/logs")(app, logsRepository);
 require("./routes/friendships")(app, friendshipRepository, friendshipRequestRepository, usersRepository, publicationsRepository);
 require("./routes/users")(app, usersRepository, logsRepository);
 require("./routes/publications")(app, publicationsRepository);
+
+require("./routes/api/APIv1.0")(app, usersRepository, friendshipRepository, friendshipRequestRepository, publicationsRepository);
 
 // View engine setup
 app.set('views', path.join(__dirname, 'views'));
