@@ -10,12 +10,15 @@ loggerRouter = function (logsRepository) {
             description: req.method + " " + req.originalUrl,
         }
         
-        logsRepository.insertLog(log).catch(error => {
+        logsRepository.insertLog(log).then(result => {
+            next();
+        })
+        .catch(error => {
             console.log(error);
             console.log("No se ha podido registrar la peticion " + req.originalUrl)
+            next();
         });
         
-        next();
     });
 
     return innerRouter;

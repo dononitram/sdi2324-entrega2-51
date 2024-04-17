@@ -6,14 +6,23 @@
 
     <form action="/logs" method="GET">
         <select id="type" name="type" class="form-control" onchange="this.form.submit()">
-            <option value="ALL">All</option>
-            <option value="PET">Request</option>
-            <option value="ALTA">Signup</option>
-            <option value="LOGIN-EX">Login Success</option>
-            <option value="LOGIN-ERR">Login Error</option>
-            <option value="LOGOUT">Logout</option>
+            <option value="ALL" {% if selectedType == 'ALL' %}selected{% endif %}>All</option>
+            <option value="PET" {% if selectedType == 'PET' %}selected{% endif %}>Request</option>
+            <option value="ALTA" {% if selectedType == 'ALTA' %}selected{% endif %}>Signup</option>
+            <option value="LOGIN-EX" {% if selectedType == 'LOGIN-EX' %}selected{% endif %}>Login Success</option>
+            <option value="LOGIN-ERR" {% if selectedType == 'LOGIN-ERR' %}selected{% endif %}>Login Error</option>
+            <option value="LOGOUT" {% if selectedType == 'LOGOUT' %}selected{% endif %}>Logout</option>
         </select>
     </form>
+
+    <button onclick="deleteLogs()">Delete Logs</button>
+
+    <script>
+        function deleteLogs() {
+            var selectedType = document.getElementById("type").value;
+            window.location.href = "/logs/delete/" + selectedType;
+        }
+    </script>
     
     <table class="table table-striped">
         <thead>

@@ -31,6 +31,7 @@ module.exports = {
     },
     deleteLogs: async function (filter, options) {
         try {
+            console.log("XD")
             await this.dbclient.connect();
             const database = this.dbclient.db(this.database);
             const logsCollection = database.collection(this.collectionName);

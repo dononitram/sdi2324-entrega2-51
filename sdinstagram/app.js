@@ -54,7 +54,7 @@ app.use("/publications/add", userSessionRouter);
 app.use("/publications", userSessionRouter);
 
 const adminSessionRouter = require('./middlewares/adminSessionRouter');
-app.use("/logs/list", adminSessionRouter);
+app.use("/logs", adminSessionRouter);
 app.use("/users/system", adminSessionRouter);
 app.use("/users/delete", adminSessionRouter);
 app.use("/users/edit", adminSessionRouter)

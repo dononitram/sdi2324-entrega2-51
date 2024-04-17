@@ -307,21 +307,22 @@ module.exports = function (app, usersRepository, logsRepository) {
 
       usersRepository.findUser(filter, options).then(user => {
 
-        if (user == null) {
-          req.session.user = null;
-          res.redirect("/users/login" + "?message=Email o Contraseña incorrectos" + "&messageType=alert-danger");
-        } else {
           req.session.user = user;
-          if (user.role === "admin") {
-            res.redirect("/users/system");
-          } else {
-            res.redirect("/users/social") 
-          }
-        }
+          
+          logsRepository.insertLog({ date: Date.now(), type: "LOGIN-EX", description: "User " + user.email + " logged in" }).catch(error => {
+            console.log(error);
+          });
+
+          (user.role === "admin") ? res.redirect("/users/system") : res.redirect("/users/social");
 
       }).catch(error => {
         req.session.user = null;
-        res.redirect("/users/login" + "?message=Error al buscar el usuario" + "&messageType=alert-danger");
+
+        logsRepository.insertLog({ date: Date.now(), type: "LOGIN-ERR", description: "User " + req.body.email + " tried to log in" }).catch(error => {
+          console.log(error);
+        });
+
+        res.redirect("/users/login" + "?message=Incorrect user or password" + "&messageType=alert-danger");
       });
 
     }).catch(error => {
