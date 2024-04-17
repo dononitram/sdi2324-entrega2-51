@@ -23,7 +23,26 @@ let bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Repositories. They need to be placed here.
+let publicationsRepository = require("./repositories/publicationsRepository");
+publicationsRepository.init(app, dbClient);
+
+let friendshipRepository = require("./repositories/friendshipsRepository");
+friendshipRepository.init(app, dbClient);
+
+let friendshipRequestRepository = require("./repositories/friendshipRequestsRepository");
+friendshipRequestRepository.init(app, dbClient);
+
+let usersRepository = require("./repositories/usersRepository");
+usersRepository.init(app, dbClient, publicationsRepository, friendshipRepository, friendshipRequestRepository);
+
+let loggerRepository = require("./repositories/logsRepository");
+loggerRepository.init(app, dbClient);
+
 // MiddleWares. They need to be placed here.
+const petLogger = require('./middlewares/petLogger');
+app.use(petLogger(loggerRepository));
+
 const userSessionRouter = require('./middlewares/userSessionRouter');
 app.use("/friendships", userSessionRouter);
 app.use("/publications/add", userSessionRouter);
@@ -48,19 +67,6 @@ app.use("/friendships/request/send", friendshipRequestsRouter);
 const { MongoClient } = require("mongodb");
 const connectionStrings = 'mongodb://sdi51:g1PqYBrJug94nHRNBV9k@158.179.219.219:27017/'; // Connection to cloud virtual machine
 const dbClient = new MongoClient(connectionStrings);
-
-// Repositories
-let publicationsRepository = require("./repositories/publicationsRepository");
-publicationsRepository.init(app, dbClient);
-
-let friendshipRepository = require("./repositories/friendshipsRepository");
-friendshipRepository.init(app, dbClient);
-
-let friendshipRequestRepository = require("./repositories/friendshipRequestsRepository");
-friendshipRequestRepository.init(app, dbClient);
-
-let usersRepository = require("./repositories/usersRepository");
-usersRepository.init(app, dbClient, publicationsRepository, friendshipRepository, friendshipRequestRepository);
 
 //Routes
 require("./routes/friendships")(app, friendshipRepository, friendshipRequestRepository, usersRepository, publicationsRepository);

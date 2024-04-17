@@ -100,6 +100,7 @@ module.exports = {
     deleteUsersData: async function (userIds) {
         try {
 
+            //TODO: Enable this
             // Delete publications
             //await publicationRepository.deletePublicationsOfUsers(userIds);
             //Delete friendships
