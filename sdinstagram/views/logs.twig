@@ -1,0 +1,37 @@
+{% extends "layout.twig" %}
+{% block title %} Logs {% endblock %}
+{% block main_container %}
+
+    <h2>Logs</h2>
+
+    <form action="/logs" method="GET">
+        <select id="type" name="type" class="form-control" onchange="this.form.submit()">
+            <option value="ALL">All</option>
+            <option value="PET">Request</option>
+            <option value="ALTA">Signup</option>
+            <option value="LOGIN-EX">Login Success</option>
+            <option value="LOGIN-ERR">Login Error</option>
+            <option value="LOGOUT">Logout</option>
+        </select>
+    </form>
+    
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for log in logs %}
+            <tr>
+            <td>{{ log.date }}</td>
+            <td>{{ log.type }}</td>
+            <td>{{ log.description }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    
+{% endblock %}

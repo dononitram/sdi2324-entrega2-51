@@ -9,8 +9,8 @@ module.exports = {
     },
     getLogs: async function (filter, options) {
         try {
-            await this.mongoClient.connect();
-            const database = client.db(this.database);
+            await this.dbclient.connect();
+            const database = this.dbclient.db(this.database);
             const logsCollection = database.collection(this.collectionName);
             const logs = await logsCollection.find(filter, options).toArray();
             return logs;
@@ -20,8 +20,8 @@ module.exports = {
     },
     insertLog: async function (log) {
         try {
-            await this.mongoClient.connect();
-            const database = client.db(this.database);
+            await this.dbclient.connect();
+            const database = this.dbclient.db(this.database);
             const logsCollection = database.collection(this.collectionName);
             const result = await logsCollection.insertOne(log);
             return result.insertedId;
@@ -31,8 +31,8 @@ module.exports = {
     },
     deleteLogs: async function (filter, options) {
         try {
-            await this.mongoClient.connect();
-            const database = client.db(this.database);
+            await this.dbclient.connect();
+            const database = this.dbclient.db(this.database);
             const logsCollection = database.collection(this.collectionName);
             const result = await logsCollection.deleteMany(filter, options);
             return result;

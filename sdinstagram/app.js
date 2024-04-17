@@ -23,7 +23,12 @@ let bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Repositories. They need to be placed here.
+// BBDD MongoDB Cloud
+const { MongoClient } = require("mongodb");
+const connectionStrings = 'mongodb://sdi51:g1PqYBrJug94nHRNBV9k@158.179.219.219:27017/'; // Connection to cloud virtual machine
+const dbClient = new MongoClient(connectionStrings);
+
+// Repositories
 let publicationsRepository = require("./repositories/publicationsRepository");
 publicationsRepository.init(app, dbClient);
 
@@ -36,12 +41,12 @@ friendshipRequestRepository.init(app, dbClient);
 let usersRepository = require("./repositories/usersRepository");
 usersRepository.init(app, dbClient, publicationsRepository, friendshipRepository, friendshipRequestRepository);
 
-let loggerRepository = require("./repositories/logsRepository");
-loggerRepository.init(app, dbClient);
+let logsRepository = require("./repositories/logsRepository");
+logsRepository.init(app, dbClient);
 
-// MiddleWares. They need to be placed here.
+// MiddleWares
 const petLogger = require('./middlewares/petLogger');
-app.use(petLogger(loggerRepository));
+app.use("*", petLogger(logsRepository));
 
 const userSessionRouter = require('./middlewares/userSessionRouter');
 app.use("/friendships", userSessionRouter);
@@ -49,7 +54,7 @@ app.use("/publications/add", userSessionRouter);
 app.use("/publications", userSessionRouter);
 
 const adminSessionRouter = require('./middlewares/adminSessionRouter');
-app.use("/log/list", adminSessionRouter);
+app.use("/logs/list", adminSessionRouter);
 app.use("/users/system", adminSessionRouter);
 app.use("/users/delete", adminSessionRouter);
 app.use("/users/edit", adminSessionRouter)
@@ -63,14 +68,10 @@ const userFriendRouter = require('./middlewares/userFriendRouter');
 const friendshipRequestsRouter = require("./middlewares/friendshipRequestsRouter");
 app.use("/friendships/request/send", friendshipRequestsRouter);
 
-// BBDD MongoDB Cloud
-const { MongoClient } = require("mongodb");
-const connectionStrings = 'mongodb://sdi51:g1PqYBrJug94nHRNBV9k@158.179.219.219:27017/'; // Connection to cloud virtual machine
-const dbClient = new MongoClient(connectionStrings);
-
 //Routes
+require("./routes/logs")(app, logsRepository);
 require("./routes/friendships")(app, friendshipRepository, friendshipRequestRepository, usersRepository, publicationsRepository);
-require("./routes/users")(app, usersRepository);
+require("./routes/users")(app, usersRepository, logsRepository);
 require("./routes/publications")(app, publicationsRepository);
 
 // View engine setup

@@ -27,17 +27,27 @@
             <li id="myRequests" class="active"><a href="/friendships/requests">Friendships Requests</a></li>
          </ul>
          <ul class="nav navbar-nav">
-                     <li id="myFriends" class="active"><a href="/friendships">My friends</a></li>
-                  </ul>
+              <li id="myFriends" class="active"><a href="/friendships">My friends</a></li>
+          </ul>
           <ul class="nav navbar-nav">
-              <li id="myPublications" class="active"><a href="/publications">My publications</a></li>
+              <li id="myPublications" class="active"><a href="/publications">My Posts</a></li>
           </ul>
           <ul class="nav navbar-nav">
               <li id="addPublication" class="active"><a href="/publications/add">New Post</a></li>
           </ul>
           <ul class="nav navbar-nav">
-            <li id="mylistUsersSocial" class="active"><a href="/users/social">Social network users</a></li>
+            <li id="mylistUsersSocial" class="active"><a href="/users/social">Social Network Users</a></li>
           </ul>
+
+          {% if user.role == 'admin' %}
+            <ul class="nav navbar-nav">
+              <li id="mylistUsers" class="active"><a href="/users/system">System Users</a></li>
+            </ul>
+            <ul class="nav navbar-nav">
+              <li id="mylistLogs" class="active"><a href="/logs/list">Logs</a></li>
+            </ul>
+          {% endif %}
+
           <ul class="nav navbar-nav navbar-right">
 		  			{% if user == null %}
     	      	<li><a href="/users/signup"><span class="glyphicon glyphicon-user"></span> Signup </a></li>

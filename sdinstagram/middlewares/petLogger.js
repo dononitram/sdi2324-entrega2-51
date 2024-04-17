@@ -6,13 +6,13 @@ loggerRouter = function (logsRepository) {
 
         let log = {
             date: Date.now(),
-            action: req.method,
-            url: req.originalUrl,
             type: "PET",
+            description: req.method + " " + req.originalUrl,
         }
         
         logsRepository.insertLog(log).catch(error => {
-            console.log("No se ha podido registrar la peticion " + req.method)
+            console.log(error);
+            console.log("No se ha podido registrar la peticion " + req.originalUrl)
         });
         
         next();

@@ -5,7 +5,7 @@
  */
 const { ObjectId } = require("mongodb");
 const friendshipRepository = require("../repositories/friendshipsRepository");
-module.exports = function (app, usersRepository) {
+module.exports = function (app, usersRepository, logsRepository) {
 
 
   /**
@@ -204,7 +204,7 @@ module.exports = function (app, usersRepository) {
    */
   app.get('/users/signup', function (req, res) {
     res.render("signup.twig", { user: req.session.user });
-  })
+  });
 
   /**
    * POST /users/signup
@@ -249,6 +249,9 @@ module.exports = function (app, usersRepository) {
 
         usersRepository.insertUser(user).then(userId => {
           res.redirect("/users/login" + "?message=User registered correctly" + "&messageType=alert-info");
+          logsRepository.insertLog({ date: Date.now(), type: "ALTA", description: "User " + user.email + " registered" }).catch(error => {
+            console.log(error);
+          });
 
         }).catch(error => {
           console.log(error);
@@ -265,7 +268,7 @@ module.exports = function (app, usersRepository) {
       res.redirect("/users/signup" + "?message=Error validating fields" + "&messageType=alert-danger");
     });
 
-  })
+  });
 
   /**
    * GET /users/login
@@ -334,6 +337,9 @@ module.exports = function (app, usersRepository) {
    * @param {Object} res - The response object.
    */
   app.get('/users/logout', function (req, res) {
+    logsRepository.insertLog({ date: Date.now(), type: "LOGOUT", description: "User " + req.session.user.email + " logged out" }).catch(error => {
+      console.log(error);
+    });
     req.session.user = null;
     res.redirect("/users/login" + "?message=Logged out successfully" + "&messageType=alert-info");
   })
