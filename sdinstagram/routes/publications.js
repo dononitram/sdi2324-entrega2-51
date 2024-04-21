@@ -8,7 +8,7 @@ module.exports = function (app, publicationsRepository) {
         }
         let page = parseInt(req.query.page); // Es String !!!
         if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
-            //Puede no venir el param
+            //Param can be inexistent
             page = 1;
         }
 
