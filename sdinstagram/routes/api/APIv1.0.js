@@ -131,4 +131,78 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
         }
     });
 
+    app.post('/api/v1.0/conversation', function (req, res) {
+        try {
+            if(typeof req.body.friendId === "undefined" ||  req.body.friendId === null) {
+                res.status(409);
+                res.json({error: "Cannot create conversation. Incorrect friend id"});
+                return;
+            }
+            if(typeof req.body.writerEmail === "undefined" ||  req.body.friendId === null) {
+                res.status(409);
+                res.json({error: "Cannot create conversation. Incorrect friend id"});
+                return;
+            }
+            //let user1 = await usersRepository.findUser({email:req.body.sender},{});
+            console.log(res);
+            let convers = {
+                user1: req.body.friend,
+                user2: res.token
+            }
+            //Should look for users and check if they are friends
+            usersRepository.findUser({email:req.body.senderEmail},{}).then(user1 => {
+                let filter = {user1: user1, user2: user2};
+                let options = {}
+                conversationsRepository.findConversation(filter, options).then(conversation => {
+                    if (conversation === null || typeof conversation === "undefined") {
+                        let filter = {user1: user2, user2: user1};
+                        let options = {}
+                        conversationsRepository.findConversation(filter, options).then(conversation => {
+                            // There is no conversation between this users
+                            if (conversation === null || typeof conversation === "undefined") {
+                                //A new conversation is created
+                                let message = {
+                                    author: user1,
+                                    date: new Date(),
+                                    text: req.body.message,
+                                    read: false
+                                }
+                                let convers = {
+                                    user1: user1,
+                                    user2: user2,
+                                    messages: [message]
+                                }
+                                conversationsRepository.insertConversation(convers, function(conversationId) {
+                                    if (conversationId === null) {
+                                        res.status(409);
+                                        res.json({error: "Could not create song"});
+                                        return;
+
+                                    } else {
+                                        res.status(201);
+                                        res.json({
+                                            message: "Conversation created successfully",
+                                            _id: conversationId
+                                        })
+                                    }
+                                })
+                            }
+                            else{
+
+                                res.status(200);
+                                res.json({conversation: conversation});
+                            }
+                        });
+                    }
+                    else {
+                        res.status(200);
+                        res.json({conversation: conversation});
+                    }
+                });
+            });
+        } catch (e) {
+            res.status(500);
+            res.json({error: "Error while creating conversation: " + e})
+        }
+    });
 }
