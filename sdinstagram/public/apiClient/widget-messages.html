@@ -1,0 +1,50 @@
+<div id="widget-songs" >
+    <button class="btn" onclick="loadSongs()" >Actualizar</button>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th class="col-md-1"></th>
+            <th class="col-md-1"></th>
+        </tr>
+        </thead>
+        <tbody id="messagesTableBody"></tbody>
+    </table>
+</div>
+<script>
+    let messages;
+    let user;
+
+    function widgetConversations(usuario) {
+        user = usuario;
+        loadMessages(); // Llama a loadMessages() después de establecer el usuario
+    }
+
+    function loadMessages() {
+        $.ajax({
+            url: URLbase + "/conversation/" + user._id,
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (response) {
+                messages = response.conversation.messages;
+                updateMessagesTable(messages);
+            },
+            error: function (error) {
+                $("#main-container").load("widget-login.html");
+            }
+        });
+    }
+    function updateMessagesTable(messages) {
+        $("#messagesTableBody").empty(); // Vaciar la tabla
+        for (let i = 0; i < messages.length; i++) {
+            $("#messagesTableBody").append(
+                "<tr>" +
+                "<td>" + messages[i].message + "</td>" +
+                "</tr>");
+        }
+    }
+    setInterval(function() {
+        loadMessages();
+    }, 5000);
+</script>

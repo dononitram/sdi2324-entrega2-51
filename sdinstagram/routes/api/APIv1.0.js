@@ -1,5 +1,7 @@
 const {ObjectId} = require('mongodb');
-module.exports = function (app, usersRepository, friendshipRepository, friendshipRequestRepository, publicationsRepository) {
+const conversationsRepository = require("../../repositories/conversationsRepository");
+module.exports = function (app, usersRepository, friendshipRepository, friendshipRequestRepository, publicationsRepository
+                           , conversationsRepository) {
 
     app.post('/api/v1.0/users/login', function (req, res) {
 
@@ -59,6 +61,74 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
             })
         }
 
+    });
+
+    app.get('/api/v1.0/conversation/:user', function (req, res) {
+        try {
+            let user1ID = new ObjectId(req.params.user1);
+            let user2 = req.session.user;
+            user2 = new ObjectId(user2._id);
+
+            usersRepository.findUser({_id:user1ID},{}).then(user1 => {
+
+                let filter = {user1: user1, user2: user2};
+                let options = {}
+                conversationsRepository.findConversation(filter, options).then(conversation => {
+
+                    if (conversation === null || typeof conversation === "undefined") {
+                        let filter = {user1: user2, user2: user1};
+                        let options = {}
+                        conversationsRepository.findConversation(filter, options).then(conversation => {
+
+                            if (conversation === null || typeof conversation === "undefined") {
+                                res.status(404);
+                                res.json({error: "No exite conversación con el usuario especificado"})
+                            }
+                            else{
+                                res.status(200);
+                                res.json({conversation: conversation});
+                            }
+                        });
+                    }
+                    else {
+                        res.status(200);
+                        res.json({conversation: conversation});
+                    }
+                });
+            });
+        } catch (e) {
+            console.log(e);
+            res.status(500);
+            res.json({error: "Se ha producido un error :" + e})
+        }
+    });
+
+    app.get('/api/v1.0/conversations/', function (req, res) {
+        try {
+            let user1 = req.session.user;
+            let filter = {user1: user1};
+            let options= {};
+            conversationsRepository.getConversations(filter, options).then(conversations => {
+
+                    if (conversations === null || typeof conversations === "undefined" || conversations.length === 0) {
+                        let filter = {user2: user1};
+                        let options = {}
+                        conversationsRepository.findConversation(filter, options).then(conversations => {
+
+                            res.status(200);
+                            res.json({conversations: conversations});
+                        });
+                    }
+                    else {
+                        res.status(200);
+                        res.json({conversations: conversations});
+                    }
+                });
+        } catch (e) {
+            console.log(e);
+            res.status(500);
+            res.json({error: "Se ha producido un error :" + e})
+        }
     });
 
 }

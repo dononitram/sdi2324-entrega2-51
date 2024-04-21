@@ -40,7 +40,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // BBDD MongoDB Cloud
 const { MongoClient } = require("mongodb");
-const connectionStrings = 'mongodb://sdi51:g1PqYBrJug94nHRNBV9k@158.179.219.219:27017/'; // Connection to cloud virtual machine
+//const connectionStrings = 'mongodb://sdi51:g1PqYBrJug94nHRNBV9k@158.179.219.219:27017/'; // Connection to cloud virtual machine
+const connectionStrings = "mongodb://localhost:27017/"
 const dbClient = new MongoClient(connectionStrings);
 
 // Repositories
@@ -58,6 +59,9 @@ usersRepository.init(app, dbClient, publicationsRepository, friendshipRepository
 
 let logsRepository = require("./repositories/logsRepository");
 logsRepository.init(app, dbClient);
+
+let conversationsRepository = require("./repositories/conversationsRepository");
+conversationsRepository.init(app, dbClient);
 
 // MiddleWares
 const petLogger = require('./middlewares/petLogger');
@@ -92,7 +96,7 @@ require("./routes/friendships")(app, friendshipRepository, friendshipRequestRepo
 require("./routes/users")(app, usersRepository, logsRepository);
 require("./routes/publications")(app, publicationsRepository);
 
-require("./routes/api/APIv1.0")(app, usersRepository, friendshipRepository, friendshipRequestRepository, publicationsRepository);
+require("./routes/api/APIv1.0")(app, usersRepository, friendshipRepository, friendshipRequestRepository, publicationsRepository, conversationsRepository);
 
 // View engine setup
 app.set('views', path.join(__dirname, 'views'));
