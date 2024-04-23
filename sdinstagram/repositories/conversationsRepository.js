@@ -7,6 +7,20 @@ module.exports = {
         this.dbClient = dbClient;
         this.app = app;
     },
+    insertConversation: async function(conversation, callbackFunction) {
+        this.dbClient.connect()
+            .then(() => {
+                const database = this.dbClient.db(this.database);
+                const conversationsCollection = database.collection(this.collectionName);
+                conversationsCollection.insertOne(conversation)
+                    .then(result => {
+                        callbackFunction(result.insertedId)
+                    })
+                    .then(() => this.dbClient.close())
+                    .catch(err => callbackFunction({error: err.message}));
+            })
+            .catch(err => callbackFunction({error: err.message}));
+    },
     getConversations: async function (filter, options) {
         try {
             await this.dbClient.connect();
