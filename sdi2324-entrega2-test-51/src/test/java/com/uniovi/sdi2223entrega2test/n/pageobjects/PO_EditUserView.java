@@ -1,4 +1,4 @@
-package com.uniovi.sdi2223entrega2test.51.pageobjects;
+package com.uniovi.sdi2223entrega2test.n.pageobjects;
 
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;

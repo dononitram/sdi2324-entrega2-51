@@ -1,12 +1,14 @@
-package com.uniovi.sdi2223entrega2test.51.util;
+package com.uniovi.sdi2223entrega2test.n.util;
 
-import java.util.List;
+
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.List;
 
 public class SeleniumUtils {
 
@@ -97,23 +99,4 @@ public class SeleniumUtils {
 		return waitLoadElementsByXpath(driver, searchCriterio, timeout);
 	}
 
-
-	/**
-	 * PROHIBIDO USARLO PARA VERSIÓN FINAL.
-	 * Esperar "segundos" durante la ejecucion del navegador 
-	 * @param driver: apuntando al navegador abierto actualmente.
-	 * @param seconds: Segundos de bloqueo de la ejecución en el navegador.
-	 */
-	static public void waitSeconds(WebDriver driver, int seconds){
-
-		//noinspection SynchronizationOnLocalVariableOrMethodParameter
-		synchronized(driver){
-			try {
-				driver.wait(seconds * 1000L);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
 }

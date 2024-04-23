@@ -6,7 +6,7 @@
     <groupId>com.uniovi</groupId>
     <artifactId>sdi2223-entrega2-test-n</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-   <packaging>war</packaging>
+    <packaging>war</packaging>
     <name>sdi2223-entrega2-test-n</name>
     <description>sdi2223-entrega2-test-n</description>
     <properties>
