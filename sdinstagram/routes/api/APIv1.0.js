@@ -63,6 +63,47 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
 
     });
 
+    app.get('/api/v1.0/users/friendships', function (req, res) {
+        try {
+
+            usersRepository.findUser({ email: res.user }, {}).then(user => {
+
+                let filter = {$or: [{user1: user}, {user2: user}]};
+                
+                friendshipRepository.findFriendships(filter, {}).then(friendships => {
+                    res.status(200);
+
+                    let parsedFriendships = friendships.map(friendship => {
+                        if (friendship.user1.email === user.email) {
+                            return friendship.user2;
+                        } else {
+                            return friendship.user1;
+                        }
+                    }).map(friend => {
+                        return {
+                            _id: friend._id,
+                            email: friend.email,
+                            firstName: friend.firstName,
+                            lastName: friend.lastName,
+                        }
+                    }
+                    );
+
+                    res.json({ friendships: parsedFriendships });
+                });
+            
+            }).catch(error => {
+                res.status(404);
+                res.json({ error: "Error while finding user: " + error });
+            });
+
+        } catch (e) {
+            console.log(e);
+            res.status(500);
+            res.json({ error: "Se ha producido un error :" + e })
+        }
+    });
+
     app.get('/api/v1.0/conversation/:user', function (req, res) {
         try {
             let user1ID = new ObjectId(req.params.user1);

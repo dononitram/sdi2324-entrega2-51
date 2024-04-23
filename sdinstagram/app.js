@@ -79,8 +79,9 @@ app.use("/users/delete", adminSessionRouter);
 app.use("/users/edit", adminSessionRouter)
 
 const userTokenRouter = require('./middlewares/userTokenRouter');
-app.use("/api/v1.0/friendships", userTokenRouter);
-app.use("/api/v1.0/conversation", userTokenRouter);
+app.use("/api/v1.0/users/friendships", userTokenRouter);
+app.use("/api/v1.0/users/conversations", userTokenRouter);
+// Add more routes that require a token
 
 const notAdminSessionRouter = require('./middlewares/notAdminSessionRouter');
 // TODO: fill with the routes an administrator can't access
