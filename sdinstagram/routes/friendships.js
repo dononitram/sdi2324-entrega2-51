@@ -203,16 +203,10 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
             if(friendship.user1._id.toString() !== req.session.user._id) {
                 filter = {"author._id": friendship.user1._id.toString()};
                 friend = friendship.user1;
-                console.log("user1");
             } else {
                 filter = {"author._id": friendship.user2._id.toString()};
                 friend = friendship.user2;
-                console.log("user2");
             }
-            console.log("FRIEND: ",friend);
-            console.log("FILTER: ",filter);
-            console.log("USER: ",req.session.user);
-
             let options = {sort: {title:1}};
             let page = parseInt(req.query.page); // Es String !!!
             if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {

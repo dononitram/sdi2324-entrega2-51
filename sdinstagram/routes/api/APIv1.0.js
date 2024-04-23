@@ -114,7 +114,6 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                         let filter = {user2: user1};
                         let options = {}
                         conversationsRepository.findConversation(filter, options).then(conversations => {
-
                             res.status(200);
                             res.json({conversations: conversations});
                         });
@@ -133,30 +132,46 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
 
     app.post('/api/v1.0/conversation', function (req, res) {
         try {
-            if(typeof req.body.friendId === "undefined" ||  req.body.friendId === null) {
-                res.status(409);
-                res.json({error: "Cannot create conversation. Incorrect friend id"});
-                return;
-            }
-            if(typeof req.body.writerEmail === "undefined" ||  req.body.friendId === null) {
-                res.status(409);
-                res.json({error: "Cannot create conversation. Incorrect friend id"});
-                return;
-            }
-            //let user1 = await usersRepository.findUser({email:req.body.sender},{});
             console.log(res);
-            let convers = {
-                user1: req.body.friend,
-                user2: res.token
+            console.log(res.user);
+            if(typeof res.session.user === "undefined" ||  res.session.user === null) {
+                res.status(409);
+                res.json({error: "Cannot create conversation. User not present"});
+                return;
+            }
+            if(typeof req.body.friendEmail === "undefined" ||  req.body.friendEmail === null) {
+                res.status(409);
+                res.json({error: "Cannot create conversation. Incorrect friend id"});
+                return;
             }
             //Should look for users and check if they are friends
-            usersRepository.findUser({email:req.body.senderEmail},{}).then(user1 => {
-                let filter = {user1: user1, user2: user2};
+            usersRepository.findUser({email:req.body.friendEmail},{}).then(user2 => {
+                //let filter = {user1: res.user, user2: user2};
+                let filter =
+                    {
+                        $or: [
+                            {"user1._id": new ObjectId(user2._id)},
+                            {"user2._id": new ObjectId(user2._id)}
+                        ]
+                    };
                 let options = {}
-                conversationsRepository.findConversation(filter, options).then(conversation => {
-                    if (conversation === null || typeof conversation === "undefined") {
-                        let filter = {user1: user2, user2: user1};
+                friendshipRepository.findFriendship(filter, options).then(friendship => {
+                    console.log("friendship: ",friendship);
+                    if (friendship !== null || typeof friendship !== "undefined") {
+                        let filter =
+                            {
+                                $or: [
+                                    {"user1._id": new ObjectId(user2._id)},
+                                    {"user2._id": new ObjectId(user2._id)}
+                                ]
+                            };
                         let options = {}
+                        let user1;
+                        if(friendship.user1._id.toString() === user2._id) {
+                            user1 = friendship.user2;
+                        } else {
+                            user1 = friendship.user1;
+                        }
                         conversationsRepository.findConversation(filter, options).then(conversation => {
                             // There is no conversation between this users
                             if (conversation === null || typeof conversation === "undefined") {
@@ -173,11 +188,10 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                                     messages: [message]
                                 }
                                 conversationsRepository.insertConversation(convers, function(conversationId) {
-                                    if (conversationId === null) {
+                                    if (conversationId.toString() === null || conversationId.toString() === undefined) {
                                         res.status(409);
-                                        res.json({error: "Could not create song"});
+                                        res.json({error: "Could not create conversation"});
                                         return;
-
                                     } else {
                                         res.status(201);
                                         res.json({
@@ -187,18 +201,17 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                                     }
                                 })
                             }
-                            else{
-
+                            else{ // There is already a conversation between this users
                                 res.status(200);
                                 res.json({conversation: conversation});
                             }
                         });
+                    } else {
+                        res.status(409);
+                        res.json({error: "There is no friendship"});
                     }
-                    else {
-                        res.status(200);
-                        res.json({conversation: conversation});
-                    }
-                });
+                })
+
             });
         } catch (e) {
             res.status(500);

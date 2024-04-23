@@ -11,8 +11,8 @@ module.exports = {
         this.dbClient.connect()
             .then(() => {
                 const database = this.dbClient.db(this.database);
-                const songsCollection = database.collection(this.collectionName);
-                songsCollection.insertOne(publication)
+                const publicationCollection = database.collection(this.collectionName);
+                publicationCollection.insertOne(publication)
                     .then(result => {
                         callbackFunction(result.insertedId)
                     })
