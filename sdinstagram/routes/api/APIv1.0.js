@@ -66,7 +66,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
     app.get('/api/v1.0/conversation/:user', function (req, res) {
         try {
             let user1ID = new ObjectId(req.params.user1);
-            let user2 = req.session.user;
+            let user2 = res.user;
             user2 = new ObjectId(user2._id);
 
             usersRepository.findUser({ _id: user1ID }, {}).then(user1 => {
@@ -105,9 +105,9 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
 
     app.get('/api/v1.0/conversations/', function (req, res) {
         try {
-            let user1 = req.session.user;
-            let filter = { user1: user1 };
-            let options = {};
+            let user1 = res.user;
+            let filter = {user1: user1};
+            let options= {};
             conversationsRepository.getConversations(filter, options).then(conversations => {
 
                 if (conversations === null || typeof conversations === "undefined" || conversations.length === 0) {
