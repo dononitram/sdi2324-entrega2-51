@@ -1,7 +1,7 @@
-const {ObjectId} = require('mongodb');
+const { ObjectId } = require('mongodb');
 const conversationsRepository = require("../../repositories/conversationsRepository");
 module.exports = function (app, usersRepository, friendshipRepository, friendshipRequestRepository, publicationsRepository
-                           , conversationsRepository) {
+    , conversationsRepository) {
 
     app.post('/api/v1.0/users/login', function (req, res) {
 
@@ -16,16 +16,16 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
 
             let options = {};
 
-            usersRepository.findUser(filter,options).then(user => {
+            usersRepository.findUser(filter, options).then(user => {
                 if (user == null) {
                     res.status(401); // Unauthorized
                     res.json({
-                      message: "usuario no autorizado",
-                      authenticated: false
+                        message: "usuario no autorizado",
+                        authenticated: false
                     })
                 } else {
                     let token = app.get('jwt').sign(
-                        {user: user.email, time: Date.now() / 1000}, "secreto"
+                        { user: user.email, time: Date.now() / 1000 }, "secreto"
                     );
 
                     const jwt = require('jsonwebtoken');
@@ -69,78 +69,78 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
             let user2 = req.session.user;
             user2 = new ObjectId(user2._id);
 
-            usersRepository.findUser({_id:user1ID},{}).then(user1 => {
+            usersRepository.findUser({ _id: user1ID }, {}).then(user1 => {
 
-                let filter = {user1: user1, user2: user2};
+                let filter = { user1: user1, user2: user2 };
                 let options = {}
                 conversationsRepository.findConversation(filter, options).then(conversation => {
 
                     if (conversation === null || typeof conversation === "undefined") {
-                        let filter = {user1: user2, user2: user1};
+                        let filter = { user1: user2, user2: user1 };
                         let options = {}
                         conversationsRepository.findConversation(filter, options).then(conversation => {
 
                             if (conversation === null || typeof conversation === "undefined") {
                                 res.status(404);
-                                res.json({error: "No exite conversación con el usuario especificado"})
+                                res.json({ error: "No exite conversación con el usuario especificado" })
                             }
-                            else{
+                            else {
                                 res.status(200);
-                                res.json({conversation: conversation});
+                                res.json({ conversation: conversation });
                             }
                         });
                     }
                     else {
                         res.status(200);
-                        res.json({conversation: conversation});
+                        res.json({ conversation: conversation });
                     }
                 });
             });
         } catch (e) {
             console.log(e);
             res.status(500);
-            res.json({error: "Se ha producido un error :" + e})
+            res.json({ error: "Se ha producido un error :" + e })
         }
     });
 
     app.get('/api/v1.0/conversations/', function (req, res) {
         try {
             let user1 = req.session.user;
-            let filter = {user1: user1};
-            let options= {};
+            let filter = { user1: user1 };
+            let options = {};
             conversationsRepository.getConversations(filter, options).then(conversations => {
 
-                    if (conversations === null || typeof conversations === "undefined" || conversations.length === 0) {
-                        let filter = {user2: user1};
-                        let options = {}
-                        conversationsRepository.findConversation(filter, options).then(conversations => {
+                if (conversations === null || typeof conversations === "undefined" || conversations.length === 0) {
+                    let filter = { user2: user1 };
+                    let options = {}
+                    conversationsRepository.findConversation(filter, options).then(conversations => {
 
-                            res.status(200);
-                            res.json({conversations: conversations});
-                        });
-                    }
-                    else {
                         res.status(200);
-                        res.json({conversations: conversations});
-                    }
-                });
+                        res.json({ conversations: conversations });
+                    });
+                }
+                else {
+                    res.status(200);
+                    res.json({ conversations: conversations });
+                }
+            });
         } catch (e) {
             console.log(e);
             res.status(500);
-            res.json({error: "Se ha producido un error :" + e})
+            res.json({ error: "Se ha producido un error :" + e })
         }
     });
 
     app.post('/api/v1.0/conversation', function (req, res) {
         try {
-            if(typeof req.body.friendId === "undefined" ||  req.body.friendId === null) {
+            if (typeof req.body.friendId === "undefined" || req.body.friendId === null) {
                 res.status(409);
-                res.json({error: "Cannot create conversation. Incorrect friend id"});
+                res.json({ error: "Cannot create conversation. Incorrect friend id" });
                 return;
             }
-            if(typeof req.body.writerEmail === "undefined" ||  req.body.friendId === null) {
+            if (typeof req.body.writerEmail === "undefined" || req.body.friendId === null) {
                 res.status(409);
-                res.json({error: "Cannot create conversation. Incorrect friend id"});
+                res.json({ error: "Cannot create conversation. Incorrect friend id" });
                 return;
             }
             //let user1 = await usersRepository.findUser({email:req.body.sender},{});
@@ -150,12 +150,12 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                 user2: res.token
             }
             //Should look for users and check if they are friends
-            usersRepository.findUser({email:req.body.senderEmail},{}).then(user1 => {
-                let filter = {user1: user1, user2: user2};
+            usersRepository.findUser({ email: req.body.senderEmail }, {}).then(user1 => {
+                let filter = { user1: user1, user2: user2 };
                 let options = {}
                 conversationsRepository.findConversation(filter, options).then(conversation => {
                     if (conversation === null || typeof conversation === "undefined") {
-                        let filter = {user1: user2, user2: user1};
+                        let filter = { user1: user2, user2: user1 };
                         let options = {}
                         conversationsRepository.findConversation(filter, options).then(conversation => {
                             // There is no conversation between this users
@@ -172,10 +172,10 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                                     user2: user2,
                                     messages: [message]
                                 }
-                                conversationsRepository.insertConversation(convers, function(conversationId) {
+                                conversationsRepository.insertConversation(convers, function (conversationId) {
                                     if (conversationId === null) {
                                         res.status(409);
-                                        res.json({error: "Could not create song"});
+                                        res.json({ error: "Could not create song" });
                                         return;
 
                                     } else {
@@ -187,22 +187,51 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                                     }
                                 })
                             }
-                            else{
+                            else {
 
                                 res.status(200);
-                                res.json({conversation: conversation});
+                                res.json({ conversation: conversation });
                             }
                         });
                     }
                     else {
                         res.status(200);
-                        res.json({conversation: conversation});
+                        res.json({ conversation: conversation });
                     }
                 });
             });
         } catch (e) {
             res.status(500);
-            res.json({error: "Error while creating conversation: " + e})
+            res.json({ error: "Error while creating conversation: " + e })
         }
+    });
+
+    app.delete('/api/v1.0/conversation/:id', async function (req, res) {
+
+        /*
+        token ok
+        usuario es emisor o receptior
+        borrar tos los mensajes
+        */
+
+        // Request param
+        const id = req.params.id;
+        if (!id)
+            res.status(400).json({ error: "Conversation id is required" });
+
+        // Find conversation
+        try {
+            const conversation = await conversationsRepository.findConversation({ _id: new ObjectId(id) });
+            if (!conversation)
+                res.status(404).json({ error: "Conversation not found" });
+        } catch (e) {
+            res.status(500).json({ error: "Error while finding conversation: " + e });
+        }
+        
+        // TODO check if user is sender or receiver
+        //TODO delete conver 
+
+
+
     });
 }
