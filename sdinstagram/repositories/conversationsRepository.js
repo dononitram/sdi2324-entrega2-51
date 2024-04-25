@@ -41,5 +41,16 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
+    },
+    updateConversation: async function(conversation, filter, options) {
+        try {
+            await this.dbClient.connect();
+            const database = this.dbClient.db(this.database);
+            const conversationsCollection = database.collection(this.collectionName);
+            const result = await conversationsCollection.updateOne(filter, {$set: conversation}, options);
+            return result;
+        } catch (error) {
+            throw (error);
+        }
     }
 };

@@ -31,7 +31,8 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                     const jwt = require('jsonwebtoken');
                     try {
                         let decoded = jwt.verify(token, 'secreto'); // replace 'secreto' with your secret key
-                        req.session.user = decoded.user;
+                        //req.session.user = decoded.user;
+                        req.session.user = user;
                     } catch (err) {
                         res.status(401).json({ error: 'Invalid token' });
                     }
@@ -175,9 +176,8 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
 
     app.post('/api/v1.0/conversation', function (req, res) {
         try {
-            console.log(res);
-            console.log(res.user);
-            if(typeof res.session.user === "undefined" ||  res.session.user === null) {
+            let user1 = req.session.user;
+            if(typeof user1 === "undefined" ||  user1 === null) {
                 res.status(409);
                 res.json({error: "Cannot create conversation. User not present"});
                 return;
@@ -189,33 +189,47 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
             }
             //Should look for users and check if they are friends
             usersRepository.findUser({email:req.body.friendEmail},{}).then(user2 => {
-                //let filter = {user1: res.user, user2: user2};
-                let filter =
-                    {
-                        $or: [
-                            {"user1._id": new ObjectId(user2._id)},
-                            {"user2._id": new ObjectId(user2._id)}
-                        ]
-                    };
+                let filter = {
+                    $or: [
+                        {
+                            $and: [
+                                {"user1._id": new ObjectId(user1._id)},
+                                {"user2._id": new ObjectId(user2._id)}
+                            ]
+                        },
+                        {
+                            $and: [
+                                {"user1._id": new ObjectId(user2._id)},
+                                {"user2._id": new ObjectId(user1._id)}
+                            ]
+                        }
+                    ]
+                };
+                user1._id = new ObjectId(user1._id);
                 let options = {}
                 friendshipRepository.findFriendship(filter, options).then(friendship => {
-                    console.log("friendship: ",friendship);
                     if (friendship !== null || typeof friendship !== "undefined") {
-                        let filter =
-                            {
-                                $or: [
-                                    {"user1._id": new ObjectId(user2._id)},
-                                    {"user2._id": new ObjectId(user2._id)}
-                                ]
-                            };
-                        let options = {}
-                        let user1;
-                        if(friendship.user1._id.toString() === user2._id) {
-                            user1 = friendship.user2;
-                        } else {
-                            user1 = friendship.user1;
-                        }
+                        let filter = {
+                            $or: [
+                                {
+                                    $and: [
+                                        {"user1._id": user1._id},
+                                        {"user2._id": user2._id}
+                                    ]
+                                },
+                                {
+                                    $and: [
+                                        {"user1._id": user2._id},
+                                        {"user2._id": user1._id}
+                                    ]
+                                }
+                            ]
+                        };
+                        let options = {};
+                        console.log("USER1: ",user1._id);
+                        console.log("USER2: ",user2._id);
                         conversationsRepository.findConversation(filter, options).then(conversation => {
+                            console.log("conversation: ",conversation);
                             // There is no conversation between this users
                             if (conversation === null || typeof conversation === "undefined") {
                                 //A new conversation is created
@@ -245,13 +259,45 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                                 })
                             }
                             else{ // There is already a conversation between this users
-                                res.status(200);
-                                res.json({conversation: conversation});
+                                let message = {
+                                    author: user1,
+                                    date: new Date(),
+                                    text: req.body.message,
+                                    read: false
+                                }
+                                conversation.messages.push(message);
+
+                                let filter = {_id: conversation._id}
+                                let options = {upsert: false};
+                                conversationsRepository.updateConversation(conversation, filter, options).then(result => {
+                                    if (result === null) {
+                                        res.status(404);
+                                        res.json({error: "ID invalid or does not exist, conversation has not been updated."});
+                                        return;
+                                    }
+                                    //La _id No existe o los datos enviados no difieren de los ya almacenados.
+                                    else if (result.modifiedCount == 0) {
+                                        res.status(409);
+                                        res.json({error: "Any conversation has been updated."});
+                                        return;
+                                    }
+                                    else{
+                                        res.status(200);
+                                        res.json({
+                                            message: "Conversation updated correctly.",
+                                            result: result,
+                                            conversation: conversation
+                                        })
+                                    }
+                                }).catch(error => {
+                                    res.status(500);
+                                    res.json({error : "Error while updating conversation."})
+                                });
                             }
                         });
-                    } else {
+                    } else { //These users need to be friends
                         res.status(409);
-                        res.json({error: "There is no friendship"});
+                        res.json({error: "There is no friendship between these users"});
                     }
                 })
 
