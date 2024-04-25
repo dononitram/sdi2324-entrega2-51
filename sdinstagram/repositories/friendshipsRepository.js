@@ -18,6 +18,17 @@ module.exports = {
             throw (error);
         }
     },
+    findFriendships: async function (filter, options) {
+        try {
+            await this.dbClient.connect();
+            const database = this.dbClient.db(this.database);
+            const friendshipCollection = database.collection(this.collectionName);
+            const friendships = await friendshipCollection.find(filter,options).toArray();
+            return friendships;
+        } catch (error) {
+            throw (error);
+        }
+    },
     findFriendship: async function (filter, options) {
         try {
             await this.dbClient.connect();
@@ -54,5 +65,5 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
-    }
+    },
 };
