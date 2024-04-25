@@ -31,8 +31,8 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                     const jwt = require('jsonwebtoken');
                     try {
                         let decoded = jwt.verify(token, 'secreto'); // replace 'secreto' with your secret key
-                        //req.session.user = decoded.user;
-                        req.session.user = user;
+                        req.session.user = decoded.user;
+
                     } catch (err) {
                         res.status(401).json({ error: 'Invalid token' });
                     }
@@ -176,8 +176,9 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
 
     app.post('/api/v1.0/conversation', function (req, res) {
         try {
-            let user1 = req.session.user;
-            if(typeof user1 === "undefined" ||  user1 === null) {
+            //let user1 = res.user;
+            console.log("USER: ",res.user);
+            if(typeof res.user === "undefined" ||  res.user === null) {
                 res.status(409);
                 res.json({error: "Cannot create conversation. User not present"});
                 return;
@@ -187,8 +188,11 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                 res.json({error: "Cannot create conversation. Incorrect friend id"});
                 return;
             }
-            //Should look for users and check if they are friends
-            usersRepository.findUser({email:req.body.friendEmail},{}).then(user2 => {
+            usersRepository.findUser({email: res.user}, {}).then(user1 => {
+                if(typeof user1 !== "undefined" &&  user1 !== null) {
+
+                //Should look for users and check if they are friends
+                usersRepository.findUser({email:req.body.friendEmail},{}).then(user2 => {
                 if(typeof user2 !== "undefined" &&  user2 !== null) {
                     let filter = {
                         $or: [
@@ -303,11 +307,14 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                     res.json({error: "User does not exist"});
                     return;
                 }});
+                }
+            })
 
         } catch (e) {
             res.status(500);
             res.json({error: "Error while creating conversation: " + e})
         }
+
     });
 
     app.delete('/api/v1.0/conversation/:id', async function (req, res) {

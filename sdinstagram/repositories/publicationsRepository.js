@@ -7,7 +7,7 @@ module.exports = {
         this.dbClient = dbClient;
         this.app = app;
     },
-    insertPublication: function (publication, callbackFunction) {
+    insertPublication: async function (publication, callbackFunction) {
         this.dbClient.connect()
             .then(() => {
                 const database = this.dbClient.db(this.database);
