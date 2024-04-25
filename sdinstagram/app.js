@@ -40,8 +40,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // BBDD MongoDB Cloud
 const { MongoClient } = require("mongodb");
-//const connectionStrings = 'mongodb://sdi51:g1PqYBrJug94nHRNBV9k@158.179.219.219:27017/'; // Connection to cloud virtual machine
-const connectionStrings = "mongodb://localhost:27017/"
+const connectionStrings = 'mongodb://sdi51:g1PqYBrJug94nHRNBV9k@158.179.219.219:27017/'; // Connection to cloud virtual machine
+//const connectionStrings = "mongodb://localhost:27017/"
 const dbClient = new MongoClient(connectionStrings);
 
 // Repositories
@@ -80,6 +80,7 @@ app.use("/users/edit", adminSessionRouter)
 
 const userTokenRouter = require('./middlewares/userTokenRouter');
 app.use("/api/v1.0/friendships", userTokenRouter);
+app.use("/api/v1.0/conversation", userTokenRouter);
 
 const notAdminSessionRouter = require('./middlewares/notAdminSessionRouter');
 // TODO: fill with the routes an administrator can't access
