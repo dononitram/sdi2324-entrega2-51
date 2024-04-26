@@ -52,5 +52,18 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
+    },
+    findConversationByMessageId: async function(messageId){
+        try {
+            const filter = {"messages": { $elemMatch: {"messageId":messageId}}};
+            const options = {};
+            await this.dbClient.connect();
+            const database = this.dbClient.db(this.database);
+            const conversationsCollection = database.collection(this.collectionName);
+            let result = await conversationsCollection.findOne(filter, options);
+            return result;
+        } catch (error) {
+            throw (error);
+        }
     }
 };

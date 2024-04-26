@@ -350,4 +350,21 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
 
 
     });
+
+    /**
+     * Mark as read the message indicated by the id
+     */
+    app.get('/api/v1.0/read/:id', async function (req, res){
+        try{
+            let usserMail = res.user;//To check if the message of the id it´s reciever or sender
+            let messageId = req.params.id;
+            //let filter = {_id: messageId};
+            //This option don´t create a new message if it doesen't exist
+            let options = {upsert: false};
+            const conversation = await conversationsRepository.findConversationByMessageId(messageId);
+        } catch (e){
+            res.status(500);//Revisar código
+            res.json({error: "An error ocurred marking as read a message: "+e});
+        }
+    });
 }
