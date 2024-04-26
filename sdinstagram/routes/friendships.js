@@ -75,6 +75,7 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
                 date: new Date()
             }
             friendshipRepository.insertFriendship(friendship).then(result =>{
+                console.log(result)
                 if (result.insertedId === null || typeof (result.insertedId) === undefined){
                     res.redirect("/friendships/requests" + '?message=There was an error accepting the friendship request.'+
                         "&messageType=alert-danger"); //completar con ruta al listado de usuarios

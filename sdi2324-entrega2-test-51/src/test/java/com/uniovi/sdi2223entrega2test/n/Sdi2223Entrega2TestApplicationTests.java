@@ -1,24 +1,27 @@
 package com.uniovi.sdi2223entrega2test.n;
 
+import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_PrivateView;
+import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_PublicView;
+import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_View;
+import com.uniovi.sdi2223entrega2test.n.util.SeleniumUtils;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+
+import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class Sdi2223Entrega2TestApplicationTests {
-    //static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    //static String Geckodriver = "C:\\Path\\geckodriver-v0.30.0-win64.exe";
-    //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
-    static String Geckodriver = "/Users/delacal/Documents/SDI/geckodriver-v0.30.0-macos";
-    static String PathFirefox = "/Applications/Firefox.app/Contents/MacOS/firefox-bin";
-//static String Geckodriver = "/Users/USUARIO/selenium/geckodriver-v0.30.0-macos";
-//Común a Windows y a MACOSX
+    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
     static WebDriver driver = getDriver(PathFirefox, Geckodriver);
-    static String URL = "http://localhost:8081";
+    static String URL = "http://localhost:8080/users/login";
 
     public static WebDriver getDriver(String PathFirefox, String Geckodriver) {
         System.setProperty("webdriver.firefox.bin", PathFirefox);
@@ -119,6 +122,54 @@ class Sdi2223Entrega2TestApplicationTests {
         final String RestAssuredURL = "http://localhost:8081/api/v1.0/songs";
         Response response = RestAssured.get(RestAssuredURL);
         Assertions.assertEquals(403, response.getStatusCode());
+    }
+
+    /**
+     * @author Pedro
+     * [Prueba22] Desde el listado de usuarios de la aplicación, enviar una invitación de amistad a un usuario.
+     * Comprobar que la solicitud de amistad aparece en el listado de invitaciones (punto siguiente).
+     */
+    @Test
+    @Order(22)
+    void PR22() {
+        //Inicio sesión como el usuario2
+        PO_PublicView.loginSpecificUser("user02@email.com","Us3r@2-PASSW",driver);
+        //Vamos a la lista de usuarios donde se puede solicitar amistad
+        driver.findElement(By.id("mylistUsersSocial")).click();
+        //Envío solicitud al usuario 3
+        WebElement botonEnviarSolicitud = driver.findElement(By.id("btn_user02@email.com"));
+        botonEnviarSolicitud.click();
+        // Cerrar sesión e inicio con el usuario 3
+        PO_PrivateView.logout(driver);
+        PO_PublicView.loginSpecificUser("user03@email.com","Us3r@3-PASSW",driver);
+        //Voy a la ventana de ver solicitudes de amistad recibidas friendshipRequests
+        driver.findElement(By.id("myRequests")).click();
+        //Y comprobamos que llegó la solicitud de amistad  email_user02@email.com
+        SeleniumUtils.textIsPresentOnPage(driver,"btn_user02@email.com");
+        //Finalmente logeamos-cerramos sesión
+        PO_PrivateView.logout(driver);
+    }
+
+    /**
+     * @author Samuel
+     * [Prueba23] Desde el listado de usuarios de la aplicación, enviar una invitación de amistad a un usuario al
+     * que ya le habíamos enviado la invitación previamente. No debería dejarnos enviar la invitación. Se podría
+     * ocultar el botón de enviar invitación o notificar que ya había sido enviada previamente.
+     */
+    @Test
+    @Order(23)
+    void PR23() {
+        //Inicio sesión como usuario 1
+        PO_PublicView.loginSpecificUser("user01@email.com","Us3r@1-PASSW",driver);
+        //Vamos a la lista de usuarios donde se puede solicitar amistad
+        driver.findElement(By.id("mylistUsersSocial")).click();
+        //Y pruebo a enviarle 2 veces la solicitud de amistad al usuario 2
+        WebElement botonEnviarSolicitud = driver.findElement(By.id("btn_user02@email.com"));
+        botonEnviarSolicitud.click();
+        botonEnviarSolicitud.click();
+        SeleniumUtils.textIsPresentOnPage(driver, "You have already sent a friend request to this user.");
+        // Cerrar sesión
+        PO_PrivateView.logout(driver);
     }
 
     @Test

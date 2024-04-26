@@ -89,13 +89,19 @@ module.exports = function (app, usersRepository, logsRepository) {
       };
 
       for (const user of result.users) {
-        const filter = { 'user1._id': new ObjectId(user._id), user2: req.session.user };
+        user2 = req.session.user;
+        user2._id = new ObjectId(user2._id);
+        const filter = { user1: user, user2: user2 };
         const options = {};
         const result = await friendshipRepository.findFriend(filter, options);
+        console.log(result)
         if (result === null || typeof result === "undefined") {
-          const filter = { user1: req.session.user, 'user2._id': new ObjectId(user._id) };
+          user1 = req.session.user;
+          user1._id = new ObjectId(user1._id);
+          const filter = { user1: user1, user2: user };
           const options = {};
           const result = await friendshipRepository.findFriend(filter, options);
+          console.log(result)
           if (result === null || typeof result === "undefined") {
             user.areFriends = false;
           }

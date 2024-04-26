@@ -37,7 +37,7 @@
              <td>
                  {% if not user.areFriends %}
                      <form class="form-horizontal" method="post" action="/friendships/request/send/{{ user._id }}">
-                         <button type="submit" class="btn btn-primary">Add friend</button>
+                         <button id=("btn_"+{{ user.email }}) type="submit" class="btn btn-primary">Add friend</button>
                      </form>
                  {% endif %}
              </td>
