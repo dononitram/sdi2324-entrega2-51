@@ -32,7 +32,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                     try {
                         let decoded = jwt.verify(token, 'secreto'); // replace 'secreto' with your secret key
                         //req.session.user = decoded.user;
-                        req.session.user = user;
+                        res.user = user;
                     } catch (err) {
                         res.status(401).json({ error: 'Invalid token' });
                     }
@@ -66,7 +66,6 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
 
     app.get('/api/v1.0/users/friendships', function (req, res) {
         try {
-
             usersRepository.findUser({ email: res.user }, {}).then(user => {
 
                 let filter = {$or: [{user1: user}, {user2: user}]};
@@ -107,11 +106,21 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
 
     app.get('/api/v1.0/conversation/:user', function (req, res) {
         try {
-            let user1ID = new ObjectId(req.params.user1);
-            let user2 = res.user;
-            user2 = new ObjectId(user2._id);
+            let user1 = res.user;
+            let user2_email = req.params.user
+            if(typeof user1 === "undefined" ||  user1 === null) {
+                res.status(409);
+                res.json({error: "Cannot get conversation. Theres is not user on session."});
+                return;
+            }
 
-            usersRepository.findUser({ _id: user1ID }, {}).then(user1 => {
+            usersRepository.findUser({ email: user2_email }, {}).then(user2 => {
+
+                if(typeof user2 === "undefined" ||  user2 === null) {
+                    res.status(409);
+                    res.json({error: "Cannot get conversation. The User you are trying to message with does not exists."});
+                    return;
+                }
 
                 let filter = { user1: user1, user2: user2 };
                 let options = {}
@@ -176,7 +185,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
 
     app.post('/api/v1.0/conversation', function (req, res) {
         try {
-            let user1 = req.session.user;
+            let user1 = res.user;
             if(typeof user1 === "undefined" ||  user1 === null) {
                 res.status(409);
                 res.json({error: "Cannot create conversation. User not present"});
