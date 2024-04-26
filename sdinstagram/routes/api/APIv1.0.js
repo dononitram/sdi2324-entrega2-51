@@ -107,37 +107,40 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
 
     app.get('/api/v1.0/conversation/:user', function (req, res) {
         try {
-            let user1ID = new ObjectId(req.params.user1);
-            let user2 = res.user;
-            user2 = new ObjectId(user2._id);
+            if(typeof res.user === "undefined" ||  res.user === null) {
+                res.status(409);
+                res.json({error: "Cannot see conversation. User not present"});
+                return;
+            }
 
-            usersRepository.findUser({ _id: user1ID }, {}).then(user1 => {
-
-                let filter = { user1: user1, user2: user2 };
-                let options = {}
-                conversationsRepository.findConversation(filter, options).then(conversation => {
-
-                    if (conversation === null || typeof conversation === "undefined") {
-                        let filter = { user1: user2, user2: user1 };
-                        let options = {}
-                        conversationsRepository.findConversation(filter, options).then(conversation => {
+            usersRepository.findUser({email: res.user}, {}).then(user1 => {
+                if(typeof user1 !== "undefined" &&  user1 !== null) {
+                    usersRepository.findUser({ email: req.params.user }, {}).then(user2 => {
+                        conversationsRepository.findConversation({user1: user1, user2: user2}, {})
+                            .then(conversation => {
 
                             if (conversation === null || typeof conversation === "undefined") {
-                                res.status(404);
-                                res.json({ error: "No exite conversación con el usuario especificado" })
+                                conversationsRepository.findConversation({user1: user2, user2: user1}, {})
+                                    .then(conversation => {
+
+                                    if (conversation === null || typeof conversation === "undefined") {
+                                        res.status(404);
+                                        res.json({ error: "No exite conversación con el usuario especificado" })
+                                    }
+                                    else {
+                                        res.status(200);
+                                        res.json({ conversation: conversation });
+                                    }
+                                });
                             }
                             else {
                                 res.status(200);
                                 res.json({ conversation: conversation });
                             }
                         });
-                    }
-                    else {
-                        res.status(200);
-                        res.json({ conversation: conversation });
-                    }
+                    });
+                }
                 });
-            });
         } catch (e) {
             console.log(e);
             res.status(500);
@@ -145,28 +148,30 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
         }
     });
 
-    app.get('/api/v1.0/conversations/', function (req, res) {
+    app.get('/api/v1.0/conversations', function (req, res) {
         try {
-            let user1 = res.user;
-            let filter = {user1: user1};
-            let options= {};
-            conversationsRepository.getConversations(filter, options).then(conversations => {
+            if(typeof res.user === "undefined" ||  res.user === null) {
+                res.status(409);
+                res.json({error: "Cannot see conversation. User not present"});
+                return;
+            }
 
-                if (conversations === null || typeof conversations === "undefined" || conversations.length === 0) {
-                    let filter = { user2: user1 };
-                    let options = {}
-                    conversationsRepository.findConversation(filter, options).then(conversations => {
+            usersRepository.findUser({ email: res.user }, {}).then(user => {
+                conversationsRepository.getConversations({user1: user}, {}).then(conversations => {
 
+                    if (conversations === null || typeof conversations === "undefined" || conversations.length === 0) {
+                        conversationsRepository.findConversation({user2: user}, {}).then(conversations => {
+
+                            res.status(200);
+                            res.json({ conversations: conversations });
+                        });
+                    }
+                    else {
                         res.status(200);
                         res.json({ conversations: conversations });
-                    });
-                }
-                else {
-                    res.status(200);
-                    res.json({ conversations: conversations });
-                }
+                    }
+                });
             });
-
         } catch (e) {
             console.log(e);
             res.status(500);
