@@ -354,12 +354,12 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
     /**
      * Mark as read the message indicated by the id  >><<<>>><<>>><<<<<>>><<>>><<<<<>>><<>>><<>>CAMBIAR A PUT
      */
-    app.get('/api/v1.0/read/:id', async function (req, res){
+    app.put('/api/v1.0/messages/read/:id', async function (req, res){
         try{
             let usserMail = res.user;//To check if the message of the id it´s reciever or sender
             let messageId = req.params.id;
             const conversation = await conversationsRepository.findConversationByMessageId(messageId);
-            if(conversation === null || conversation === undefined){
+            if(!conversation){
                 res.status(404);
                 res.json({error: "Invalid ID or message doesn't exist, the message couldn't be marked as read."});
                 return;
@@ -395,6 +395,23 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
             res.status(500);//Revisar código
             res.json({error: "An error ocurred marking as read a message: "+e});
             return;
+        }
+    });
+    /**
+     * Número de mensajes no leídos de una conversación dado su id
+     */
+    app.get('/api/v1.0/messages/unread/:id/', async function (req, res){
+        try {
+            let conversationId = req.params.id;
+            const conversation = await conversationsRepository.findConversation({ _id: new ObjectId(conversationId) }, {});
+            if (!conversation)
+                res.status(404).json({ error: "Conversation not found" });
+            let messages = conversation.messages;
+            let mensajesNoLeidos = messages.filter(mensaje => mensaje.read !== true);
+            let countMensajesNoLeidos = mensajesNoLeidos.length;
+            console("asd");
+        } catch (e) {
+            res.status(500).json({ error: "Error while finding conversation: " + e });
         }
     });
 }
