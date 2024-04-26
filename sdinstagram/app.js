@@ -81,6 +81,9 @@ app.use("/users/edit", adminSessionRouter)
 const userTokenRouter = require('./middlewares/userTokenRouter');
 app.use("/api/v1.0/users/friendships", userTokenRouter);
 app.use("/api/v1.0/users/conversations", userTokenRouter);
+app.use("/api/v1.0/conversation", userTokenRouter);
+
+
 // Add more routes that require a token
 
 const notAdminSessionRouter = require('./middlewares/notAdminSessionRouter');

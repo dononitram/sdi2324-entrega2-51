@@ -31,8 +31,8 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                     const jwt = require('jsonwebtoken');
                     try {
                         let decoded = jwt.verify(token, 'secreto'); // replace 'secreto' with your secret key
-                        //req.session.user = decoded.user;
-                        res.user = user;
+                        req.session.user = decoded.user;
+
                     } catch (err) {
                         res.status(401).json({ error: 'Invalid token' });
                     }
@@ -66,6 +66,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
 
     app.get('/api/v1.0/users/friendships', function (req, res) {
         try {
+
             usersRepository.findUser({ email: res.user }, {}).then(user => {
 
                 let filter = {$or: [{user1: user}, {user2: user}]};
@@ -106,21 +107,11 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
 
     app.get('/api/v1.0/conversation/:user', function (req, res) {
         try {
-            let user1 = res.user;
-            let user2_email = req.params.user
-            if(typeof user1 === "undefined" ||  user1 === null) {
-                res.status(409);
-                res.json({error: "Cannot get conversation. Theres is not user on session."});
-                return;
-            }
+            let user1ID = new ObjectId(req.params.user1);
+            let user2 = res.user;
+            user2 = new ObjectId(user2._id);
 
-            usersRepository.findUser({ email: user2_email }, {}).then(user2 => {
-
-                if(typeof user2 === "undefined" ||  user2 === null) {
-                    res.status(409);
-                    res.json({error: "Cannot get conversation. The User you are trying to message with does not exists."});
-                    return;
-                }
+            usersRepository.findUser({ _id: user1ID }, {}).then(user1 => {
 
                 let filter = { user1: user1, user2: user2 };
                 let options = {}
@@ -185,8 +176,9 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
 
     app.post('/api/v1.0/conversation', function (req, res) {
         try {
-            let user1 = res.user;
-            if(typeof user1 === "undefined" ||  user1 === null) {
+            //let user1 = res.user;
+            console.log("USER: ",res.user);
+            if(typeof res.user === "undefined" ||  res.user === null) {
                 res.status(409);
                 res.json({error: "Cannot create conversation. User not present"});
                 return;
@@ -196,8 +188,11 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                 res.json({error: "Cannot create conversation. Incorrect friend id"});
                 return;
             }
-            //Should look for users and check if they are friends
-            usersRepository.findUser({email:req.body.friendEmail},{}).then(user2 => {
+            usersRepository.findUser({email: res.user}, {}).then(user1 => {
+                if(typeof user1 !== "undefined" &&  user1 !== null) {
+
+                //Should look for users and check if they are friends
+                usersRepository.findUser({email:req.body.friendEmail},{}).then(user2 => {
                 if(typeof user2 !== "undefined" &&  user2 !== null) {
                     let filter = {
                         $or: [
@@ -312,11 +307,14 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                     res.json({error: "User does not exist"});
                     return;
                 }});
+                }
+            })
 
         } catch (e) {
             res.status(500);
             res.json({error: "Error while creating conversation: " + e})
         }
+
     });
 
     app.delete('/api/v1.0/conversation/:id', async function (req, res) {
