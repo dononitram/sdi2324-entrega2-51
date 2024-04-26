@@ -65,5 +65,19 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
+    },updateAsReadedByIndexMessage: async function(filter, options, messageIndex){
+        try {
+            const setStr = "messages."+ messageIndex +".read";
+            const update = {};
+            update[setStr] = true;
+            const options = {};
+            await this.dbClient.connect();
+            const database = this.dbClient.db(this.database);
+            const conversationsCollection = database.collection(this.collectionName);
+            const result = await conversationsCollection.updateOne(filter, { $set: update }, options);
+            return result;
+        } catch (error) {
+            throw (error);
+        }
     }
 };

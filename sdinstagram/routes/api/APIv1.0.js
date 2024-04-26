@@ -352,19 +352,49 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
     });
 
     /**
-     * Mark as read the message indicated by the id
+     * Mark as read the message indicated by the id  >><<<>>><<>>><<<<<>>><<>>><<<<<>>><<>>><<>>CAMBIAR A PUT
      */
     app.get('/api/v1.0/read/:id', async function (req, res){
         try{
             let usserMail = res.user;//To check if the message of the id it´s reciever or sender
             let messageId = req.params.id;
-            //let filter = {_id: messageId};
+            const conversation = await conversationsRepository.findConversationByMessageId(messageId);
+            if(conversation === null || conversation === undefined){
+                res.status(404);
+                res.json({error: "Invalid ID or message doesn't exist, the message couldn't be marked as read."});
+                return;
+            }
+            //Sacar el index del mensaje en cuestión
+            let index = conversation.messages.findIndex(message => message.messageId === messageId);
+            let filter = {_id: conversation._id};
             //This option don´t create a new message if it doesen't exist
             let options = {upsert: false};
-            const conversation = await conversationsRepository.findConversationByMessageId(messageId);
+            conversationsRepository.updateAsReadedByIndexMessage(filter, options, index).then(result =>{
+               if(result === null){
+                   res.status(404);
+                   res.json({error: "Invalid ID or message doesn't exist, the message couldn't be marked as read."});
+                   return;
+               } else if(result.modifiedCount == 0){
+                   res.status(409);
+                   res.json({error: "No message was updated."});
+                   return;
+               } else{
+                   res.status(200);
+                   res.json({
+                       message: "Message marked as read correctly.",
+                       result: result
+                   });
+                   return;
+               }
+            }).catch(error=>{
+                res.status(500);//Revisar código
+                res.json({error: "An error ocurred updating the message: "+error});
+                return;
+            });
         } catch (e){
             res.status(500);//Revisar código
             res.json({error: "An error ocurred marking as read a message: "+e});
+            return;
         }
     });
 }
