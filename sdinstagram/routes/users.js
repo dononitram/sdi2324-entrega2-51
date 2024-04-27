@@ -294,6 +294,8 @@ module.exports = function (app, usersRepository, logsRepository) {
    */
   app.post('/users/login', function (req, res) {
 
+    console.log("XD")
+
     validateLogin(req, res).then(errors => {
 
       if (errors.length > 0) {
