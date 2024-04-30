@@ -1,5 +1,8 @@
 package com.uniovi.sdi2223entrega2test.n;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_PrivateView;
 import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_PublicView;
 import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_View;
@@ -13,6 +16,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.bson.Document;
 
 import java.util.List;
 
@@ -23,6 +27,9 @@ class Sdi2223Entrega2TestApplicationTests {
     static WebDriver driver = getDriver(PathFirefox, Geckodriver);
     static String URL = "http://localhost:8080/users/login";
 
+    static MongoClient mongoClient;
+    static MongoDatabase database;
+
     public static WebDriver getDriver(String PathFirefox, String Geckodriver) {
         System.setProperty("webdriver.firefox.bin", PathFirefox);
         System.setProperty("webdriver.gecko.driver", Geckodriver);
@@ -32,12 +39,144 @@ class Sdi2223Entrega2TestApplicationTests {
 
     @BeforeEach
     public void setUp() {
+        initDatabase();
         driver.navigate().to(URL);
+    }
+
+    private void initDatabase() {
+        //establecer conexión con la bbdd
+        mongoClient = MongoClients.create("mongodb://localhost:27017");
+        database = mongoClient.getDatabase("sdinstagram");
+        restDatabase();
+        insertTestsData();
+        //cierra la conexión
+        mongoClient.close();
+    }
+
+    private void insertTestsData() {
+        //usuarios
+        Document user1 = new Document("email", "user01@email.com")
+                .append("password", "Us3r@1-PASSW")
+                .append("name", "User01")
+                .append("surname", "Surname01")
+                .append("birthdate","2024-04-30")
+                .append("role", "user");
+        Document user2 = new Document("email", "user02@email.com")
+                .append("password", "Us3r@2-PASSW")
+                .append("name", "User02")
+                .append("surname", "Surname02")
+                .append("birthdate","2024-04-30")
+                .append("role", "user");
+        Document user3 = new Document("email", "user03@email.com")
+                .append("password", "Us3r@3-PASSW")
+                .append("name", "User03")
+                .append("surname", "Surname03")
+                .append("birthdate","2024-04-30")
+                .append("role", "user");
+        Document user4 = new Document("email", "user04@email.com")
+                .append("password", "Us3r@4-PASSW")
+                .append("name", "User04")
+                .append("surname", "Surname04")
+                .append("birthdate","2024-04-30")
+                .append("role", "user");
+        Document user5 = new Document("email", "user05@email.com")
+                .append("password", "Us3r@5-PASSW")
+                .append("name", "User05")
+                .append("surname", "Surname05")
+                .append("birthdate","2024-04-30")
+                .append("role", "user");
+        Document user6 = new Document("email", "user06@email.com")
+                .append("password", "Us3r@6-PASSW")
+                .append("name", "User06")
+                .append("surname", "Surname06")
+                .append("birthdate","2024-04-30")
+                .append("role", "user");
+        Document user7 = new Document("email", "user07@email.com")
+                .append("password", "Us3r@7-PASSW")
+                .append("name", "User07")
+                .append("surname", "Surname07")
+                .append("birthdate","2024-04-30")
+                .append("role", "user");
+        Document user8 = new Document("email", "user08@email.com")
+                .append("password", "Us3r@8-PASSW")
+                .append("name", "User08")
+                .append("surname", "Surname08")
+                .append("birthdate","2024-04-30")
+                .append("role", "user");
+        Document user9 = new Document("email", "user09@email.com")
+                .append("password", "Us3r@9-PASSW")
+                .append("name", "User09")
+                .append("surname", "Surname09")
+                .append("birthdate","2024-04-30")
+                .append("role", "user");
+        Document user10 = new Document("email", "user10@email.com")
+                .append("password", "Us3r@10-PASSW")
+                .append("name", "User10")
+                .append("surname", "Surname10")
+                .append("birthdate","2024-04-30")
+                .append("role", "user");
+        Document user11 = new Document("email", "user11@email.com")
+                .append("password", "Us3r@11-PASSW")
+                .append("name", "User11")
+                .append("surname", "Surname11")
+                .append("birthdate","2024-04-30")
+                .append("role", "user");
+        Document user12 = new Document("email", "user12@email.com")
+                .append("password", "Us3r@12-PASSW")
+                .append("name", "User12")
+                .append("surname", "Surname12")
+                .append("birthdate","2024-04-30")
+                .append("role", "user");
+        Document user13 = new Document("email", "user13@email.com")
+                .append("password", "Us3r@13-PASSW")
+                .append("name", "User13")
+                .append("surname", "Surname13")
+                .append("birthdate","2024-04-30")
+                .append("role", "user");
+        Document user14 = new Document("email", "user14@email.com")
+                .append("password", "Us3r@14-PASSW")
+                .append("name", "User14")
+                .append("surname", "Surname14")
+                .append("birthdate","2024-04-30")
+                .append("role", "user");
+        Document user15 = new Document("email", "user15@email.com")
+                .append("password", "Us3r@15-PASSW")
+                .append("name", "User15")
+                .append("surname", "Surname15")
+                .append("birthdate","2024-04-30")
+                .append("role", "user");
+
+
+        database.getCollection("users").insertOne(user1);
+        database.getCollection("users").insertOne(user2);
+        database.getCollection("users").insertOne(user3);
+        database.getCollection("users").insertOne(user4);
+        database.getCollection("users").insertOne(user5);
+        database.getCollection("users").insertOne(user6);
+        database.getCollection("users").insertOne(user7);
+        database.getCollection("users").insertOne(user8);
+        database.getCollection("users").insertOne(user9);
+        database.getCollection("users").insertOne(user10);
+        database.getCollection("users").insertOne(user11);
+        database.getCollection("users").insertOne(user12);
+        database.getCollection("users").insertOne(user13);
+        database.getCollection("users").insertOne(user14);
+        database.getCollection("users").insertOne(user15);
+
+        //publicaciones
+    }
+
+    private void restDatabase() {
+        // Eliminar todas las colecciones de la base de datos
+        for (String collectionName : database.listCollectionNames()) {
+            database.getCollection(collectionName).deleteMany(new Document());
+        }
     }
 
     //Después de cada prueba se borran las cookies del navegador
     @AfterEach
     public void tearDown() {
+
         driver.manage().deleteAllCookies();
     }
 
