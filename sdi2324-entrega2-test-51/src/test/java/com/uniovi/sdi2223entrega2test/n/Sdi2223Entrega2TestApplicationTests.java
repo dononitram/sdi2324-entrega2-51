@@ -18,6 +18,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.bson.Document;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -53,94 +58,113 @@ class Sdi2223Entrega2TestApplicationTests {
         mongoClient.close();
     }
 
+    private String hashPassword(String password, String clave) {
+        try {
+            // Crear una instancia del algoritmo HMAC-SHA-256 con la clave proporcionada
+            Mac sha256Hmac = Mac.getInstance("HmacSHA256");
+            SecretKeySpec secretKey = new SecretKeySpec(clave.getBytes(), "HmacSHA256");
+            sha256Hmac.init(secretKey);
+            // Aplicar el algoritmo HMAC-SHA-256 al password
+            byte[] hashedBytes = sha256Hmac.doFinal(password.getBytes());
+            // Convertir el hash a una representación hexadecimal
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashedBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException | InvalidKeyException ex) {
+            throw new RuntimeException("No se ha podido hashear las contraseñas");
+        }
+    }
+
     private void insertTestsData() {
         //usuarios
         Document user1 = new Document("email", "user01@email.com")
-                .append("password", "Us3r@1-PASSW")
+                .append("password", hashPassword("Us3r@1-PASSW", "abcdefg"))
                 .append("name", "User01")
                 .append("surname", "Surname01")
-                .append("birthdate","2024-04-30")
+                .append("birthdate", "2024-04-30")
                 .append("role", "user");
         Document user2 = new Document("email", "user02@email.com")
-                .append("password", "Us3r@2-PASSW")
+                .append("password", hashPassword("Us3r@2-PASSW", "abcdefg"))
                 .append("name", "User02")
                 .append("surname", "Surname02")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user3 = new Document("email", "user03@email.com")
-                .append("password", "Us3r@3-PASSW")
+                .append("password", hashPassword("Us3r@3-PASSW", "abcdefg"))
                 .append("name", "User03")
                 .append("surname", "Surname03")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user4 = new Document("email", "user04@email.com")
-                .append("password", "Us3r@4-PASSW")
+                .append("password", hashPassword("Us3r@4-PASSW", "abcdefg"))
                 .append("name", "User04")
                 .append("surname", "Surname04")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user5 = new Document("email", "user05@email.com")
-                .append("password", "Us3r@5-PASSW")
+                .append("password", hashPassword("Us3r@5-PASSW", "abcdefg"))
                 .append("name", "User05")
                 .append("surname", "Surname05")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user6 = new Document("email", "user06@email.com")
-                .append("password", "Us3r@6-PASSW")
+                .append("password", hashPassword("Us3r@6-PASSW", "abcdefg"))
                 .append("name", "User06")
                 .append("surname", "Surname06")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user7 = new Document("email", "user07@email.com")
-                .append("password", "Us3r@7-PASSW")
+                .append("password", hashPassword("Us3r@7-PASSW", "abcdefg"))
                 .append("name", "User07")
                 .append("surname", "Surname07")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user8 = new Document("email", "user08@email.com")
-                .append("password", "Us3r@8-PASSW")
+                .append("password", hashPassword("Us3r@8-PASSW", "abcdefg"))
                 .append("name", "User08")
                 .append("surname", "Surname08")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user9 = new Document("email", "user09@email.com")
-                .append("password", "Us3r@9-PASSW")
+                .append("password", hashPassword("Us3r@9-PASSW", "abcdefg"))
                 .append("name", "User09")
                 .append("surname", "Surname09")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user10 = new Document("email", "user10@email.com")
-                .append("password", "Us3r@10-PASSW")
+                .append("password", hashPassword("Us3r@10-PASSW", "abcdefg"))
                 .append("name", "User10")
                 .append("surname", "Surname10")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user11 = new Document("email", "user11@email.com")
-                .append("password", "Us3r@11-PASSW")
+                .append("password", hashPassword("Us3r@11-PASSW", "abcdefg"))
                 .append("name", "User11")
                 .append("surname", "Surname11")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user12 = new Document("email", "user12@email.com")
-                .append("password", "Us3r@12-PASSW")
+                .append("password", hashPassword("Us3r@12-PASSW", "abcdefg"))
                 .append("name", "User12")
                 .append("surname", "Surname12")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user13 = new Document("email", "user13@email.com")
-                .append("password", "Us3r@13-PASSW")
+                .append("password", hashPassword("Us3r@13-PASSW", "abcdefg"))
                 .append("name", "User13")
                 .append("surname", "Surname13")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user14 = new Document("email", "user14@email.com")
-                .append("password", "Us3r@14-PASSW")
+                .append("password", hashPassword("Us3r@14-PASSW", "abcdefg"))
                 .append("name", "User14")
                 .append("surname", "Surname14")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user15 = new Document("email", "user15@email.com")
-                .append("password", "Us3r@15-PASSW")
+                .append("password", hashPassword("Us3r@15-PASSW", "abcdefg"))
                 .append("name", "User15")
                 .append("surname", "Surname15")
                 .append("birthdate","2024-04-30")
@@ -188,8 +212,8 @@ class Sdi2223Entrega2TestApplicationTests {
     //Al finalizar la última prueba
     @AfterAll
     static public void end() {
-//Cerramos el navegador al finalizar las pruebas
-        driver.quit();
+    //Cerramos el navegador al finalizar las pruebas
+        //driver.quit();
     }
 
     @Test
