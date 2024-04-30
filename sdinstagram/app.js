@@ -40,8 +40,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // BBDD MongoDB Cloud
 const { MongoClient } = require("mongodb");
-const connectionStrings = 'mongodb://sdi51:g1PqYBrJug94nHRNBV9k@158.179.212.107:27017/'; // Connection to oracle cloud virtual machine
-//const connectionStrings = "mongodb://localhost:27017/"
+//const connectionStrings = 'mongodb://sdi51:g1PqYBrJug94nHRNBV9k@158.179.212.107:27017/'; // Connection to oracle cloud virtual machine
+const connectionStrings = "mongodb://localhost:27017/"
 const dbClient = new MongoClient(connectionStrings);
 
 // Repositories

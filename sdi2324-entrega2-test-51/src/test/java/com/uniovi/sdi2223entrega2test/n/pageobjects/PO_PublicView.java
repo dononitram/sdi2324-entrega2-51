@@ -13,7 +13,7 @@ public class PO_PublicView extends PO_NavView {
 
     static public void fillLoginForm(WebDriver driver, String emailp, String passwordp) {
 
-        WebElement email = driver.findElement(By.name("username"));
+        WebElement email = driver.findElement(By.name("email"));
         email.click();
         email.clear();
         email.sendKeys(emailp);
