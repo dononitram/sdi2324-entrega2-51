@@ -31,7 +31,7 @@
             }
         });
     }
-    function updateFriendsTable(songs) {
+    function updateFriendsTable(friendships) {
         $("#friendsTableBody").empty(); // Vaciar la tabla
         for (let i = 0; i < friendships.length; i++) {
             $("#friendsTableBody").append(
@@ -40,11 +40,9 @@
                 "<td>" + friendships[i].firstName + "</td>" +
                 "<td>" + friendships[i].lastName + "</td>" +
                 "<td>" +
-                "<a onclick=goToConversation('" + friendships[i] + "')>Conversation</a><br>" +
+                "<a onclick=loadConversation('" + friendships[i] + "')>Conversation</a><br>" +
                 "</td>" +
                 "</tr>");
-            // Mucho cuidado con las comillas del eliminarCancion
-            //la id tiene que ir entre comillas ' '
         }
     }
     loadFriends();

@@ -1,5 +1,5 @@
 <div id="widget-songs" >
-    <button class="btn" onclick="loadSongs()" >Actualizar</button>
+    <button class="btn" onclick="loadConversation()" >Actualizar</button>
     <table class="table table-hover">
         <thead>
         <tr>
@@ -14,12 +14,12 @@
     let messages;
     let user;
 
-    function widgetConversations(usuario) {
+    function widgetConversation(usuario) {
         user = usuario;
-        loadMessages(); // Llama a loadMessages() después de establecer el usuario
+        loadConversation(); // Llama a loadConversation() después de establecer el usuario
     }
 
-    function loadMessages() {
+    function loadConversation() {
         $.ajax({
             url: URLbase + "/conversation/" + user._id,
             type: "GET",
@@ -45,6 +45,6 @@
         }
     }
     setInterval(function() {
-        loadMessages();
+        loadConversation();
     }, 5000);
 </script>
