@@ -311,6 +311,7 @@ class Sdi2223Entrega2TestApplicationTests {
         SeleniumUtils.textIsPresentOnPage(driver,"btn_user02@email.com");
         //Finalmente logeamos-cerramos sesión
         PO_PrivateView.logout(driver);
+
     }
 
     /**
