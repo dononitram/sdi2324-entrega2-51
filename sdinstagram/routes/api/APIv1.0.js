@@ -194,6 +194,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                 res.json({error: "Cannot create conversation. Incorrect friend id"});
                 return;
             }
+            if(typeof req.body.message === "undefined" ||  req.body.message === null || req.body.message.length===0)
             usersRepository.findUser({email: res.user}, {}).then(user1 => {
                 if(typeof user1 !== "undefined" &&  user1 !== null) {
 
