@@ -41,17 +41,20 @@ module.exports = function (app, publicationsRepository) {
 
     app.post('/publications/add',function (req,res) {
         if(req.session.user == null || typeof(req.session.user) == "undefined") {
-            res.send("Error when inserting new publication: Invalid user");
+            let error = "Error when inserting new publication: Invalid user";
+            res.redirect("/publications/add" + "?message=" + error + "&messageType=alert-danger");
             return;
         }
         if(req.body.title == null || typeof(req.body.title) == "undefined"
             || req.body.title.length <= 4) {
-            res.send("Error when inserting new publication: Invalid title " + req.body.title);
+            let error = "Error when inserting new publication: Title must be at least 4 characters long.";
+            res.redirect("/publications/add" + "?message=" + error + "&messageType=alert-danger");
             return;
         }
         if(req.body.description == null || typeof(req.body.description) == "undefined"
             || req.body.description.length <= 4) {
-            res.send("Error when inserting new publication: Invalid description");
+            let error = "Error when inserting new publication: Description must be at least 4 characters long.";
+            res.redirect("/publications/add" + "?message=" + error + "&messageType=alert-danger");
             return;
         }
         let publication = {
