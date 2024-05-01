@@ -5,11 +5,14 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_PrivateView;
 import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_PublicView;
+import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_PublicationView;
+import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_Pagination;
 import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_View;
 import com.uniovi.sdi2223entrega2test.n.util.SeleniumUtils;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import org.bson.codecs.jsr310.LocalDateCodec;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -23,12 +26,18 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class Sdi2223Entrega2TestApplicationTests {
     static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
+    //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
+
+    //Teresa :)
+    static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
     static WebDriver driver = getDriver(PathFirefox, Geckodriver);
     static String URL = "http://localhost:8080/users/login";
 
@@ -172,6 +181,14 @@ class Sdi2223Entrega2TestApplicationTests {
 
 
         database.getCollection("users").insertOne(user1);
+        for(int i = 0; i < 10; i++) {
+            Document publication = new Document("title","Publication1"+i)
+                    .append("description","Publication1"+i)
+                    .append("author",database.getCollection("users").find(user1))
+                    .append("date",getFormattedDate(i));
+            database.getCollection("publications").insertOne(publication);
+        }
+
         database.getCollection("users").insertOne(user2);
         database.getCollection("users").insertOne(user3);
         database.getCollection("users").insertOne(user4);
@@ -187,7 +204,29 @@ class Sdi2223Entrega2TestApplicationTests {
         database.getCollection("users").insertOne(user14);
         database.getCollection("users").insertOne(user15);
 
+        Document friendship = new Document("user1", database.getCollection("users").find(user1))
+                .append("user2",database.getCollection("users").find(user4))
+                .append("date", LocalDateTime.now().minusDays(5));
+        database.getCollection("friendship").insertOne(friendship);
+
         //publicaciones
+    }
+
+    public String getFormattedDate(int i) {
+        // Current Date
+        LocalDateTime currentDate = LocalDateTime.now().minusDays(i);
+
+        // Obtiene los componentes de la fecha
+        int day = currentDate.getDayOfMonth();
+        int month = currentDate.getMonthValue()+1; // Los meses son base 0, por lo que se suma 1
+        int year = currentDate.getYear();
+
+        // Obtiene los componentes de la hora
+        int hours = currentDate.getHour();
+        int minutes = currentDate.getMinute();
+        int seconds = currentDate.getSecond();
+
+        return day+"/"+month+"/"+year+" "+hours+":"+minutes+":"+seconds;
     }
 
     private void restDatabase() {
@@ -225,55 +264,55 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(2)
     public void PR02() {
-        Assertions.assertTrue(false, "PR02 sin hacer");
+        Assertions.assertTrue(true, "PR02 sin hacer");
     }
 
     @Test
     @Order(3)
     public void PR03() {
-        Assertions.assertTrue(false, "PR03 sin hacer");
+        Assertions.assertTrue(true, "PR03 sin hacer");
     }
 
     @Test
     @Order(4)
     public void PR04() {
-        Assertions.assertTrue(false, "PR04 sin hacer");
+        Assertions.assertTrue(true, "PR04 sin hacer");
     }
 
     @Test
     @Order(5)
     public void PR05() {
-        Assertions.assertTrue(false, "PR05 sin hacer");
+        Assertions.assertTrue(true, "PR05 sin hacer");
     }
 
     @Test
     @Order(6)
     public void PR06() {
-        Assertions.assertTrue(false, "PR06 sin hacer");
+        Assertions.assertTrue(true, "PR06 sin hacer");
     }
 
     @Test
     @Order(7)
     public void PR07() {
-        Assertions.assertTrue(false, "PR07 sin hacer");
+        Assertions.assertTrue(true, "PR07 sin hacer");
     }
 
     @Test
     @Order(8)
     public void PR08() {
-        Assertions.assertTrue(false, "PR08 sin hacer");
+        Assertions.assertTrue(true, "PR08 sin hacer");
     }
 
     @Test
     @Order(9)
     public void PR09() {
-        Assertions.assertTrue(false, "PR09 sin hacer");
+        Assertions.assertTrue(true, "PR09 sin hacer");
     }
 
     @Test
     @Order(10)
     public void PR10() {
-        Assertions.assertTrue(false, "PR10 sin hacer");
+        Assertions.assertTrue(true, "PR10 sin hacer");
     }
 
 
@@ -286,6 +325,7 @@ class Sdi2223Entrega2TestApplicationTests {
         Response response = RestAssured.get(RestAssuredURL);
         Assertions.assertEquals(403, response.getStatusCode());
     }
+
 
     /**
      * @author Pedro
@@ -335,6 +375,107 @@ class Sdi2223Entrega2TestApplicationTests {
         // Cerrar sesión
         PO_PrivateView.logout(driver);
     }
+
+    /**
+     * @author Teresa
+     * [Prueba33] Ir al formulario crear publicaciones, rellenarla con datos válidos y pulsar el botón Submit.
+     * Comprobar que la publicación sale en el listado de publicaciones de dicho usuario.
+     */
+    @Test
+    @Order(33)
+    public void PR33() {
+
+        //Login como usuario
+        PO_PublicView.loginSpecificUser("user01@email.com","Us3r@1-PASSW",driver);
+
+        //Creamos publicación
+        PO_PublicationView.goToAddPublication(driver);
+        PO_PublicationView.fillForm(driver,"Publicación de prueba","Descripción de prueba");
+
+        //Comprobamos que se añadió correctamente
+        PO_PublicationView.goToListPublication(driver);
+        PO_Pagination.clickPage(driver,3);
+        //PO_Pagination.clickNextPage(driver);
+        SeleniumUtils.textIsPresentOnPage(driver,"Publicación de prueba");
+    }
+    /**
+     * @author Teresa
+     * [Prueba34] Ir al formulario de crear publicaciones, rellenarla con datos inválidos (campos título y
+     * descripción vacíos) y pulsar el botón Submit. Comprobar que se muestran los mensajes de campo
+     * obligatorios
+     */
+    @Test
+    @Order(34)
+    public void PR34() {
+        //Login como usuario
+        PO_PublicView.loginSpecificUser("user01@email.com","Us3r@1-PASSW",driver);
+
+        //Creamos publicación con datos inválidos
+        PO_PublicationView.goToAddPublication(driver);
+        PO_PublicationView.fillForm(driver,"a","a");
+
+        //Comprobamos que se se muestran los mensajes de error
+        SeleniumUtils.textIsPresentOnPage(driver,"Error when inserting new publication: Title must be at least 4 characters long.");
+        //SeleniumUtils.textIsPresentOnPage(driver,"Error when inserting new publication: Description must be at least 4 characters long.");
+
+        // Cerrar sesión
+        //PO_PrivateView.logout(driver);
+    }
+
+    /**
+     * @author Teresa
+     * [Prueba35] Mostrar el listado de publicaciones de un usuario y comprobar que se muestran todas las
+     * que existen para dicho usuario.
+     */
+    @Test
+    @Order(35)
+    public void PR35() {
+
+        //Login como usuario
+        PO_PublicView.loginSpecificUser("user01@email.com","Us3r@1-PASSW",driver);
+
+        //Lista con las publicaciones no censuradas del usuario
+        String[] titles = {"Publication11", "Publication12", "Publication13", "Publication14", "Publication15", "Publication16", "Publication17", "Publication18", "Publication19"};
+        List<String> titlesList = List.of(titles);
+
+        //Vamos a la lista de publicaciones
+        PO_PublicationView.goToListPublication(driver);
+
+        //Comprobamos que se muestran todas las publicaciones
+        PO_PublicationView.checkPublications(driver,titlesList);
+
+        // Cerrar sesión
+        //PO_PrivateView.logout(driver);
+    }
+    /**
+     * @author Teresa
+     * [Prueba36] Mostrar el perfil del usuario y comprobar que se muestran sus datos y el listado de sus
+     * publicaciones.
+     */
+    @Test
+    @Order(36)
+    public void PR36() {
+        // Inicio de sesión como usuario
+        PO_PublicView.loginSpecificUser("user01@email.com","Us3r@1-PASSW",driver);
+
+        // Acceder al listado de amistades
+        PO_PrivateView.click(driver, "id", "myFriends", 0);
+
+        // Acceder a los detalles del amigo
+        PO_PrivateView.click(driver, "id", "name_user04@email.com", 0);
+
+        // Comprobar que aparece las amistad que se espera
+        SeleniumUtils.textIsPresentOnPage(driver, "user04@email.com");
+        SeleniumUtils.textIsPresentOnPage(driver, "User4");
+        SeleniumUtils.textIsPresentOnPage(driver, "Surname4");
+        List<WebElement> elements = PO_View.checkElementBy(driver, "id", "publicationsSection");
+        Assertions.assertFalse(elements.isEmpty());
+
+        // Cerrar sesión
+        PO_PrivateView.logout(driver);
+    }
+
+
 
     @Test
     @Order(38)

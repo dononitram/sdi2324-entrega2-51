@@ -47,4 +47,8 @@ public class PO_Pagination extends PO_View{
         elements.get(0).click();
     }
 
+    public static void clickPage(WebDriver driver, int i) {
+        List<WebElement> elements = PO_View.checkElementBy(driver, "id", "page_"+i);
+        elements.get(0).click();
+    }
 }

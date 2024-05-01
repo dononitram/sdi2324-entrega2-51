@@ -10,7 +10,6 @@ import java.util.List;
 public class PO_PublicationView extends PO_NavView{
 
     public static void goToAddPublication (WebDriver driver){
-        PO_PrivateView.click(driver, "id", "publicationDropdown", 0);
         PO_PrivateView.click(driver, "id", "addPublication", 0);
     }
 
@@ -20,8 +19,7 @@ public class PO_PublicationView extends PO_NavView{
     }
 
     public static void goToListPublication (WebDriver driver){
-        PO_PrivateView.click(driver, "id", "publicationDropdown", 0);
-        PO_PrivateView.click(driver, "id", "misPublicaciones", 0);
+        PO_PrivateView.click(driver, "id", "myPublications", 0);
     }
 
     public static void fillForm(WebDriver driver, String name, String description) {
@@ -43,11 +41,11 @@ public class PO_PublicationView extends PO_NavView{
     }
 
     public static void checkPublications(WebDriver driver, List<String> titles ){
-
+        int page = 1;
         for(int i=0 ; i< titles.size(); i++){
             //Pasar de página si ya se comprobaron las primeras 5 publicaciones
             if(i == 5)
-                PO_Pagination.clickNextPage(driver);
+                PO_Pagination.clickPage(driver, ++page);
             //Comprobar que la publicación está en la lista
             SeleniumUtils.textIsPresentOnPage(driver, titles.get(i));
         }
