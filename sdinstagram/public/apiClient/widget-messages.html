@@ -5,43 +5,56 @@
         <tr>
             <th class="col-md-1"></th>
             <th class="col-md-1"></th>
+            <th class="col-md-1"></th>
         </tr>
         </thead>
         <tbody id="messagesTableBody"></tbody>
     </table>
 </div>
 <script>
-    let messages;
+    let conversation;
     let user;
 
-    function widgetConversation(usuario) {
+    /*function widgetConversation(usuario) {
         user = usuario;
         loadConversation(); // Llama a loadConversation() después de establecer el usuario
-    }
+    }*/
 
-    function loadConversation() {
-        $.ajax({
-            url: URLbase + "/conversation/" + user._id,
+    function loadConversation(email) {
+        user = email;
+        $.ajax ({
+            url: URLbase + "/conversation/" + user,
             type: "GET",
             data: {},
             dataType: 'json',
             headers: {"token": token},
             success: function (response) {
-                messages = response.conversation.messages;
-                updateMessagesTable(messages);
+                conversation = response.conversation;
+                updateMessagesTable(conversation);
             },
             error: function (error) {
                 $("#main-container").load("widget-login.html");
             }
         });
     }
-    function updateMessagesTable(messages) {
+    function updateMessagesTable(conversation) {
         $("#messagesTableBody").empty(); // Vaciar la tabla
-        for (let i = 0; i < messages.length; i++) {
-            $("#messagesTableBody").append(
-                "<tr>" +
-                "<td>" + messages[i].message + "</td>" +
-                "</tr>");
+        for (let i = 0; i < conversation.messages.length; i++) {
+            if(conversation.messages[i].author.email===user) { // Checks if author is the person logged in
+                $("#messagesTableBody").append(
+                    "<tr id=" +conversation.messages[i].message.messageId + ">" +
+                    "<td>" + "</td>" +
+                    "<td>" + conversation.messages[i].message + "</td>" +
+                    "<td>" + conversation.messages[i].author.email + "</td>" +
+                    "</tr>");
+            } else {
+                $("#messagesTableBody").append(
+                    "<tr id=" +conversation.messages[i].message.messageId + ">" +
+                    "<td>" + conversation.messages[i].author.email + "</td>" +
+                    "<td>" + conversation.messages[i].message + "</td>" +
+                    "<td>" + "</td>" +
+                    "</tr>");
+            }
         }
     }
     setInterval(function() {
