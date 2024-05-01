@@ -16,7 +16,7 @@
             <tbody>
             {% for friend in friends %}
                 <tr>
-                    <td ><a href="/friendships/{{ friend._id }}">{{ friend.email }}</a></td>
+                    <td ><a id={{ friend.email}} href="/friendships/{{ friend._id }}">{{ friend.email }}</a></td>
                     <td>{{ friend.firstName }}</td>
                     <td>{{ friend.lastName }}</td>
                     <td> {{ friend.initFriendship }} </td>
