@@ -88,6 +88,12 @@ class Sdi2223Entrega2TestApplicationTests {
 
     private void insertTestsData() {
         //usuarios
+        Document admin1 = new Document("email", "admin@email.com")
+                .append("password", hashPassword("@Dm1n1str@D0r", "abcdefg"))
+                .append("name", "admin")
+                .append("surname", "admin")
+                .append("birthdate", "2024-04-30")
+                .append("role", "admin");
         Document user1 = new Document("email", "user01@email.com")
                 .append("password", hashPassword("Us3r@1-PASSW", "abcdefg"))
                 .append("name", "User01")
@@ -179,7 +185,7 @@ class Sdi2223Entrega2TestApplicationTests {
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
 
-
+        database.getCollection("users").insertOne(admin1);
         database.getCollection("users").insertOne(user1);
         for(int i = 0; i < 10; i++) {
             Document publication = new Document("title","Publication1"+i)
@@ -252,7 +258,7 @@ class Sdi2223Entrega2TestApplicationTests {
     @AfterAll
     static public void end() {
     //Cerramos el navegador al finalizar las pruebas
-        //driver.quit();
+        driver.quit();
     }
 
     @Test
@@ -328,7 +334,7 @@ class Sdi2223Entrega2TestApplicationTests {
 
 
     /**
-     * @author Pedro
+     * @author Samuel
      * [Prueba22] Desde el listado de usuarios de la aplicación, enviar una invitación de amistad a un usuario.
      * Comprobar que la solicitud de amistad aparece en el listado de invitaciones (punto siguiente).
      */
@@ -337,21 +343,21 @@ class Sdi2223Entrega2TestApplicationTests {
     void PR22() {
         //Inicio sesión como el usuario2
         PO_PublicView.loginSpecificUser("user02@email.com","Us3r@2-PASSW",driver);
-        //Vamos a la lista de usuarios donde se puede solicitar amistad
-        driver.findElement(By.id("mylistUsersSocial")).click();
         //Envío solicitud al usuario 3
-        WebElement botonEnviarSolicitud = driver.findElement(By.id("btn_user02@email.com"));
+        WebElement botonEnviarSolicitud = driver.findElement(By.id("btn_user03@email.com"));
         botonEnviarSolicitud.click();
         // Cerrar sesión e inicio con el usuario 3
-        PO_PrivateView.logout(driver);
+        WebElement logout = driver.findElement(By.id("logout"));
+        logout.click();
         PO_PublicView.loginSpecificUser("user03@email.com","Us3r@3-PASSW",driver);
         //Voy a la ventana de ver solicitudes de amistad recibidas friendshipRequests
-        driver.findElement(By.id("myRequests")).click();
+        WebElement myRequests = driver.findElement(By.id("myRequests"));
+        myRequests.click();
         //Y comprobamos que llegó la solicitud de amistad  email_user02@email.com
-        SeleniumUtils.textIsPresentOnPage(driver,"btn_user02@email.com");
+        SeleniumUtils.textIsPresentOnPage(driver,"user02@email.com");
         //Finalmente logeamos-cerramos sesión
-        PO_PrivateView.logout(driver);
-
+        WebElement logout2 = driver.findElement(By.id("logout"));
+        logout2.click();
     }
 
     /**
@@ -365,15 +371,81 @@ class Sdi2223Entrega2TestApplicationTests {
     void PR23() {
         //Inicio sesión como usuario 1
         PO_PublicView.loginSpecificUser("user01@email.com","Us3r@1-PASSW",driver);
-        //Vamos a la lista de usuarios donde se puede solicitar amistad
-        driver.findElement(By.id("mylistUsersSocial")).click();
         //Y pruebo a enviarle 2 veces la solicitud de amistad al usuario 2
-        WebElement botonEnviarSolicitud = driver.findElement(By.id("btn_user02@email.com"));
-        botonEnviarSolicitud.click();
-        botonEnviarSolicitud.click();
+        WebElement botonEnviarSolicitud1 = driver.findElement(By.id("btn_user02@email.com"));
+        botonEnviarSolicitud1.click();
+        WebElement botonEnviarSolicitud2 = driver.findElement(By.id("btn_user02@email.com"));
+        botonEnviarSolicitud2.click();
         SeleniumUtils.textIsPresentOnPage(driver, "You have already sent a friend request to this user.");
         // Cerrar sesión
-        PO_PrivateView.logout(driver);
+        WebElement logout = driver.findElement(By.id("logout"));
+        logout.click();
+    }
+
+    /**
+     * @author Samuel
+     * [Prueba24] Mostrar el listado de invitaciones de amistad recibidas. Comprobar con un listado que
+     * contenga varias invitaciones recibidas.
+     */
+    @Test
+    @Order(24)
+    void PR24() {
+        //Inicio sesión como el usuario1
+        PO_PublicView.loginSpecificUser("user01@email.com","Us3r@1-PASSW",driver);
+        //Envío solicitud al usuario 3
+        WebElement botonEnviarSolicitud = driver.findElement(By.id("btn_user03@email.com"));
+        botonEnviarSolicitud.click();
+        // Cerrar sesión e inicio con el usuario 2
+        WebElement logout = driver.findElement(By.id("logout"));
+        logout.click();
+        PO_PublicView.loginSpecificUser("user02@email.com","Us3r@2-PASSW",driver);
+        //Envío solicitud al usuario 3
+        WebElement botonEnviarSolicitud2 = driver.findElement(By.id("btn_user03@email.com"));
+        botonEnviarSolicitud2.click();
+        // Cerrar sesión e inicio con el usuario 3
+        WebElement logout2 = driver.findElement(By.id("logout"));
+        logout2.click();
+        PO_PublicView.loginSpecificUser("user03@email.com","Us3r@3-PASSW",driver);
+        //Voy a la ventana de ver solicitudes de amistad recibidas friendshipRequests
+        WebElement myRequests = driver.findElement(By.id("myRequests"));
+        myRequests.click();
+        //Y comprobamos que llegaron las solicitudes de amistad
+        SeleniumUtils.textIsPresentOnPage(driver,"user01@email.com");
+        SeleniumUtils.textIsPresentOnPage(driver,"user02@email.com");
+        //Finalmente logeamos-cerramos sesión
+        WebElement logout3 = driver.findElement(By.id("logout"));
+        logout3.click();
+    }
+
+    /**
+     * @author Samuel
+     * [Prueba25] Sobre el listado de invitaciones recibidas. Hacer clic en el botón/enlace de una de ellas y
+     * comprobar que dicha solicitud desaparece del listado de invitaciones.
+     */
+    @Test
+    @Order(25)
+    void PR25() {
+        //Inicio sesión como el usuario2
+        PO_PublicView.loginSpecificUser("user02@email.com","Us3r@2-PASSW",driver);
+        //Envío solicitud al usuario 3
+        WebElement botonEnviarSolicitud = driver.findElement(By.id("btn_user03@email.com"));
+        botonEnviarSolicitud.click();
+        // Cerrar sesión e inicio con el usuario 3
+        WebElement logout = driver.findElement(By.id("logout"));
+        logout.click();
+        PO_PublicView.loginSpecificUser("user03@email.com","Us3r@3-PASSW",driver);
+        //Voy a la ventana de ver solicitudes de amistad recibidas friendshipRequests
+        WebElement myRequests = driver.findElement(By.id("myRequests"));
+        myRequests.click();
+        //Y comprobamos que llegó la solicitud de amistad  email_user02@email.com y la aceptamos
+        SeleniumUtils.textIsPresentOnPage(driver,"user02@email.com");
+        WebElement botonAceptar = driver.findElement(By.id("btn_user02@email.com"));
+        botonAceptar.click();
+        //Comprobamos que ya no aparece la solicitud
+        SeleniumUtils.textIsNotPresentOnPage(driver,"user02@email.com");
+        //Finalmente logeamos-cerramos sesión
+        WebElement logout2 = driver.findElement(By.id("logout"));
+        logout2.click();
     }
 
     /**
@@ -477,6 +549,7 @@ class Sdi2223Entrega2TestApplicationTests {
 
 
 
+    //ejemplo API
     @Test
     @Order(38)
     public void PR38() {
