@@ -408,6 +408,23 @@ class Sdi2223Entrega2TestApplicationTests {
         logout2.click();
     }
 
+    /**
+     * @author Samuel
+     * [Prueba25] Obtener los mensajes de una conversación.
+     */
+    //ejemplo API
+    @Test
+    @Order(43)
+    public void PR57() {
+        final String RestAssuredURL = "http://localhost:8081/api/v1.0/conversation/user01@email.com";
+        //2. Preparamos el parámetro en formato JSON
+        RequestSpecification request = RestAssured.given();
+        //3. Hacemos la petición
+        Response response = request.post(RestAssuredURL);
+        //4. Comprobamos que el servicio ha tenido exito
+        Assertions.assertEquals(200, response.getStatusCode());
+    }
+
     //ejemplo API
     @Test
     @Order(38)
