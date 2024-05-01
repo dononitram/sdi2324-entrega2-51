@@ -551,7 +551,7 @@ class Sdi2223Entrega2TestApplicationTests {
         PO_PrivateView.click(driver, "id", "myFriends", 0);
 
         // Acceder a los detalles del amigo
-        PO_PrivateView.click(driver, "id", "name_user04@email.com", 0);
+        PO_PrivateView.click(driver, "id", "user04@email.com", 0);
 
         // Comprobar que aparece las amistad que se espera
         SeleniumUtils.textIsPresentOnPage(driver, "user04@email.com");
