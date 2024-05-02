@@ -12,21 +12,19 @@
         <tbody id="messagesTableBody"></tbody>
     </table>
     <div class="form-group">
-        <label class="control-label col-sm-2" for="message">New message:</label>
-        <div class="col-sm-10">
-            <input type="message" class="form-control" name="message"
+        <label class="control-label col-sm-10" for="message">New message:</label>
+        <input type="text" class="form-control" name="message"
                    placeholder="Good morning!" id="message" />
-        </div>
-        <div class="col-sm-offset-2 col-sm-10">
-            <button type="button" id="boton-send">Send</button>
-        </div>
+        <button type="button" id="boton-send">Send</button>
     </div>
 </div>
 <script>
     let conversation;
     let user;
     function loadConversation(email) {
+
         user = email;
+        $("#friendEmail").append(user);
         $.ajax ({
             url: URLbase + "/conversation/" + user,
             type: "GET",
@@ -35,10 +33,12 @@
             headers: {"token": token},
             success: function (response) {
                 conversation = response.conversation;
+                console.log("Conversation: ",conversation);
                 updateMessagesTable(conversation);
             },
             error: function (error) {
-                $("#main-container").load("widget-login.html");
+                console.log("token",token);
+                $("#main-container").load("widget-friends.html");
             }
         });
     }
@@ -63,9 +63,9 @@
         }
     }
 
-    setInterval(function() {
-        loadConversation();
-    }, 1000);
+    /*setInterval(function() {
+        loadConversation(user);
+    }, 1000);*/
 
     $("#boton-send").click(function() {
         $.ajax({
@@ -76,6 +76,7 @@
                 message: $("#message").val()
             },
             dataType: "json",
+            headers: {"token": token},
             success: function success(response) {
                 console.log(response.token); //Prueba
                 token = response.token;

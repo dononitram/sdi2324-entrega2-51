@@ -22,7 +22,6 @@
 <script>
     window.history.pushState("", "", "/apiclient/client.html?w=login");
     $("#boton-login").click(function () {
-        console.log("XD")
         $.ajax({
             url: URLbase + "/users/login",
             type: "POST",

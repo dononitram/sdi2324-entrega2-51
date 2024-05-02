@@ -15,7 +15,6 @@
 </div>
 
 <script>
-    let friendships;
     function loadFriends() {
         $.ajax({
             url: URLbase + "/users/friendships",
@@ -24,13 +23,31 @@
             dataType: 'json',
             headers: {"token": token},
             success: function (response) {
-                friendships = response.friendships;
-                updateFriendsTable(friendships);
+                updateFriendsTable(response.friendships);
             },
             error: function (error) {
                 $("#main-container").load("widget-login.html");
             }
         });
+    }
+    function loadConversation() {
+        $( "#main-container" ).load("widget-messages.html");
+        /*$.ajax ({
+            url: URLbase + "/conversation/" + user,
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (response) {
+                conversation = response.conversation;
+                console.log("Conversation: ",conversation);
+                updateMessagesTable(conversation);
+            },
+            error: function (error) {
+                console.log("token",token);
+                $("#main-container").load("widget-friends.html");
+            }
+        });*/
     }
     function updateFriendsTable(friendships) {
         $("#friendsTableBody").empty(); // Vaciar la tabla
@@ -41,7 +58,7 @@
                 "<td>" + friendships[i].firstName + "</td>" +
                 "<td>" + friendships[i].lastName + "</td>" +
                 "<td>" +
-                "<a onclick=loadConversation('" + friendships[i].email + "')>Conversation</a><br>" +
+                "<a onclick=loadConversation()>Conversation</a><br>" +
                 "</td>" +
                 "</tr>");
         }
