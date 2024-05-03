@@ -1,5 +1,5 @@
 <div id="widget-friends" >
-    <button class="btn" onclick="loadFriends()" >Update</button>
+    <button class="btn" onclick="getFriends()" >Update</button>
     <table class="table table-hover">
         <thead>
         <tr>
@@ -16,7 +16,7 @@
 
 <script>
     window.history.pushState("", "", "/apiclient/client.html?w=friends");
-    function loadFriends() {
+    function getFriends() {
         $.ajax({
             url: URLbase + "/users/friendships",
             type: "GET",
@@ -50,5 +50,5 @@
         }
     }
 
-    loadFriends();
+    getFriends();
 </script>
