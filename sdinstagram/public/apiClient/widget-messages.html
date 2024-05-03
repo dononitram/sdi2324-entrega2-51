@@ -15,7 +15,7 @@
         <label class="control-label col-sm-10" for="message">New message:</label>
         <input type="text" class="form-control" name="message"
                    placeholder="Good morning!" id="message" />
-        <button type="button" id="boton-send">Send</button>
+        <button  type="submit" class="btn btn-primary" id="boton-send" onclick=sendMessage()>Send</button>
     </div>
 </div>
 <script>
@@ -66,7 +66,7 @@
         loadConversation(user);
     }, 1000);*/
 
-    $("#boton-send").click(function() {
+    function sendMessage() {
         $.ajax({
             url: URLbase + "/conversation/",
             type: "POST",
@@ -90,5 +90,30 @@
                     .prepend(message);
             }
         });
-    });
+    }
+    /*$("#boton-send").click(function() {
+        $.ajax({
+            url: URLbase + "/conversation/",
+            type: "POST",
+            data:  {
+                friendEmail: $("#friendEmail").val(),
+                message: $("#message").val()
+            },
+            dataType: "json",
+            headers: {"token": token},
+            success: function success(response) {
+                console.log(response.token); //Prueba
+                token = response.token;
+                //Cookies.set('token', token);
+                $("#main-container").load("widget-messages.html");
+            },
+            error: function(error) {
+                //Cookies.remove('token');
+                var message = "<div class='alert alert-danger'>";
+                message += error.responseJSON.error += "</div>";
+                $("#widget-messages")
+                    .prepend(message);
+            }
+        });
+    });*/
 </script>
