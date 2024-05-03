@@ -421,7 +421,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
             let messages = conversation.messages;
             let mensajesNoLeidos = messages.filter(mensaje => mensaje.read !== true);
             res.status(200);
-            res.json({ mensajes: mensajesNoLeidos });
+            res.json({ messages: mensajesNoLeidos });
         } catch (e) {
             res.status(500).json({ error: "Error while finding conversation: " + e });
         }

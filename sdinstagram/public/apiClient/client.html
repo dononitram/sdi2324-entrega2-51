@@ -106,28 +106,59 @@
         });
     };
 
+    const countUnreadMessagesIn = async (id) => {
+        $.ajax({
+            url: URLbase + `/messages/unread/${id}`,
+            type: "GET",
 
+            success: response => {
+                return response.messages.length;
+            },
+            error: error =>  {
+                $("#widget-conversations")
+                    .prepend("<div class='alert alert-danger'>Error counting conversations unread messages</div>");
+            }
+        });
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: URLbase + `/messages/unread/${id}`,
+                type: "GET",
+                success: response => {
+                    resolve(response.messages.length);
+                },
+                error: error => {
+                    $("#widget-conversations")
+                        .prepend("<div class='alert alert-danger'>Error counting conversations unread messages</div>");
+                }
+            });
+        });
+    };
 
-    const generateTable = conversations => {
+    const generateTable = async conversations => {
         $("#conversationsTableBody").empty();
-        conversations.forEach(conversation => {
+
+        for (const conversation of conversations) {
             const user = conversation.user2;
             const email = user.email;
             const name = user.firstName;
             const surname = user.lastName;
             const id = conversation._id;
 
+            let unreadMessagesCount = 0;
+            unreadMessagesCount = await countUnreadMessagesIn(id);
+
             let row = `<tr id="${id}">
                         <td>${email}</td>
                         <td>${name}</td>
                         <td>${surname}</td>
+                        <td>${unreadMessagesCount}</td>
                         <td><button class="btn btn-primary">Open</button></td>
                         <td><button class="btn btn-danger" onClick="(deleteConversation('${id}'))">Delete</button></td>
 
                     </tr>`;
-                    
+
             $("#conversationsTableBody").append(row);
-        });
+        }
     };    
 </script>
 
