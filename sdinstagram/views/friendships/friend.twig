@@ -13,7 +13,7 @@
     <!-- -->
     <div class="row" style="margin-top: 20px;" >
         <h3>{{ friend.email }} 's publications</h3>
-        <div class="table-responsive">
+        <div class="table-responsive" id="publicationsSection">
             <table class="table table-hover">
                 <thead>
                 <tr>
@@ -22,7 +22,7 @@
                     <th>Description</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="publicationsSection">
                 {% for publication in publications %}
                     <tr>
                         <td>{{ publication.date }}</td>
