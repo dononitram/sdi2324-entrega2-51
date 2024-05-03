@@ -21,7 +21,9 @@
 <script>
     let conversation;
     let user;
-    function loadConversation(email) {
+    window.history.pushState("", "", "/apiclient/client.html?w=messages");
+
+    function loadConversation() {
         user = email;
         $("#friendEmail").append(user);
         $.ajax ({
@@ -80,6 +82,7 @@
                 console.log(response.token); //Prueba
                 token = response.token;
                 //Cookies.set('token', token);
+                $("#div-message-errors").remove();
                 $("#main-container").load("widget-messages.html");
             },
             error: function(error) {

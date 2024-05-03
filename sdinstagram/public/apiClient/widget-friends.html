@@ -15,6 +15,8 @@
 </div>
 
 <script>
+    window.history.pushState("", "", "/apiclient/client.html?w=friends");
+    let friend;
     function loadFriends() {
         $.ajax({
             url: URLbase + "/users/friendships",
@@ -30,8 +32,10 @@
             }
         });
     }
-    function loadConversation() {
+    function loadConversation(email) {
+        friend = email;
         $( "#main-container" ).load("widget-messages.html");
+
         /*$.ajax ({
             url: URLbase + "/conversation/" + user,
             type: "GET",
@@ -58,10 +62,11 @@
                 "<td>" + friendships[i].firstName + "</td>" +
                 "<td>" + friendships[i].lastName + "</td>" +
                 "<td>" +
-                "<a onclick=loadConversation() id='chat_'+friendhips[i].email>Conversation</a><br>" +
+                "<a onclick=\"loadConversation('"+friendships[i].email+"')\">Conversation</a><br>" +
                 "</td>" +
                 "</tr>");
         }
     }
+
     loadFriends();
 </script>
