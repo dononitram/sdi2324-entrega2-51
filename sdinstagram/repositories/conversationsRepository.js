@@ -79,5 +79,16 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
+    },
+    deleteConversation: async function(filter, options){
+        try {
+            await this.dbClient.connect();
+            const database = this.dbClient.db(this.database);
+            const conversationsCollection = database.collection(this.collectionName);
+            const result = await conversationsCollection.deleteOne(filter, options);
+            return result;
+        } catch (error) {
+            throw (error);
+        }
     }
 };

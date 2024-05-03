@@ -69,8 +69,8 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
 
             usersRepository.findUser({ email: res.user }, {}).then(user => {
 
-                let filter = {$or: [{user1: user}, {user2: user}]};
-                
+                let filter = { $or: [{ user1: user }, { user2: user }] };
+
                 friendshipRepository.findFriendships(filter, {}).then(friendships => {
                     res.status(200);
 
@@ -92,7 +92,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
 
                     res.json({ friendships: parsedFriendships });
                 });
-            
+
             }).catch(error => {
                 res.status(404);
                 res.json({ error: "Error while finding user: " + error });
@@ -107,40 +107,40 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
 
     app.get('/api/v1.0/conversation/:user', function (req, res) {
         try {
-            if(typeof res.user === "undefined" ||  res.user === null) {
+            if (typeof res.user === "undefined" || res.user === null) {
                 res.status(409);
-                res.json({error: "Cannot see conversation. User not present"});
+                res.json({ error: "Cannot see conversation. User not present" });
                 return;
             }
 
-            usersRepository.findUser({email: res.user}, {}).then(user1 => {
-                if(typeof user1 !== "undefined" &&  user1 !== null) {
+            usersRepository.findUser({ email: res.user }, {}).then(user1 => {
+                if (typeof user1 !== "undefined" && user1 !== null) {
                     usersRepository.findUser({ email: req.params.user }, {}).then(user2 => {
-                        conversationsRepository.findConversation({user1: user1, user2: user2}, {})
+                        conversationsRepository.findConversation({ user1: user1, user2: user2 }, {})
                             .then(conversation => {
 
-                            if (conversation === null || typeof conversation === "undefined") {
-                                conversationsRepository.findConversation({user1: user2, user2: user1}, {})
-                                    .then(conversation => {
+                                if (conversation === null || typeof conversation === "undefined") {
+                                    conversationsRepository.findConversation({ user1: user2, user2: user1 }, {})
+                                        .then(conversation => {
 
-                                    if (conversation === null || typeof conversation === "undefined") {
-                                        res.status(404);
-                                        res.json({ error: "No exite conversación con el usuario especificado" })
-                                    }
-                                    else {
-                                        res.status(200);
-                                        res.json({ conversation: conversation });
-                                    }
-                                });
-                            }
-                            else {
-                                res.status(200);
-                                res.json({ conversation: conversation });
-                            }
-                        });
+                                            if (conversation === null || typeof conversation === "undefined") {
+                                                res.status(404);
+                                                res.json({ error: "No exite conversación con el usuario especificado" })
+                                            }
+                                            else {
+                                                res.status(200);
+                                                res.json({ conversation: conversation });
+                                            }
+                                        });
+                                }
+                                else {
+                                    res.status(200);
+                                    res.json({ conversation: conversation });
+                                }
+                            });
                     });
                 }
-                });
+            });
         } catch (e) {
             console.log(e);
             res.status(500);
@@ -150,17 +150,17 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
 
     app.get('/api/v1.0/conversations', function (req, res) {
         try {
-            if(typeof res.user === "undefined" ||  res.user === null) {
+            if (typeof res.user === "undefined" || res.user === null) {
                 res.status(409);
-                res.json({error: "Cannot see conversation. User not present"});
+                res.json({ error: "Cannot see conversation. User not present" });
                 return;
             }
 
             usersRepository.findUser({ email: res.user }, {}).then(user => {
-                conversationsRepository.getConversations({user1: user}, {}).then(conversations => {
+                conversationsRepository.getConversations({ user1: user }, {}).then(conversations => {
 
                     if (conversations === null || typeof conversations === "undefined" || conversations.length === 0) {
-                        conversationsRepository.findConversation({user2: user}, {}).then(conversations => {
+                        conversationsRepository.findConversation({ user2: user }, {}).then(conversations => {
 
                             res.status(200);
                             res.json({ conversations: conversations });
@@ -182,142 +182,143 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
     app.post('/api/v1.0/conversation', function (req, res) {
         try {
             //let user1 = res.user;
-            console.log("USER: ",res.user);
-            if(typeof res.user === "undefined" ||  res.user === null) {
+            console.log("USER: ", res.user);
+            if (typeof res.user === "undefined" || res.user === null) {
                 res.status(409);
-                res.json({error: "Cannot create conversation. User not present"});
+                res.json({ error: "Cannot create conversation. User not present" });
                 return;
             }
-            if(typeof req.body.friendEmail === "undefined" ||  req.body.friendEmail === null) {
+            if (typeof req.body.friendEmail === "undefined" || req.body.friendEmail === null) {
                 res.status(409);
-                res.json({error: "Cannot create conversation. Incorrect friend id"});
+                res.json({ error: "Cannot create conversation. Incorrect friend id" });
                 return;
             }
-            usersRepository.findUser({email: res.user}, {}).then(user1 => {
-                if(typeof user1 !== "undefined" &&  user1 !== null) {
+            usersRepository.findUser({ email: res.user }, {}).then(user1 => {
+                if (typeof user1 !== "undefined" && user1 !== null) {
 
-                //Should look for users and check if they are friends
-                usersRepository.findUser({email:req.body.friendEmail},{}).then(user2 => {
-                if(typeof user2 !== "undefined" &&  user2 !== null) {
-                    let filter = {
-                        $or: [
-                            {
-                                $and: [
-                                    {"user1._id": new ObjectId(user1._id)},
-                                    {"user2._id": new ObjectId(user2._id)}
-                                ]
-                            },
-                            {
-                                $and: [
-                                    {"user1._id": new ObjectId(user2._id)},
-                                    {"user2._id": new ObjectId(user1._id)}
-                                ]
-                            }
-                        ]
-                    };
-                    user1._id = new ObjectId(user1._id);
-                    let options = {}
-                    friendshipRepository.findFriendship(filter, options).then(friendship => {
-                        if (friendship !== null || typeof friendship !== "undefined") {
+                    //Should look for users and check if they are friends
+                    usersRepository.findUser({ email: req.body.friendEmail }, {}).then(user2 => {
+                        if (typeof user2 !== "undefined" && user2 !== null) {
                             let filter = {
                                 $or: [
                                     {
                                         $and: [
-                                            {"user1._id": user1._id},
-                                            {"user2._id": user2._id}
+                                            { "user1._id": new ObjectId(user1._id) },
+                                            { "user2._id": new ObjectId(user2._id) }
                                         ]
                                     },
                                     {
                                         $and: [
-                                            {"user1._id": user2._id},
-                                            {"user2._id": user1._id}
+                                            { "user1._id": new ObjectId(user2._id) },
+                                            { "user2._id": new ObjectId(user1._id) }
                                         ]
                                     }
                                 ]
                             };
-                            let options = {};
-                            conversationsRepository.findConversation(filter, options).then(conversation => {
-                                // There is no conversation between this users
-                                if (conversation === null || typeof conversation === "undefined") {
-                                    //A new conversation is created
-                                    let message = {
-                                        author: user1,
-                                        date: new Date(),
-                                        text: req.body.message,
-                                        read: false
-                                    }
-                                    let convers = {
-                                        user1: user1,
-                                        user2: user2,
-                                        messages: [message]
-                                    }
-                                    conversationsRepository.insertConversation(convers, function (conversationId) {
-                                        if (conversationId.toString() === null || conversationId.toString() === undefined) {
-                                            res.status(409);
-                                            res.json({error: "Could not create conversation"});
-                                            return;
-                                        } else {
-                                            res.status(201);
-                                            res.json({
-                                                message: "Conversation created successfully",
-                                                _id: conversationId
+                            user1._id = new ObjectId(user1._id);
+                            let options = {}
+                            friendshipRepository.findFriendship(filter, options).then(friendship => {
+                                if (friendship !== null || typeof friendship !== "undefined") {
+                                    let filter = {
+                                        $or: [
+                                            {
+                                                $and: [
+                                                    { "user1._id": user1._id },
+                                                    { "user2._id": user2._id }
+                                                ]
+                                            },
+                                            {
+                                                $and: [
+                                                    { "user1._id": user2._id },
+                                                    { "user2._id": user1._id }
+                                                ]
+                                            }
+                                        ]
+                                    };
+                                    let options = {};
+                                    conversationsRepository.findConversation(filter, options).then(conversation => {
+                                        // There is no conversation between this users
+                                        if (conversation === null || typeof conversation === "undefined") {
+                                            //A new conversation is created
+                                            let message = {
+                                                author: user1,
+                                                date: new Date(),
+                                                text: req.body.message,
+                                                read: false
+                                            }
+                                            let convers = {
+                                                user1: user1,
+                                                user2: user2,
+                                                messages: [message]
+                                            }
+                                            conversationsRepository.insertConversation(convers, function (conversationId) {
+                                                if (conversationId.toString() === null || conversationId.toString() === undefined) {
+                                                    res.status(409);
+                                                    res.json({ error: "Could not create conversation" });
+                                                    return;
+                                                } else {
+                                                    res.status(201);
+                                                    res.json({
+                                                        message: "Conversation created successfully",
+                                                        _id: conversationId
+                                                    })
+                                                }
                                             })
-                                        }
-                                    })
-                                } else { // There is already a conversation between this users
-                                    let message = {
-                                        author: user1,
-                                        date: new Date(),
-                                        text: req.body.message,
-                                        read: false
-                                    }
-                                    conversation.messages.push(message);
+                                        } else { // There is already a conversation between this users
+                                            let message = {
+                                                author: user1,
+                                                date: new Date(),
+                                                text: req.body.message,
+                                                read: false
+                                            }
+                                            conversation.messages.push(message);
 
-                                    let filter = {_id: conversation._id}
-                                    let options = {upsert: false};
-                                    conversationsRepository.updateConversation(conversation, filter, options).then(result => {
-                                        if (result === null) {
-                                            res.status(404);
-                                            res.json({error: "ID invalid or does not exist, conversation has not been updated."});
-                                            return;
+                                            let filter = { _id: conversation._id }
+                                            let options = { upsert: false };
+                                            conversationsRepository.updateConversation(conversation, filter, options).then(result => {
+                                                if (result === null) {
+                                                    res.status(404);
+                                                    res.json({ error: "ID invalid or does not exist, conversation has not been updated." });
+                                                    return;
+                                                }
+                                                //La _id No existe o los datos enviados no difieren de los ya almacenados.
+                                                else if (result.modifiedCount == 0) {
+                                                    res.status(409);
+                                                    res.json({ error: "Any conversation has been updated." });
+                                                    return;
+                                                } else {
+                                                    res.status(200);
+                                                    res.json({
+                                                        message: "Conversation updated correctly.",
+                                                        result: result,
+                                                        conversation: conversation
+                                                    })
+                                                }
+                                            }).catch(error => {
+                                                res.status(500);
+                                                res.json({ error: "Error while updating conversation." })
+                                            });
                                         }
-                                        //La _id No existe o los datos enviados no difieren de los ya almacenados.
-                                        else if (result.modifiedCount == 0) {
-                                            res.status(409);
-                                            res.json({error: "Any conversation has been updated."});
-                                            return;
-                                        } else {
-                                            res.status(200);
-                                            res.json({
-                                                message: "Conversation updated correctly.",
-                                                result: result,
-                                                conversation: conversation
-                                            })
-                                        }
-                                    }).catch(error => {
-                                        res.status(500);
-                                        res.json({error: "Error while updating conversation."})
                                     });
+                                } else { //These users need to be friends
+                                    res.status(409);
+                                    res.json({ error: "There is no friendship between these users" });
+                                    return;
                                 }
-                            });
-                        } else { //These users need to be friends
+                            })
+
+                        } else {
                             res.status(409);
-                            res.json({error: "There is no friendship between these users"});
+                            res.json({ error: "User does not exist" });
                             return;
                         }
-                    })
-
-                } else {
-                    res.status(409);
-                    res.json({error: "User does not exist"});
-                    return;
-                }});
+                    });
                 }
             })
 
         } catch (e) {
             res.status(500);
-            res.json({error: "Error while creating conversation: " + e})
+            res.json({ error: "Error while creating conversation: " + e })
         }
 
     });
@@ -335,72 +336,83 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
         if (!id)
             res.status(400).json({ error: "Conversation id is required" });
 
-        // Find conversation
         try {
+            // Find conversation
             const conversation = await conversationsRepository.findConversation({ _id: new ObjectId(id) });
             if (!conversation)
                 res.status(404).json({ error: "Conversation not found" });
+
+            // Check if user is sender or receiver
+            const user = res.user;
+            const participants = [conversation.user1.email, conversation.user2.email];
+            if (!participants.includes(user))
+                res.status(403).json({ error: "User is not part of this conversation" });
+
+            // Perform delete
+            const filter = { _id: new ObjectId(id) };
+            const options = {};
+            const result = await conversationsRepository.deleteConversation(filter, options);
+
+            if (result.deletedCount === 1)
+                res.status(200).json({ message: "Conversation deleted successfully" });
+            else
+                res.status(500).json({ error: "Error while deleting conversation" });
+
         } catch (e) {
             res.status(500).json({ error: "Error while finding conversation: " + e });
         }
-
-        // TODO check if user is sender or receiver
-        //TODO delete conver
-
-
-
     });
 
     /**
      * Mark as read the message indicated by the id  >><<<>>><<>>><<<<<>>><<>>><<<<<>>><<>>><<>>CAMBIAR A PUT
      */
-    app.put('/api/v1.0/messages/read/:id', async function (req, res){
-        try{
+    app.put('/api/v1.0/messages/read/:id', async function (req, res) {
+        try {
             let usserMail = res.user;//To check if the message of the id it´s reciever or sender
             let messageId = req.params.id;
             const conversation = await conversationsRepository.findConversationByMessageId(messageId);
-            if(!conversation){
+            if (!conversation) {
                 res.status(404);
-                res.json({error: "Invalid ID or message doesn't exist, the message couldn't be marked as read."});
+                res.json({ error: "Invalid ID or message doesn't exist, the message couldn't be marked as read." });
                 return;
             }
             //Index of the message
             let index = conversation.messages.findIndex(message => message.messageId === messageId);
-            let filter = {_id: conversation._id};
+            let filter = { _id: conversation._id };
             //This option don´t create a new message if it doesen't exist
-            let options = {upsert: false};
-            conversationsRepository.updateAsReadedByIndexMessage(filter, options, index).then(result =>{
-               if(result === null){
-                   res.status(404);
-                   res.json({error: "Invalid ID or message doesn't exist, the message couldn't be marked as read."});
-                   return;
-               } else if(result.modifiedCount == 0){
-                   res.status(409);
-                   res.json({error: "No message was updated."});
-                   return;
-               } else{
-                   res.status(200);
-                   res.json({
-                       message: "Message marked as read correctly.",
-                       result: result
-                   });
-                   return;
-               }
-            }).catch(error=>{
+            let options = { upsert: false };
+            conversationsRepository.updateAsReadedByIndexMessage(filter, options, index).then(result => {
+                if (result === null) {
+                    res.status(404);
+                    res.json({ error: "Invalid ID or message doesn't exist, the message couldn't be marked as read." });
+                    return;
+                } else if (result.modifiedCount == 0) {
+                    res.status(409);
+                    res.json({ error: "No message was updated." });
+                    return;
+                } else {
+                    res.status(200);
+                    res.json({
+                        message: "Message marked as read correctly.",
+                        result: result
+                    });
+                    return;
+                }
+            }).catch(error => {
                 res.status(500);//Revisar código
-                res.json({error: "An error ocurred updating the message: "+error});
+                res.json({ error: "An error ocurred updating the message: " + error });
                 return;
             });
-        } catch (e){
+        } catch (e) {
             res.status(500);
-            res.json({error: "An error ocurred marking as read a message: "+e});
+            res.json({ error: "An error ocurred marking as read a message: " + e });
             return;
         }
     });
     /**
      * Mensajes no leídos de una conversación dado su id
      */
-    app.get('/api/v1.0/messages/unread/:id/', async function (req, res){
+    app.get('/api/v1.0/messages/unread/:id/', async function (req, res) {
         try {
             let conversationId = req.params.id;
             const conversation = await conversationsRepository.findConversation({ _id: new ObjectId(conversationId) }, {});

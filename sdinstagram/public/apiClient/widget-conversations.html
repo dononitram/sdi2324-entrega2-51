@@ -6,7 +6,8 @@
                 <th>User</th>
                 <th>Name</th>
                 <th>Surname</th>
-                <th class="col-md-1"></th>
+                <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody id="conversationsTableBody">
@@ -34,24 +35,44 @@
         });
     };
 
-    getConversations();
+    const deleteConversation = id => {
+        $.ajax({
+            url: URLbase + `/conversation/${id}?token=${token}`,
+            type: "DELETE",
+
+            success: response => {
+                getConversations();
+            },
+            error: error =>  {
+                $("#widget-conversations")
+                    .prepend("<div class='alert alert-danger'>Error deleting conversation</div>");
+            }
+        });
+    };
+
+
 
     const generateTable = conversations => {
         conversations.forEach(conversation => {
-            let user = conversation.user2;
-            let email = user.email;
-            let name = user.firstName;
-            let surname = user.lastName;
+            const user = conversation.user2;
+            const email = user.email;
+            const name = user.firstName;
+            const surname = user.lastName;
+            const id = conversation._id;
 
             let row = `<tr>
                         <td>${email}</td>
                         <td>${name}</td>
                         <td>${surname}</td>
                         <td><button class="btn btn-primary">Open</button></td>
+                        <td><button class="btn btn-danger" onClick="(deleteConversation('${id}'))">Delete</button></td>
+
                     </tr>`;
 
             $("#conversationsTableBody").append(row);
         });
     };
+
+    getConversations();
     
 </script>
