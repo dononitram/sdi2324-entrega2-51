@@ -1,0 +1,78 @@
+<div id="widget-conversations">
+    <h2>Chats</h2>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Name</th>
+                <th>Surname</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="conversationsTableBody">
+
+        </tbody>
+    </table>
+
+</div>
+
+<script>
+
+    const getConversations = () => {
+        $.ajax({
+            url: URLbase + `/conversations?token=${token}`,
+            type: "GET",
+
+            success: response => {
+                generateTable(response.conversations);
+            },
+            error: error =>  {
+                Cookies.remove('token');
+                $("#widget-login")
+                    .prepend("<div class='alert alert-danger'>Error fetching user conversations</div>");
+            }
+        });
+    };
+
+    const deleteConversation = id => {
+        $.ajax({
+            url: URLbase + `/conversation/${id}?token=${token}`,
+            type: "DELETE",
+
+            success: response => {
+                getConversations();
+            },
+            error: error =>  {
+                $("#widget-conversations")
+                    .prepend("<div class='alert alert-danger'>Error deleting conversation</div>");
+            }
+        });
+    };
+
+
+
+    const generateTable = conversations => {
+        conversations.forEach(conversation => {
+            const user = conversation.user2;
+            const email = user.email;
+            const name = user.firstName;
+            const surname = user.lastName;
+            const id = conversation._id;
+
+            let row = `<tr>
+                        <td>${email}</td>
+                        <td>${name}</td>
+                        <td>${surname}</td>
+                        <td><button class="btn btn-primary">Open</button></td>
+                        <td><button class="btn btn-danger" onClick="(deleteConversation('${id}'))">Delete</button></td>
+
+                    </tr>`;
+
+            $("#conversationsTableBody").append(row);
+        });
+    };
+
+    getConversations();
+    
+</script>
