@@ -1,5 +1,4 @@
 const { ObjectId } = require('mongodb');
-const uuid = require('uuid');
 const conversationsRepository = require("../../repositories/conversationsRepository");
 module.exports = function (app, usersRepository, friendshipRepository, friendshipRequestRepository, publicationsRepository
     , conversationsRepository) {
@@ -194,7 +193,6 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                 res.json({error: "Cannot create conversation. Incorrect friend id"});
                 return;
             }
-            if(typeof req.body.message === "undefined" ||  req.body.message === null || req.body.message.length===0)
             usersRepository.findUser({email: res.user}, {}).then(user1 => {
                 if(typeof user1 !== "undefined" &&  user1 !== null) {
 
@@ -243,7 +241,6 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                                 if (conversation === null || typeof conversation === "undefined") {
                                     //A new conversation is created
                                     let message = {
-                                        messageId: uuid.v4(),
                                         author: user1,
                                         date: new Date(),
                                         text: req.body.message,
@@ -269,7 +266,6 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                                     })
                                 } else { // There is already a conversation between this users
                                     let message = {
-                                        messageId: uuid.v4(),
                                         author: user1,
                                         date: new Date(),
                                         text: req.body.message,
