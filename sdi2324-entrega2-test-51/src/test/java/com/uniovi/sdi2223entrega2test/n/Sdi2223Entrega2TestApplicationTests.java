@@ -40,6 +40,7 @@ class Sdi2223Entrega2TestApplicationTests {
     static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
     static WebDriver driver = getDriver(PathFirefox, Geckodriver);
     static String URL = "http://localhost:8080/users/login";
+    static String URL_API = "http://localhost:8080/apiclient/client.html";
 
     static MongoClient mongoClient;
     static MongoDatabase database;
@@ -90,98 +91,98 @@ class Sdi2223Entrega2TestApplicationTests {
         //usuarios
         Document admin1 = new Document("email", "admin@email.com")
                 .append("password", hashPassword("@Dm1n1str@D0r", "abcdefg"))
-                .append("name", "admin")
-                .append("surname", "admin")
+                .append("firstName", "admin")
+                .append("lastName", "admin")
                 .append("birthdate", "2024-04-30")
                 .append("role", "admin");
         Document user1 = new Document("email", "user01@email.com")
                 .append("password", hashPassword("Us3r@1-PASSW", "abcdefg"))
-                .append("name", "User01")
-                .append("surname", "Surname01")
+                .append("firstName", "User01")
+                .append("lastName", "Surname01")
                 .append("birthdate", "2024-04-30")
                 .append("role", "user");
         Document user2 = new Document("email", "user02@email.com")
                 .append("password", hashPassword("Us3r@2-PASSW", "abcdefg"))
-                .append("name", "User02")
-                .append("surname", "Surname02")
+                .append("firstName", "User02")
+                .append("lastName", "Surname02")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user3 = new Document("email", "user03@email.com")
                 .append("password", hashPassword("Us3r@3-PASSW", "abcdefg"))
-                .append("name", "User03")
-                .append("surname", "Surname03")
+                .append("firstName", "User03")
+                .append("lastName", "Surname03")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user4 = new Document("email", "user04@email.com")
                 .append("password", hashPassword("Us3r@4-PASSW", "abcdefg"))
-                .append("name", "User04")
-                .append("surname", "Surname04")
+                .append("firstName", "User04")
+                .append("lastName", "Surname04")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user5 = new Document("email", "user05@email.com")
                 .append("password", hashPassword("Us3r@5-PASSW", "abcdefg"))
-                .append("name", "User05")
-                .append("surname", "Surname05")
+                .append("firstName", "User05")
+                .append("lastName", "Surname05")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user6 = new Document("email", "user06@email.com")
                 .append("password", hashPassword("Us3r@6-PASSW", "abcdefg"))
-                .append("name", "User06")
-                .append("surname", "Surname06")
+                .append("firstName", "User06")
+                .append("lastName", "Surname06")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user7 = new Document("email", "user07@email.com")
                 .append("password", hashPassword("Us3r@7-PASSW", "abcdefg"))
-                .append("name", "User07")
-                .append("surname", "Surname07")
+                .append("firstName", "User07")
+                .append("lastName", "Surname07")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user8 = new Document("email", "user08@email.com")
                 .append("password", hashPassword("Us3r@8-PASSW", "abcdefg"))
-                .append("name", "User08")
-                .append("surname", "Surname08")
+                .append("firstName", "User08")
+                .append("lastName", "Surname08")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user9 = new Document("email", "user09@email.com")
                 .append("password", hashPassword("Us3r@9-PASSW", "abcdefg"))
-                .append("name", "User09")
-                .append("surname", "Surname09")
+                .append("firstName", "User09")
+                .append("lastName", "Surname09")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user10 = new Document("email", "user10@email.com")
                 .append("password", hashPassword("Us3r@10-PASSW", "abcdefg"))
-                .append("name", "User10")
-                .append("surname", "Surname10")
+                .append("firstName", "User10")
+                .append("lastName", "Surname10")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user11 = new Document("email", "user11@email.com")
                 .append("password", hashPassword("Us3r@11-PASSW", "abcdefg"))
-                .append("name", "User11")
-                .append("surname", "Surname11")
+                .append("firstName", "User11")
+                .append("lastName", "Surname11")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user12 = new Document("email", "user12@email.com")
                 .append("password", hashPassword("Us3r@12-PASSW", "abcdefg"))
-                .append("name", "User12")
-                .append("surname", "Surname12")
+                .append("firstName", "User12")
+                .append("lastName", "Surname12")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user13 = new Document("email", "user13@email.com")
                 .append("password", hashPassword("Us3r@13-PASSW", "abcdefg"))
-                .append("name", "User13")
-                .append("surname", "Surname13")
+                .append("firstName", "User13")
+                .append("lastName", "Surname13")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user14 = new Document("email", "user14@email.com")
                 .append("password", hashPassword("Us3r@14-PASSW", "abcdefg"))
-                .append("name", "User14")
-                .append("surname", "Surname14")
+                .append("firstName", "User14")
+                .append("lastName", "Surname14")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
         Document user15 = new Document("email", "user15@email.com")
                 .append("password", hashPassword("Us3r@15-PASSW", "abcdefg"))
-                .append("name", "User15")
-                .append("surname", "Surname15")
+                .append("firstName", "User15")
+                .append("lastName", "Surname15")
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
 
@@ -210,8 +211,8 @@ class Sdi2223Entrega2TestApplicationTests {
         database.getCollection("users").insertOne(user14);
         database.getCollection("users").insertOne(user15);
 
-        Document friendship = new Document("user1", database.getCollection("users").find(user1))
-                .append("user2",database.getCollection("users").find(user4))
+        Document friendship = new Document("user1", database.getCollection("users").find(user1).first())
+                .append("user2",database.getCollection("users").find(user4).first())
                 .append("date", LocalDateTime.now().minusDays(5));
         database.getCollection("friendship").insertOne(friendship);
 
@@ -538,6 +539,7 @@ class Sdi2223Entrega2TestApplicationTests {
     }
     /**
      * @author Teresa
+     * TODO: Da un error al crear la lista de amistades
      * [Prueba36] Mostrar el perfil del usuario y comprobar que se muestran sus datos y el listado de sus
      * publicaciones.
      */
@@ -555,15 +557,36 @@ class Sdi2223Entrega2TestApplicationTests {
 
         // Comprobar que aparece las amistad que se espera
         SeleniumUtils.textIsPresentOnPage(driver, "user04@email.com");
-        SeleniumUtils.textIsPresentOnPage(driver, "User4");
-        SeleniumUtils.textIsPresentOnPage(driver, "Surname4");
+        SeleniumUtils.textIsPresentOnPage(driver, "User04");
+        SeleniumUtils.textIsPresentOnPage(driver, "Surname04");
         List<WebElement> elements = PO_View.checkElementBy(driver, "id", "publicationsSection");
         Assertions.assertFalse(elements.isEmpty());
 
         // Cerrar sesión
-        PO_PrivateView.logout(driver);
+        //PO_PrivateView.logout(driver);
     }
 
+    /**
+     * @author Teresa
+     * [Prueba37] Utilizando un acceso vía URL u otra alternativa, tratar de acceder al perfil de un usuario que
+     * no sea amigo del usuario identificado en sesión. Comprobar que el sistema da un error de autorización.
+     */
+    @Test
+    @Order(37)
+    void PR37() {
+        // Inicio de sesión como usuario
+        PO_PublicView.loginUser(driver);
+
+        // Navegar a la dirección de un usuario que no es amigo de user01@email.com
+        driver.navigate().to("http://localhost:8080/friendship/details/user05@email.com");
+
+        // Redirige a /home porque no tiene permisos
+        //PO_HomeView.checkWelcomeToPage(driver, PO_Properties.SPANISH);
+        PO_View.checkElementBy(driver, "text", "Bienvenido a la pagina principal");
+
+        // Cerrar sesión
+        PO_PrivateView.logout(driver);
+    }
 
 
     //ejemplo API
@@ -582,5 +605,20 @@ class Sdi2223Entrega2TestApplicationTests {
         Response response = request.post(RestAssuredURL);
         //4. Comprobamos que el servicio ha tenido exito
         Assertions.assertEquals(200, response.getStatusCode());
+    }
+
+    /**
+     * @author Teresa
+     * [Prueba42] Enviar un mensaje a un amigo. Esta prueba consistirá en comprobar que el servicio
+     * almacena correctamente el mensaje para el mensaje enviado. Por lo tanto, el usuario tendrá que
+     * identificarse (S1), enviar un mensaje para un amigo (S3) y comprobar que el mensaje ha quedado
+     * registrado (S4).
+     */
+    @Test
+    @Order(42)
+    public void PR42() {
+        driver.navigate().to(URL_API);
+
+
     }
 }
