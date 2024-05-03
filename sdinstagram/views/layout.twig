@@ -2,7 +2,8 @@
 <html>
   <html lang="en">
   <head>
-    <title>{% block title %} SDInstagram {% endblock %}</title>
+    <title>SDI: {% block title %} SDInstagram {% endblock %}</title>
+    <link rel="icon" href="/images/logo.svg" type="image/x-icon"/>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
@@ -14,37 +15,38 @@
     <!-- NavBar -->
     <nav class="navbar navbar-inverse">
       <div class="container-fluid">
+
+        <img src="/images/logo.svg" alt="logo" style="width: 15%; margin-left: 2.5rem; margin-top: 1rem"/>
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-        <!-- <img src="/images/logo.png" alt="logo"/>  cambiar por logo de nuestra aplicación-->
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
           <ul class="nav navbar-nav">
-            <li id="myRequests" class="active"><a href="/friendships/requests">Friendships Requests</a></li>
+            <li id="myRequests" class=""><a href="/friendships/requests">Friendships Requests</a></li>
          </ul>
          <ul class="nav navbar-nav">
-              <li id="myFriends" class="active"><a href="/friendships">My friends</a></li>
+              <li id="myFriends" class=""><a href="/friendships">My friends</a></li>
           </ul>
           <ul class="nav navbar-nav">
-              <li id="myPublications" class="active"><a href="/publications">My Posts</a></li>
+              <li id="myPublications" class=""><a href="/publications">My Posts</a></li>
           </ul>
           <ul class="nav navbar-nav">
-              <li id="addPublication" class="active"><a href="/publications/add">New Post</a></li>
+              <li id="addPublication" class=""><a href="/publications/add">New Post</a></li>
           </ul>
           <ul class="nav navbar-nav">
-            <li id="mylistUsersSocial" class="active"><a href="/users/social">Social Network Users</a></li>
+            <li id="mylistUsersSocial" class=""><a href="/users/social">Social Network Users</a></li>
           </ul>
 
           {% if user.role == 'admin' %}
             <ul class="nav navbar-nav">
-              <li id="mylistUsers" class="active"><a href="/users/system">System Users</a></li>
+              <li id="mylistUsers" class=""><a href="/users/system">System Users</a></li>
             </ul>
             <ul class="nav navbar-nav">
-              <li id="mylistLogs" class="active"><a href="/logs">Logs</a></li>
+              <li id="mylistLogs" class=""><a href="/logs">Logs</a></li>
             </ul>
           {% endif %}
 
