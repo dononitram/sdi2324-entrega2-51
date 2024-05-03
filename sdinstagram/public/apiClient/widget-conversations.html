@@ -53,6 +53,7 @@
 
 
     const generateTable = conversations => {
+        $("#conversationsTableBody").empty();
         conversations.forEach(conversation => {
             const user = conversation.user2;
             const email = user.email;
@@ -60,7 +61,7 @@
             const surname = user.lastName;
             const id = conversation._id;
 
-            let row = `<tr>
+            let row = `<tr id="${id}">
                         <td>${email}</td>
                         <td>${name}</td>
                         <td>${surname}</td>
@@ -68,7 +69,7 @@
                         <td><button class="btn btn-danger" onClick="(deleteConversation('${id}'))">Delete</button></td>
 
                     </tr>`;
-
+                    
             $("#conversationsTableBody").append(row);
         });
     };
