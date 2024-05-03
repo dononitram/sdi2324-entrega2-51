@@ -1,12 +1,11 @@
 <div id="widget-messages" >
-    <h2 id="friendEmail">{{ user }}</h2>
-    <button class="btn" onclick="loadConversation(user)" >Actualizar</button>
+    <h2 id="friendEmail"></h2>
+    <button class="btn" onclick="loadConversation()" >Actualizar</button>
     <table class="table table-hover">
         <thead>
         <tr>
-            <th class="col-md-1"></th>
-            <th class="col-md-1"></th>
-            <th class="col-md-1"></th>
+            <th>Emisario mensaje</th>
+            <th>Receptor mensaje</th>
         </tr>
         </thead>
         <tbody id="messagesTableBody"></tbody>
@@ -19,15 +18,15 @@
     </div>
 </div>
 <script>
-    let conversation;
-    let user;
-    window.history.pushState("", "", "/apiclient/client.html?w=messages");
+    var conversation;
+    var email;
 
     function loadConversation() {
-        user = email;
-        $("#friendEmail").append(user);
+        email = localStorage.getItem("friend_email");
+        $("#friendEmail").empty();
+        $("#friendEmail").append(email);
         $.ajax ({
-            url: URLbase + "/conversation/" + user,
+            url: URLbase + "/conversation/" + email,
             type: "GET",
             data: {},
             dataType: 'json',
@@ -45,78 +44,54 @@
     }
     function updateMessagesTable(conversation) {
         $("#messagesTableBody").empty(); // Vaciar la tabla
-        for (let i = 0; i < conversation.messages.length; i++) {
-            if(conversation.messages[i].author.email===user) { // Checks if author is the person logged in
+        var messageCount;
+        if (conversation.messages === undefined || conversation.messages === null)  {
+            messageCount = 0;
+        } else {
+            messageCount = Object.keys(conversation.messages).length;
+        }
+        for (let i = 0; i < messageCount; i++) {
+            if(conversation.messages[i].author.email===localStorage.getItem("friend_email")) {
                 $("#messagesTableBody").append(
                     "<tr id=" +conversation.messages[i].message.messageId + ">" +
-                    "<td>" + "</td>" +
                     "<td>" + conversation.messages[i].message + "</td>" +
-                    "<td>" + conversation.messages[i].author.email + "</td>" +
+                    "<td>" + "</td>" +
                     "</tr>");
             } else {
                 $("#messagesTableBody").append(
                     "<tr id=" +conversation.messages[i].message.messageId + ">" +
-                    "<td>" + conversation.messages[i].author.email + "</td>" +
-                    "<td>" + conversation.messages[i].message + "</td>" +
                     "<td>" + "</td>" +
+                    "<td>" + conversation.messages[i].message + "</td>" +
                     "</tr>");
             }
         }
     }
 
-    /*setInterval(function() {
-        loadConversation(user);
-    }, 1000);*/
+
+    loadConversation();
+
 
     function sendMessage() {
+        email = localStorage.getItem("friend_email");
+
         $.ajax({
-            url: URLbase + "/conversation/",
+            url: URLbase + "/conversation",
             type: "POST",
             data:  {
-                friendEmail: $("#friendEmail").val(),
+                friendEmail: email,
                 message: $("#message").val()
             },
             dataType: "json",
             headers: {"token": token},
             success: function success(response) {
-                console.log(response.token); //Prueba
-                token = response.token;
-                //Cookies.set('token', token);
-                $("#div-message-errors").remove();
-                $("#main-container").load("widget-messages.html");
+                console.log(1);
+                loadConversation();
             },
             error: function(error) {
-                //Cookies.remove('token');
-                var message = "<div class='alert alert-danger'>";
-                message += error.responseJSON.error += "</div>";
-                $("#widget-messages")
-                    .prepend(message);
+                console.log(2);
+                console.log("token",token);
+                $("#main-container").load("widget-friends.html");
             }
         });
     }
-    /*$("#boton-send").click(function() {
-        $.ajax({
-            url: URLbase + "/conversation/",
-            type: "POST",
-            data:  {
-                friendEmail: $("#friendEmail").val(),
-                message: $("#message").val()
-            },
-            dataType: "json",
-            headers: {"token": token},
-            success: function success(response) {
-                console.log(response.token); //Prueba
-                token = response.token;
-                //Cookies.set('token', token);
-                $("#main-container").load("widget-messages.html");
-            },
-            error: function(error) {
-                //Cookies.remove('token');
-                var message = "<div class='alert alert-danger'>";
-                message += error.responseJSON.error += "</div>";
-                $("#widget-messages")
-                    .prepend(message);
-            }
-        });
-    });*/
 </script>
