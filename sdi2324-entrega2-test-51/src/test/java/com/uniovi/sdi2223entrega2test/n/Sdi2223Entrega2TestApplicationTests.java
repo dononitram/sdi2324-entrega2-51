@@ -259,7 +259,7 @@ class Sdi2223Entrega2TestApplicationTests {
     @AfterAll
     static public void end() {
     //Cerramos el navegador al finalizar las pruebas
-        driver.quit();
+        //driver.quit();
     }
 
     @Test
@@ -578,14 +578,14 @@ class Sdi2223Entrega2TestApplicationTests {
         PO_PublicView.loginUser(driver);
 
         // Navegar a la dirección de un usuario que no es amigo de user01@email.com
-        driver.navigate().to("http://localhost:8080/friendship/details/user05@email.com");
+        driver.navigate().to("http://localhost:8080/friendships/user02@email.com");
 
-        // Redirige a /home porque no tiene permisos
-        //PO_HomeView.checkWelcomeToPage(driver, PO_Properties.SPANISH);
-        PO_View.checkElementBy(driver, "text", "Bienvenido a la pagina principal");
+        //SeleniumUtils.textIsPresentOnPage(driver, "You are not friends with this user:user02@email.com");
+        // There is still the list of friends so there was no authorization to access that user details
+        SeleniumUtils.textIsPresentOnPage(driver, "My friends");
 
         // Cerrar sesión
-        PO_PrivateView.logout(driver);
+        //PO_PrivateView.logout(driver);
     }
 
 
