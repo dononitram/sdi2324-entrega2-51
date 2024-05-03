@@ -6,6 +6,9 @@ module.exports = {
     init: function (app, dbClient, publicationRepository, friendshipRepository, friendshipRequestRepository) {
         this.dbClient = dbClient;
         this.app = app;
+        this.publicationRepository = publicationRepository;
+        this.friendshipRepository = friendshipRepository;
+        this.friendshipRequestRepository = friendshipRequestRepository;
     },
     findUser: async function (filter, options) {
         try {
@@ -100,14 +103,12 @@ module.exports = {
     deleteUsersData: async function (userIds) {
         try {
 
-            //TODO: Enable this
-            // Delete publications
-            //await publicationRepository.deletePublicationsOfUsers(userIds);
+            //TODO:
             //Delete friendships
             //Delete friendship requests
-            // Delete users
-            const response = await this.deleteUsers(userIds);
 
+            await this.publicationRepository.deletePublicationsOfUsers(userIds);
+            const response = await this.deleteUsers(userIds);
             return response;
         } catch (error) {
             throw (error);
