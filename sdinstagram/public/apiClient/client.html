@@ -25,6 +25,9 @@
             <ul class="nav navbar-nav" id="barra-menu">
                 <li><a onclick=loadFriends() id="myFriends">Friends</a></li>
             </ul>
+            <ul class="nav navbar-nav" id="barra-menu">
+                <li><a onclick=loadConversations() id="myChats">Chats</a></li>
+            </ul>
             <ul class="nav navbar-nav navbar-right" id="barra-menu-derecha">
                 <!-- Opciones de menú aqui -->
             </ul>
@@ -57,6 +60,10 @@
 
     function widgetConversation(){
         $( "#main-container" ).load( "widget-messages.html");
+    }
+
+    function loadConversations(){
+        $( "#main-container" ).load( "widget-conversations.html");
     }
 
 </script>
