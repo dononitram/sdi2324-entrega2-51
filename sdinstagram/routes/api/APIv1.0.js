@@ -402,7 +402,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
         }
     });
     /**
-     * Número de mensajes no leídos de una conversación dado su id
+     * Mensajes no leídos de una conversación dado su id
      */
     app.get('/api/v1.0/messages/unread/:id/', async function (req, res){
         try {
@@ -412,8 +412,8 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                 res.status(404).json({ error: "Conversation not found" });
             let messages = conversation.messages;
             let mensajesNoLeidos = messages.filter(mensaje => mensaje.read !== true);
-            let countMensajesNoLeidos = mensajesNoLeidos.length;
-            console("asd");
+            res.status(200);
+            res.json({ mensajes: mensajesNoLeidos });
         } catch (e) {
             res.status(500).json({ error: "Error while finding conversation: " + e });
         }
