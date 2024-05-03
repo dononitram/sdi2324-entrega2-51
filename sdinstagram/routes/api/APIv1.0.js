@@ -368,7 +368,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                 res.json({error: "Invalid ID or message doesn't exist, the message couldn't be marked as read."});
                 return;
             }
-            //Sacar el index del mensaje en cuestión
+            //Index of the message
             let index = conversation.messages.findIndex(message => message.messageId === messageId);
             let filter = {_id: conversation._id};
             //This option don´t create a new message if it doesen't exist
@@ -396,7 +396,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                 return;
             });
         } catch (e){
-            res.status(500);//Revisar código
+            res.status(500);
             res.json({error: "An error ocurred marking as read a message: "+e});
             return;
         }

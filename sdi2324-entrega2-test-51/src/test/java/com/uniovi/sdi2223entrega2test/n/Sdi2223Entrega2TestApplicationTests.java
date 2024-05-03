@@ -24,6 +24,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -184,6 +185,8 @@ class Sdi2223Entrega2TestApplicationTests {
                 .append("birthdate","2024-04-30")
                 .append("role", "user");
 
+
+
         database.getCollection("users").insertOne(admin1);
         database.getCollection("users").insertOne(user1);
         for(int i = 0; i < 10; i++) {
@@ -219,6 +222,28 @@ class Sdi2223Entrega2TestApplicationTests {
                 .append("date", LocalDateTime.now().minusDays(6));
         database.getCollection("friendship").insertOne(friendship);
 
+        //Mensajes
+        List<Document> messages = new ArrayList<>();
+        //Adding messages
+        Document message1 = new Document("author", database.getCollection("users").find(user1).first())
+                .append("date", LocalDateTime.now().minusDays(5))
+                .append("text", "Que tal estás?")
+                .append("read", true)
+                .append("messageId", "1");
+        messages.add(message1);
+
+        Document message2 = new Document("author", database.getCollection("users").find(user4).first())
+                .append("date", LocalDateTime.now().minusDays(4))
+                .append("text", "Mal, haciendo tests")
+                .append("read", false)
+                .append("messageId", "2");
+        messages.add(message2);
+
+        //Conversations
+        Document conversation = new Document("user1", database.getCollection("users").find(user1).first())
+                .append("user2",database.getCollection("users").find(user4).first())
+                .append("messages",messages);
+        database.getCollection("conversations").insertOne(conversation);
     }
 
     public String getFormattedDate(int i) {
