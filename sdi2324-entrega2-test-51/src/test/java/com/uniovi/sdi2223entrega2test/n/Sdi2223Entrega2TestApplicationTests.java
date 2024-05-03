@@ -6,6 +6,7 @@ import com.mongodb.client.MongoDatabase;
 import com.uniovi.sdi2223entrega2test.n.pageobjects.*;
 import com.uniovi.sdi2223entrega2test.n.util.SeleniumUtils;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.bson.codecs.jsr310.LocalDateCodec;
@@ -27,6 +28,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.bson.conversions.Bson;
+import com.mongodb.client.model.Filters;
+import static io.restassured.RestAssured.*;
+import static io.restassured.matcher.RestAssuredMatchers.*;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class Sdi2223Entrega2TestApplicationTests {
@@ -356,7 +365,7 @@ class Sdi2223Entrega2TestApplicationTests {
     @Order(11)
     public void PR11() {
         final String RestAssuredURL = "http://localhost:8081/api/v1.0/songs";
-        Response response = RestAssured.get(RestAssuredURL);
+        Response response = get(RestAssuredURL);
         Assertions.assertEquals(403, response.getStatusCode());
     }
 
@@ -674,5 +683,61 @@ class Sdi2223Entrega2TestApplicationTests {
 
         //TODO: Check that message is sent
 
+    }
+
+    /**
+     * --PRUEBA FUNCIONAL--
+     * @author Pedro
+     * [Prueba46] Marcar como leído un mensaje de ID conocido. Esta prueba consistirá en comprobar que
+     * el mensaje marcado de ID conocido queda marcado correctamente a true como leído. Por lo tanto,
+     * se tendrá primero que invocar al servicio de identificación (S1), solicitar el servicio de marcado
+     * (S7), comprobando que el mensaje marcado ha quedado marcado a true como leído (S4).
+     */
+    @Test
+    @Order(46)
+    public void PR46() {
+        RestAssured.baseURI = "http://localhost:8080"; // Cambia esto por la URL de tu servicio
+        mongoClient = MongoClients.create("mongodb://localhost:27017");
+        database = mongoClient.getDatabase("sdinstagram");
+
+        //Hago el login
+        given().
+                contentType("application/json").
+                body("{\"email\":\"user01@email.com\", \"password\":\"Us3r@1-PASSW\"}").
+        when().
+                post("/api/v1.0/users/login").
+        then().
+                body("authenticated", equalTo(true));
+        //Compruebo que el mensaje está no leido
+
+        //Esto saca de la BD el atr read del mensaje que voy a marcar leido
+        Document firstConversation = database.getCollection("conversations").find().first();
+        List<Document> mensajes = firstConversation.getList("messages", Document.class);
+        Document mensaje = mensajes.get(1);
+        Boolean leido = mensaje.getBoolean("read");
+        assertEquals(false, leido);
+
+        //Lo marco como leido y veo que el put salió correcto
+        RestAssured.baseURI = "http://localhost:8080";
+        given().
+                pathParams("messageId", 2).
+        when().
+                put("/api/v1.0/messages/read/{messageId}").
+        then().
+                body("message", equalTo("Message marked as read correctly."));
+
+        mongoClient.close();
+        //Compruebo que ahora esa propiedad read está puesta a true, es decir se leyó
+        mongoClient = MongoClients.create("mongodb://localhost:27017");
+        database = mongoClient.getDatabase("sdinstagram");
+
+        firstConversation = database.getCollection("conversations").find().first();
+        mensajes = firstConversation.getList("messages", Document.class);
+        mensaje = mensajes.get(1);
+        leido = mensaje.getBoolean("read");
+        assertEquals(true, leido);//Esta vez a true
+
+        //cierra la conexión
+        mongoClient.close();
     }
 }
