@@ -180,64 +180,77 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
         }
     });
 
-    app.get('/friendships/:id', function (req, res) {
+    app.get('/friendships/:email', function (req, res) {
         let connectedUser = req.session.user;
         if (!connectedUser || !connectedUser._id) {
             res.send("Error you have to be logged to see users");
             return;
         }
-        let filter = {_id: new ObjectId(req.params.id)};
+        let filter = {email: req.params.email};
         let options = {};
         usersRepository.findUser(filter, options).then(friend => {
-            let filter =
-                {
-                    $or: [
-                        {"user1._id": new ObjectId(friend._id)},
-                        {"user2._id": new ObjectId(friend._id)}
-                    ]
-                };
-            let options = {};
+            if(typeof friend !== "undefined" &&  friend !== null) {
+                let filter =
+                    {
+                        $or: [
+                            {"user1._id": new ObjectId(friend._id)},
+                            {"user2._id": new ObjectId(friend._id)}
+                        ]
+                    };
+                let options = {};
 
-        friendshipRepository.findFriendship(filter, options).then(friendship => {
-            let filter;
-            let friend;
-            if(friendship.user1._id.toString() !== req.session.user._id) {
-                filter = {"author._id": friendship.user1._id.toString()};
-                friend = friendship.user1;
-            } else {
-                filter = {"author._id": friendship.user2._id.toString()};
-                friend = friendship.user2;
-            }
-            let options = {sort: {title:1}};
-            let page = parseInt(req.query.page); // Es String !!!
-            if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
-                //Param can be inexistent
-                page = 1;
-            }
-            publicationsRepository.getPublicationsPg(filter, options, page)
-                .then(result => {
-                    let lastPage = result.total / 4;
-                    if (result.total % 4 > 0) { // Sobran decimales
-                        lastPage = lastPage + 1;
-                    }
-                    let pages = []; // paginas mostrar
-                    for (let i = page - 2; i <= page + 2; i++) {
-                        if (i > 0 && i <= lastPage) {
-                            pages.push(i);
+                friendshipRepository.findFriendship(filter, options).then(friendship => {
+                    if(typeof friendship !== "undefined" &&  friendship !== null) {
+                        let filter;
+                        let friend;
+                        if(friendship.user1._id.toString() !== req.session.user._id) {
+                            filter = {"author._id": friendship.user1._id.toString()};
+                            friend = friendship.user1;
+                        } else {
+                            filter = {"author._id": friendship.user2._id.toString()};
+                            friend = friendship.user2;
                         }
+                        let options = {sort: {title:1}};
+                        let page = parseInt(req.query.page); // Es String !!!
+                        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
+                            //Param can be inexistent
+                            page = 1;
+                        }
+                        publicationsRepository.getPublicationsPg(filter, options, page)
+                            .then(result => {
+                                let lastPage = result.total / 4;
+                                if (result.total % 4 > 0) { // Sobran decimales
+                                    lastPage = lastPage + 1;
+                                }
+                                let pages = []; // paginas mostrar
+                                for (let i = page - 2; i <= page + 2; i++) {
+                                    if (i > 0 && i <= lastPage) {
+                                        pages.push(i);
+                                    }
+                                }
+
+                                console.log(result.publications)
+                                res.render("friendships/friend.twig",
+                                    { friendship:friendship, friend:friend, publications:result.publications,
+                                        pages: pages, currentPage: page, user: req.session.user});
+                            })
+                            .catch(error => {
+                                res.render("friendships/friend.twig", {friend: friend});
+                            })
+                    } else {
+                        //res.send("Error: you are not friends with this user");
+                        res.redirect("/friendships/" + "?message=You are not friends with this user: "+friend.email + "&messageType=alert-danger");
+                        return;
                     }
 
-                    console.log(result.publications)
-                    res.render("friendships/friend.twig",
-                        { friendship:friendship, friend:friend, publications:result.publications,
-                            pages: pages, currentPage: page, user: req.session.user});
+                }).catch(error => {
+                    res.send("Error while looking for friendship " + error)
                 })
-                .catch(error => {
-                    res.render("friendships/friend.twig", {friend: friend});
-                })
-        }).catch(error => {
-            res.send("Error while looking for friendship " + error)
-        })
+            } else {
+                res.redirect("/friendships/" + "?message=Friend does not exist" + "&messageType=alert-danger");
+                return;
+            }
+
         });
     });
 }
