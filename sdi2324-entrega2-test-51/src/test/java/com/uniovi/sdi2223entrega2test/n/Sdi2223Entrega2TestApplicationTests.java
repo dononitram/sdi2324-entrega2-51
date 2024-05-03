@@ -3,11 +3,7 @@ package com.uniovi.sdi2223entrega2test.n;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
-import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_PrivateView;
-import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_PublicView;
-import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_PublicationView;
-import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_Pagination;
-import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_View;
+import com.uniovi.sdi2223entrega2test.n.pageobjects.*;
 import com.uniovi.sdi2223entrega2test.n.util.SeleniumUtils;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -211,12 +207,16 @@ class Sdi2223Entrega2TestApplicationTests {
         database.getCollection("users").insertOne(user14);
         database.getCollection("users").insertOne(user15);
 
+        //Friendships
         Document friendship = new Document("user1", database.getCollection("users").find(user1).first())
                 .append("user2",database.getCollection("users").find(user4).first())
                 .append("date", LocalDateTime.now().minusDays(5));
         database.getCollection("friendship").insertOne(friendship);
+        friendship = new Document("user1", database.getCollection("users").find(user1).first())
+                .append("user2",database.getCollection("users").find(user5).first())
+                .append("date", LocalDateTime.now().minusDays(6));
+        database.getCollection("friendship").insertOne(friendship);
 
-        //publicaciones
     }
 
     public String getFormattedDate(int i) {
@@ -539,7 +539,6 @@ class Sdi2223Entrega2TestApplicationTests {
     }
     /**
      * @author Teresa
-     * TODO: Da un error al crear la lista de amistades
      * [Prueba36] Mostrar el perfil del usuario y comprobar que se muestran sus datos y el listado de sus
      * publicaciones.
      */
@@ -609,6 +608,26 @@ class Sdi2223Entrega2TestApplicationTests {
 
     /**
      * @author Teresa
+     * [Prueba41] Mostrar el listado de amigos para dicho usuario y comprobar que se muestran los amigos
+     * del usuario autenticado. Esta prueba implica invocar a dos servicios: S1 y S2
+     */
+    @Test
+    @Order(41)
+    public void PR41() {
+        driver.navigate().to(URL_API);
+        PO_PublicView.loginUser(driver);
+
+        // Acceder al listado de amistades
+        PO_PrivateView.click(driver, "id", "myFriends", 0);
+        SeleniumUtils.textIsPresentOnPage(driver, "user04@email.com");
+        SeleniumUtils.textIsPresentOnPage(driver, "user05@email.com");
+
+        //TODO: Check that message is sent
+
+    }
+
+    /**
+     * @author Teresa
      * [Prueba42] Enviar un mensaje a un amigo. Esta prueba consistirá en comprobar que el servicio
      * almacena correctamente el mensaje para el mensaje enviado. Por lo tanto, el usuario tendrá que
      * identificarse (S1), enviar un mensaje para un amigo (S3) y comprobar que el mensaje ha quedado
@@ -618,7 +637,15 @@ class Sdi2223Entrega2TestApplicationTests {
     @Order(42)
     public void PR42() {
         driver.navigate().to(URL_API);
+        PO_PublicView.loginUser(driver);
 
+        // Acceder al listado de amistades
+        PO_PrivateView.click(driver, "id", "myFriends", 0);
+        PO_PrivateView.click(driver, "text", "Conversation", 0);
+
+        PO_ConversationView.sendMessage(driver, "Hola!");
+
+        //TODO: Check that message is sent
 
     }
 }
