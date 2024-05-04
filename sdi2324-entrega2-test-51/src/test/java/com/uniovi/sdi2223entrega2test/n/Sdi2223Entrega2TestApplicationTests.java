@@ -45,9 +45,9 @@ class Sdi2223Entrega2TestApplicationTests {
     //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
     //Peter :(
-    //static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
+    static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
     //Teresa :)
-    static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
+    //static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
     //David
     //static String Geckodriver = "C:\\Users\\david\\Desktop\\Uni\\3\\2doSem\\SDI\\PL\\Spring\\PL6\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
 

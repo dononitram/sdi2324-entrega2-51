@@ -50,20 +50,24 @@
             messageCount = Object.keys(conversation.messages).length;
         }
         for (let i = 0; i < messageCount; i++) {
-            if(conversation.messages[i].author.email===localStorage.getItem("friend_email")) {
+            if(conversation.messages[i].author.email===localStorage.getItem("friend_email")) {//The friend
                 $("#messagesTableBody").append(
                     "<tr id=" +conversation.messages[i].messageId + ">" +
                     "<td style=\"text-align: right;\">" + conversation.messages[i].author.firstName + ":" + "</td>" +
                     "<td style=\"text-align: left;\">" + conversation.messages[i].text + "</td>" +
                     "<td>" + "</td>" +
                     "</tr>");
-            } else {
+            } else {//The user logged in
+                //Check read from the other user
+                let strLeido = "";//Only readed if it is, otherwise empty
+                if(conversation.messages[i].read) strLeido = " - leído";
                 $("#messagesTableBody").append(
                     "<tr id=" +conversation.messages[i].messageId + ">" +
                     "<td>" + "</td>" +
-                    "<td style=\"text-align: right;\">" + conversation.messages[i].text + "</td>" +
+                    "<td style=\"text-align: right;\">" + conversation.messages[i].text + strLeido + "</td>" +
                     "<td style=\"text-align: left;\">" + ":" + conversation.messages[i].author.firstName + "</td>" +
                     "</tr>");
+
             }
         }
     }
