@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class Sdi2223Entrega2TestApplicationTests {
     static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
+    //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
     //Peter :(
     //static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
@@ -645,7 +645,7 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
-     * @author Teresa
+     *
      * [Prueba41] Mostrar el listado de amigos para dicho usuario y comprobar que se muestran los amigos
      * del usuario autenticado. Esta prueba implica invocar a dos servicios: S1 y S2
      */
@@ -666,17 +666,41 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(42)
     public void PR42() {
-        driver.navigate().to(URL_API);
-        PO_PublicView.loginUser(driver);
+        // S1: Start session and get autentificated
+        final String RestAssuredURL = "http://localhost:8080/api/v1.0/users/login";
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("email", "user01@email.com");
+        requestParams.put("password", "Us3r@1-PASSW");
+        request.header("Content-Type", "application/json");
+        request.body(requestParams.toJSONString());
+        Response response = request.post(RestAssuredURL);
+        Assertions.assertEquals(200, response.getStatusCode());
 
-        // Acceder al listado de amistades
-        PO_PrivateView.click(driver, "id", "myFriends", 0);
-        PO_PrivateView.click(driver, "text", "Conversation", 0);
+        // get session token
+        String token = response.jsonPath().getString("token");
 
-        PO_ConversationView.sendMessage(driver, "Hola!");
+        // S3: Send message to a friend
+        final String RestAssuredURL2 = "http://localhost:8080/api/v1.0/conversation";
+        RequestSpecification request2 = RestAssured.given();
+        request2.header("token", token); // Stablish token in header
+        request2.header("Content-Type", "application/json");
+        // Stablish body to send a message
+        requestParams = new JSONObject();
+        requestParams.put("friendEmail", "user05@email.com");
+        requestParams.put("message", "Testing");
+        request2.body(requestParams.toJSONString());
+        Response response2 = request2.post(RestAssuredURL2);
+        Assertions.assertEquals(201, response2.getStatusCode());
 
-        //TODO: Check that message is sent
-
+        // S4: Check that conversation is updated
+        final String RestAssuredURL3 = "http://localhost:8080/api/v1.0/conversation/user05@email.com";
+        RequestSpecification request3 = RestAssured.given();
+        request3.header("token", token); // Stablish session token in header
+        request3.header("Content-Type", "application/json");
+        Response response3 = request3.get(RestAssuredURL3);
+        Assertions.assertEquals(200, response3.getStatusCode());
+        Assertions.assertTrue(response3.getBody().asString().contains("Testing"));
     }
 
     /**
@@ -690,7 +714,6 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(43)
     public void PR43() {
-
         // Iniciamos sesión
         final String RestAssuredURL = "http://localhost:8080/api/v1.0/users/login";
         RequestSpecification request = RestAssured.given();
@@ -797,5 +820,25 @@ class Sdi2223Entrega2TestApplicationTests {
         PO_PrivateView.click(driver, "id", "myFriends", 0);
         SeleniumUtils.textIsPresentOnPage(driver, "user04@email.com");
         SeleniumUtils.textIsPresentOnPage(driver, "user05@email.com");
+    }
+
+    /**
+     * [Prueba51] Sobre listado de amigos (a elección de desarrollador), enviar un mensaje a un amigo
+     * concreto. Se abriría dicha conversación por primera vez. Comprobar que el mensaje aparece en el
+     * listado de mensajes.
+     */
+    @Test
+    @Order(51)
+    public void PR51() {
+        driver.navigate().to(URL_API);
+        PO_PublicView.loginUser(driver);
+
+        // Acceder al listado de amistades
+        PO_PrivateView.click(driver, "id", "myFriends", 0);
+        PO_PrivateView.click(driver, "text", "Conversation", 0);
+
+        PO_ConversationView.sendMessage(driver, "Hola!");
+
+        //TODO: Check that message is sent
     }
 }
