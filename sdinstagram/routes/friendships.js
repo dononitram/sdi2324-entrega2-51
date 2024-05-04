@@ -153,7 +153,7 @@ module.exports = function(app, friendshipRepository, friendshipRequestRepository
             })
             for (const friend of filteredFriendship) {
                 let filter2 = {
-                    "author._id": friend._id.toString()
+                    "author._id": friend._id
                 };
                 const publication = await publicationsRepository.getLastPublicationOf(filter2, {});
                 if (publication.length === 0) {
