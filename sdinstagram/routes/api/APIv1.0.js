@@ -183,12 +183,17 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
         try {
             if (typeof res.user === "undefined" || res.user === null) {
                 res.status(409);
-                res.json({ error: "Cannot create conversation. User not present" });
+                res.json({ error: "Cannot update conversation. User not present" });
                 return;
             }
             if (typeof req.body.friendEmail === "undefined" || req.body.friendEmail === null) {
                 res.status(409);
-                res.json({ error: "Cannot create conversation. Incorrect friend id" });
+                res.json({ error: "Cannot update conversation. Incorrect friend id" });
+                return;
+            }
+            if (typeof req.body.message === "undefined" || req.body.message === null || req.body.message.length==0) {
+                res.status(409);
+                res.json({ error: "Cannot update conversation. Message cannot be empty" });
                 return;
             }
             usersRepository.findUser({ email: res.user }, {}).then(user1 => {
