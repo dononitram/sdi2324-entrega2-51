@@ -181,9 +181,8 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
     });
 
     app.post('/api/v1.0/conversation', function (req, res) {
+        console.log("POST CONVERSATION",res.user, req.body);
         try {
-            //let user1 = res.user;
-            console.log("USER: ", res.user);
             if (typeof res.user === "undefined" || res.user === null) {
                 res.status(409);
                 res.json({ error: "Cannot create conversation. User not present" });
