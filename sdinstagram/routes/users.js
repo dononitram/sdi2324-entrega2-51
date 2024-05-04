@@ -292,6 +292,14 @@ module.exports = function (app, usersRepository, logsRepository) {
 
 }
 
+// validate
+function validate(errors, condition, message) {
+  if (!condition) {
+    errors.push("- " + message);
+  }
+}
+
+
 // Function to validate form fields for signup
 async function validateSignup(req, res) {
 
