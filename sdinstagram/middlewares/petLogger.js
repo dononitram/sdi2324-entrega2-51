@@ -15,7 +15,7 @@ loggerRouter = function (logsRepository) {
         })
         .catch(error => {
             console.log(error);
-            console.log("No se ha podido registrar la peticion " + req.originalUrl)
+            console.log("Petition could not be registered " + req.originalUrl)
             next();
         });
         
