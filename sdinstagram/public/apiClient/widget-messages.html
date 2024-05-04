@@ -44,36 +44,30 @@
     function updateMessagesTable(conversation) {
         $("#messagesTableBody").empty(); // Vaciar la tabla
         var messageCount;
-        if (typeof conversation === "undefined" || conversation === null)  {
+        if (typeof conversation === "undefined" || conversation === null) {
             messageCount = 0;
         } else {
             messageCount = Object.keys(conversation.messages).length;
         }
         for (let i = 0; i < messageCount; i++) {
-            if(conversation.messages[i].author.email===localStorage.getItem("friend_email")) {//The friend
+            if (conversation.messages[i].author.email === localStorage.getItem("friend_email")) {//The friend
                 //Read messages from the other person that weeren't read
-                if(!conversation.messages[i].read){//Only if it wasn't read
-                    await
+                if (!conversation.messages[i].read) {//Only if it wasn't read
+                    let messageId = conversation.messages[i].messageId;
+                    $.ajax({
+                        url: URLbase + `/messages/read/${messageId}`,
+                        type: "PUT",
+                        success: response => {
+                            //On succes continue
+                        },
+                        error: error => {
+                            $("#widget-conversations")
+                                .prepend("<div class='alert alert-danger'>Error updating messages marking as read</div>");
+                        }
+                    });
                 }
-                $.ajax ({
-                    url: URLbase + "/conversation/" + email,
-                    type: "GET",
-                    data: {},
-                    dataType: 'json',
-                    headers: {"token": token},
-                    success: function (response) {
-                        conversation = response.conversation;
-                        updateMessagesTable(conversation);
-                    },
-                    error: function (error) {
-                        console.log("token",token);
-                        $("#main-container").load("widget-messages.html");
-                    }
-                });
-
-
                 $("#messagesTableBody").append(
-                    "<tr id=" +conversation.messages[i].messageId + ">" +
+                    "<tr id=" + conversation.messages[i].messageId + ">" +
                     "<td style=\"text-align: right;\">" + conversation.messages[i].author.firstName + ":" + "</td>" +
                     "<td style=\"text-align: left;\">" + conversation.messages[i].text + "</td>" +
                     "<td>" + "</td>" +
@@ -81,9 +75,9 @@
             } else {//The user logged in
                 //Check read from the other user and incluide it in my messages
                 let strLeido = "";//Only readed if it is, otherwise empty
-                if(conversation.messages[i].read) strLeido = " - leído";
+                if (conversation.messages[i].read) strLeido = " - leído";
                 $("#messagesTableBody").append(
-                    "<tr id=" +conversation.messages[i].messageId + ">" +
+                    "<tr id=" + conversation.messages[i].messageId + ">" +
                     "<td>" + "</td>" +
                     "<td style=\"text-align: right;\">" + conversation.messages[i].text + strLeido + "</td>" +
                     "<td style=\"text-align: left;\">" + ":" + conversation.messages[i].author.firstName + "</td>" +
@@ -123,7 +117,19 @@
         });
     }
 
-    function  async markAsRead(id){
-
-    }
+    const markAsRead = async (messageId) => {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: URLbase + `/messages/read/${messageId}`,
+                type: "PUT",
+                success: response => {
+                    //On succes continue
+                },
+                error: error => {
+                    $("#widget-conversations")
+                        .prepend("<div class='alert alert-danger'>Error updating messages marking as read</div>");
+                }
+            });
+        });
+    };
 </script>
