@@ -303,60 +303,100 @@ class Sdi2223Entrega2TestApplicationTests {
         //driver.quit();
     }
 
+    /**
+     * [Prueba01] Registro de Usuario con datos válidos.
+     * @author Donato
+     */
     @Test
     @Order(1)
     void PR01() {
         Assertions.assertTrue(true, "PR01 sin hacer");
     }
 
+    /**
+     * [Prueba02] Registro de Usuario con datos inválidos (email vacío, nombre vacío, apellidos vacíos).
+     * @author Donato
+     */
     @Test
     @Order(2)
     public void PR02() {
         Assertions.assertTrue(true, "PR02 sin hacer");
     }
 
+    /**
+     * [Prueba03] Registro de Usuario con datos inválidos (repetición de contraseña inválida).
+     * @author Donato
+     */
     @Test
     @Order(3)
     public void PR03() {
         Assertions.assertTrue(true, "PR03 sin hacer");
     }
 
+    /**
+     * [Prueba04] Registro de Usuario con datos inválidos (email existente).
+     * @author Donato
+     */
     @Test
     @Order(4)
     public void PR04() {
         Assertions.assertTrue(true, "PR04 sin hacer");
     }
 
+    /**
+     * [Prueba05] Inicio de sesión con datos válidos (administrador).
+     * @author Donato
+     */
     @Test
     @Order(5)
     public void PR05() {
         Assertions.assertTrue(true, "PR05 sin hacer");
     }
 
+    /**
+     * [Prueba06] Inicio de sesión con datos válidos (usuario estándar).
+     * @author Donato
+     */
     @Test
     @Order(6)
     public void PR06() {
         Assertions.assertTrue(true, "PR06 sin hacer");
     }
 
+    /**
+     * [Prueba07] Inicio de sesión con datos inválidos (usuario estándar, email existente y contraseña incorrecta).
+     * @author Donato
+     */
     @Test
     @Order(7)
     public void PR07() {
         Assertions.assertTrue(true, "PR07 sin hacer");
     }
 
+    /**
+     * [Prueba08] Inicio de sesión con datos inválidos (usuario estándar, campo email y contraseña vacíos).
+     * @author Donato
+     */
     @Test
     @Order(8)
     public void PR08() {
         Assertions.assertTrue(true, "PR08 sin hacer");
     }
 
+    /**
+     * [Prueba09] Hacer click en la opción de salir de sesión y comprobar que se muestra el mensaje "Ha cerrado sesión correctamente" y se redirige a la página de inicio de sesión (Login).
+     * @author Donato
+     */
     @Test
     @Order(9)
     public void PR09() {
         Assertions.assertTrue(true, "PR09 sin hacer");
     }
 
+    /**
+     * [Prueba10] Comprobar que el botón de cerrar sesión no está visible si el usuario no está autenticado.
+     * @author Donato
+     */
     @Test
     @Order(10)
     public void PR10() {
@@ -518,6 +558,77 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
+     * [Prueba28] Intentar acceder sin estar autenticado a la opción de listado de usuarios. Se deberá volver al formulario de login.
+     * @author Donato
+     */
+    @Test
+    @Order(28)
+    public void PR28() {
+        //Intento acceder a la lista de usuarios sin estar autenticado
+        driver.navigate().to("http://localhost:8080/users/list");
+        //Compruebo que me redirige al login
+        SeleniumUtils.textIsPresentOnPage(driver, "Login");
+    }
+
+    /**
+     * [Prueba29] Intentar acceder sin estar autenticado a la opción de listado de invitaciones de amistad recibida de un usuario estandar. Se deverá voler al formulario de login.
+     * @author Donato
+     */
+    @Test
+    @Order(29)
+    public void PR29() {
+        //Intento acceder a la lista de invitaciones de amistad sin estar autenticado
+        driver.navigate().to("http://localhost:8080/friendships/list");
+        //Compruebo que me redirige al login
+        SeleniumUtils.textIsPresentOnPage(driver, "Login");
+    }
+
+    /**
+     * [Prueba30]  Estando autenticado como usuario estándar intentar acceder a una opción disponible solo para usuarios administradores (Añadir menú de auditoria (visualizar logs)). Se deberá indicar un mensaje de acción prohibida. 
+     * @author Donato
+     */
+    @Test
+    @Order(30)
+    public void PR30() {
+        //Inicio sesión como usuario estándar
+        PO_PublicView.loginSpecificUser("", "", driver);
+        //Intento acceder a la opción de añadir menú de auditoria
+        driver.navigate().to("http://localhost:8080/auditor/list");
+        //Compruebo que me indica que no tengo permisos
+        SeleniumUtils.textIsPresentOnPage(driver, "You do not have permission to access this page.");
+    }
+
+    /**
+     * [Prueba31] Estando autenticado como usuario administrador visualizar todos los logs generados en una serie de interacciones. Esta prueba deberá generar al menos dos interacciones de cada tipo y comprobar que el listado incluye los logs correspondientes. 
+     * @author Donato
+     */
+    @Test
+    @Order(31)
+    public void PR31() {
+        //Inicio sesión como usuario administrador
+        PO_PublicView.loginSpecificUser("", "", driver);
+        //Intento acceder a la opción de añadir menú de auditoria
+        driver.navigate().to("http://localhost:8080/auditor/list");
+        //Compruebo que me indica que no tengo permisos
+        SeleniumUtils.textIsPresentOnPage(driver, "You do not have permission to access this page.");
+    }
+
+    /**
+     * [Prueba32] Estando autenticado como usuario administrador, ir a visualización de logs y filtrar por un tipo, pulsar el botón/enlace borrar logs y comprobar que se eliminan los logs del tipo seleccionado, de la base de datos.
+     * @author Donato
+     */
+    @Test
+    @Order(32)
+    public void PR32() {
+        //Inicio sesión como usuario estándar
+        PO_PublicView.loginSpecificUser("", "", driver);
+        //Intento acceder a la opción de añadir menú de auditoria
+        driver.navigate().to("http://localhost:8080/publications/list");
+        //Compruebo que me indica que no tengo permisos
+        SeleniumUtils.textIsPresentOnPage(driver, "You do not have permission to access this page.");
+    }
+
+    /**
      * @author Teresa
      * [Prueba33] Ir al formulario crear publicaciones, rellenarla con datos válidos y pulsar el botón Submit.
      * Comprobar que la publicación sale en el listado de publicaciones de dicho usuario.
@@ -640,15 +751,61 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
+     * [Prueba38] Inicio de sesión con datos válidos.
+     * @author Donato
+     */
+    @Test
+    @Order(38)
+    public void PR38() {
+        //Intento de inicio de sesión con datos inválidos
+        PO_PublicView.loginSpecificUser("", "", driver);
+        //Compruebo que no se ha iniciado sesión
+        SeleniumUtils.textIsPresentOnPage(driver, "Login");
+    }
+
+    /**
      *
-     * [Prueba41] Mostrar el listado de amigos para dicho usuario y comprobar que se muestran los amigos
-     * del usuario autenticado. Esta prueba implica invocar a dos servicios: S1 y S2
+     * [Prueba39] Inicio de sesión con datos inválidos (email existente, pero contraseña incorrecta).
+     * @author Donato
+     */
+    @Test
+    @Order(39)
+    public void PR39() {
+        //Intento de inicio de sesión con datos inválidos
+        PO_PublicView.loginSpecificUser("", "", driver);
+        //Compruebo que no se ha iniciado sesión
+        SeleniumUtils.textIsPresentOnPage(driver, "Login");
+    }
+
+    /**
+     * [Prueba40] Inicio de sesión con datos inválidos (campo email o contraseña vacíos).
+     * @author Donato
+     */
+    @Test
+    @Order(40)
+    public void PR40() {
+        //Intento de inicio de sesión con datos inválidos
+        PO_PublicView.loginSpecificUser("", "", driver);
+        //Compruebo que no se ha iniciado sesión
+        SeleniumUtils.textIsPresentOnPage(driver, "Login");
+    }
+
+    /**
+     * [Prueba41] Mostrar el listado de amigos para dicho usuario y comprobar que se muestran los amigos del usuario autenticado. Esta prueba implica invocar a dos servicios: S1 y S2.
+     * @author Donato
      */
     @Test
     @Order(41)
     public void PR41() {
-
-
+        //Inicio sesión como el usuario1
+        PO_PublicView.loginSpecificUser("", "", driver);
+        //Ir a la lista de amigos
+        driver.navigate().to("http://localhost:8080/friendships/list");
+        // Comprobar que se muestran todos los amigos
+        SeleniumUtils.textIsPresentOnPage(driver, "user04");
+        SeleniumUtils.textIsPresentOnPage(driver, "user05");
+        // Cerrar sesión
+        //PO_PrivateView.logout(driver);
     }
 
     /**
@@ -827,6 +984,42 @@ class Sdi2223Entrega2TestApplicationTests {
 
         //cierra la conexión
         mongoClient.close();
+    }
+
+    /**
+     * [Prueba47] Inicio de sesión con datos válidos.
+     * @author Donato
+     */
+    @Test
+    @Order(47)
+    public void PR47() {
+        driver.navigate().to(URL_API);
+        PO_PublicView.loginUser(driver);
+        SeleniumUtils.textIsPresentOnPage(driver, "My friends");
+    }
+
+    /**
+     * [Prueba48] Inicio de sesión con datos inválidos (email existente, pero contraseña incorrecta).
+     * @author Donato
+     */
+    @Test
+    @Order(48)
+    public void PR48() {
+        driver.navigate().to(URL_API);
+        PO_PublicView.loginUser(driver);
+        SeleniumUtils.textIsPresentOnPage(driver, "Login");
+    }
+
+    /**
+     * [Prueba49] Inicio de sesión con datos inválidos (campo email o contraseña vacíos).
+     * @author Donato
+     */
+    @Test
+    @Order(49)
+    public void PR49() {
+        driver.navigate().to(URL_API);
+        PO_PublicView.loginUser(driver);
+        SeleniumUtils.textIsPresentOnPage(driver, "Login");
     }
 
     /**
