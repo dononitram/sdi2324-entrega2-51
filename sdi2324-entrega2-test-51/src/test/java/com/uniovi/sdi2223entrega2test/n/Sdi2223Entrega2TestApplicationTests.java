@@ -7,9 +7,11 @@ import com.uniovi.sdi2223entrega2test.n.pageobjects.*;
 import com.uniovi.sdi2223entrega2test.n.util.SeleniumUtils;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.bson.codecs.jsr310.LocalDateCodec;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -40,10 +42,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class Sdi2223Entrega2TestApplicationTests {
     static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
+    static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
     //Peter :(
-    static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
+    //static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
     //Teresa :)
     //static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
     static WebDriver driver = getDriver(PathFirefox, Geckodriver);
@@ -682,6 +684,53 @@ class Sdi2223Entrega2TestApplicationTests {
         PO_ConversationView.sendMessage(driver, "Hola!");
 
         //TODO: Check that message is sent
+
+    }
+
+    /**
+     * @author Samuel
+     * [Prueba43] Obtener los mensajes de una conversación. Esta prueba consistirá en comprobar que el
+     * servicio retorna el número correcto de mensajes para una conversación. El ID de la conversación
+     * deberá conocerse a priori. Por lo tanto, se tendrá primero que invocar al servicio de identificación
+     * (S1), y solicitar el listado de mensajes de una conversación de ID conocido a continuación (S4),
+     * comprobando que se retornan los mensajes adecuados.
+     */
+    @Test
+    @Order(43)
+    public void PR43() {
+
+        // Iniciamos sesión
+        final String RestAssuredURL = "http://localhost:8080/api/v1.0/users/login";
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("email", "user01@email.com");
+        requestParams.put("password", "Us3r@1-PASSW");
+        request.header("Content-Type", "application/json");
+        request.body(requestParams.toJSONString());
+        Response response = request.post(RestAssuredURL);
+        Assertions.assertEquals(200, response.getStatusCode());
+
+        // obtengo el token de inicio de sesión
+        String token = response.jsonPath().getString("token");
+
+        // Obtenemos conversación
+        final String RestAssuredURL2 = "http://localhost:8080/api/v1.0/conversation/user04@email.com";
+        RequestSpecification request2 = RestAssured.given();
+        request2.header("token", token); // Aquí configuramos el token en la cabecera
+        Response response2 = request2.get(RestAssuredURL2);
+        Assertions.assertEquals(200, response2.getStatusCode());
+    }
+
+    /**
+     * @author Samuel
+     * [Prueba44] Obtener la lista de conversaciones de un usuario. Esta prueba consistirá en comprobar que
+     * el servicio retorna el número correcto de conversaciones para dicho usuario. Por lo tanto, se tendrá
+     * primero que invocar al servicio de identificación (S1), y solicitar el listado de conversaciones a
+     * continuación (S5) comprobando que se retornan las conversaciones adecuadas
+     */
+    @Test
+    @Order(44)
+    public void PR44() {
 
     }
 
