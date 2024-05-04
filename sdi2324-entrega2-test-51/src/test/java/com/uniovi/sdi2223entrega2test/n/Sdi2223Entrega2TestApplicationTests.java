@@ -45,9 +45,9 @@ class Sdi2223Entrega2TestApplicationTests {
     //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
     //Peter :(
-    //static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
+    static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
     //Teresa :)
-    static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
+    //static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
     //David
     //static String Geckodriver = "C:\\Users\\david\\Desktop\\Uni\\3\\2doSem\\SDI\\PL\\Spring\\PL6\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
 
@@ -1156,14 +1156,14 @@ class Sdi2223Entrega2TestApplicationTests {
         database = mongoClient.getDatabase("sdinstagram");
 
         //Hago el login
-        given().
+        Response response = given().
                 contentType("application/json").
                 body("{\"email\":\"user01@email.com\", \"password\":\"Us3r@1-PASSW\"}").
                 when().
                 post("/api/v1.0/users/login").
-                then().
-                body("authenticated", equalTo(true));
-        //Compruebo que el mensaje está no leido
+                then().extract().response();
+        //Saco el token
+        String token = response.jsonPath().getString("token");
 
         //Esto saca de la BD el atr read del mensaje que voy a marcar leido
         Document firstConversation = database.getCollection("conversations").find().first();
@@ -1176,9 +1176,10 @@ class Sdi2223Entrega2TestApplicationTests {
         RestAssured.baseURI = "http://localhost:8080";
         given().
                 pathParams("messageId", 2).
-                when().
+                queryParam("token", token).
+        when().
                 put("/api/v1.0/messages/read/{messageId}").
-                then().
+        then().
                 body("message", equalTo("Message marked as read correctly."));
 
         mongoClient.close();
