@@ -43,9 +43,9 @@ class Sdi2223Entrega2TestApplicationTests {
     //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
     //Peter :(
-    static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
+    //static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
     //Teresa :)
-    //static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
+    static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
     static WebDriver driver = getDriver(PathFirefox, Geckodriver);
     static String URL = "http://localhost:8080/users/login";
     static String URL_API = "http://localhost:8080/apiclient/client.html";
@@ -234,18 +234,18 @@ class Sdi2223Entrega2TestApplicationTests {
         //Mensajes
         List<Document> messages = new ArrayList<>();
         //Adding messages
-        Document message1 = new Document("author", database.getCollection("users").find(user1).first())
+        Document message1 = new Document("messageId", "1")
+                .append("author", database.getCollection("users").find(user1).first())
                 .append("date", LocalDateTime.now().minusDays(5))
                 .append("text", "Que tal estás?")
-                .append("read", true)
-                .append("messageId", "1");
+                .append("read", true);
         messages.add(message1);
 
-        Document message2 = new Document("author", database.getCollection("users").find(user4).first())
+        Document message2 = new Document("messageId","2")
+                .append("author", database.getCollection("users").find(user4).first())
                 .append("date", LocalDateTime.now().minusDays(4))
                 .append("text", "Mal, haciendo tests")
-                .append("read", false)
-                .append("messageId", "2");
+                .append("read", false);
         messages.add(message2);
 
         //Conversations
@@ -269,7 +269,7 @@ class Sdi2223Entrega2TestApplicationTests {
         int minutes = currentDate.getMinute();
         int seconds = currentDate.getSecond();
 
-        return day+"/"+month+"/"+year+" "+hours+":"+minutes+":"+seconds;
+        return month+"/"+day+"/"+year+" "+hours+":"+minutes+":"+seconds;
     }
 
     private void restDatabase() {

@@ -1,5 +1,6 @@
 const { ObjectId } = require('mongodb');
 const conversationsRepository = require("../../repositories/conversationsRepository");
+const uuid =require('uuid');
 module.exports = function (app, usersRepository, friendshipRepository, friendshipRequestRepository, publicationsRepository
     , conversationsRepository) {
 
@@ -241,6 +242,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                                         if (conversation === null || typeof conversation === "undefined") {
                                             //A new conversation is created
                                             let message = {
+                                                messageId: uuid(),
                                                 author: user1,
                                                 date: new Date(),
                                                 text: req.body.message,
@@ -266,6 +268,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                                             })
                                         } else { // There is already a conversation between this users
                                             let message = {
+                                                messageId: uuid(),
                                                 author: user1,
                                                 date: new Date(),
                                                 text: req.body.message,
