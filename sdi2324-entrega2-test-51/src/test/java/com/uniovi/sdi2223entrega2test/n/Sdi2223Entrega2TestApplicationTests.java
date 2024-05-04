@@ -41,17 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class Sdi2223Entrega2TestApplicationTests {
-    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
-    //Peter :(
-    static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
-    //Teresa :)
-    //static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
-    //David
-    //static String Geckodriver = "C:\\Users\\david\\Desktop\\Uni\\3\\2doSem\\SDI\\PL\\Spring\\PL6\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
-
-    static WebDriver driver = getDriver(PathFirefox, Geckodriver);
+    static WebDriver driver = getDriver(PathResolver.PathFirefox, PathResolver.GeckoDriver);
     static String URL = "http://localhost:8080/users/login";
     static String URL_API = "http://localhost:8080/apiclient/client.html";
 
@@ -396,8 +387,8 @@ class Sdi2223Entrega2TestApplicationTests {
     //Al finalizar la última prueba
     @AfterAll
     static public void end() {
-    //Cerramos el navegador al finalizar las pruebas
-        //driver.quit();
+        //Cerramos el navegador al finalizar las pruebas
+        driver.quit();
     }
 
     /**
@@ -407,7 +398,10 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(1)
     void PR01() {
-        Assertions.assertTrue(true, "PR01 sin hacer");
+        //Hacemos click es registrarnos
+        PO_PrivateView.click(driver, "text", "Signup", 0);
+        PO_PublicView.signupSuccess(driver);
+        SeleniumUtils.textIsPresentOnPage(driver,"User registered correctly");
     }
 
     /**
@@ -417,7 +411,9 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(2)
     public void PR02() {
-        Assertions.assertTrue(true, "PR02 sin hacer");
+        PO_PrivateView.click(driver, "text", "Signup", 0);
+        PO_PublicView.signupAllError(driver);
+        SeleniumUtils.textIsPresentOnPage(driver,"Validation errors:");
     }
 
     /**
@@ -427,7 +423,9 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(3)
     public void PR03() {
-        Assertions.assertTrue(true, "PR03 sin hacer");
+        PO_PrivateView.click(driver, "text", "Signup", 0);
+        PO_PublicView.signupErrorPasswords(driver);
+        SeleniumUtils.textIsPresentOnPage(driver,"Passwords do not match");
     }
 
     /**
@@ -437,7 +435,9 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(4)
     public void PR04() {
-        Assertions.assertTrue(true, "PR04 sin hacer");
+        PO_PrivateView.click(driver, "text", "Signup", 0);
+        PO_PublicView.fillSingupForm(driver, "admin@email.com", "admin", "admin", "@Dm1n1str@D0r", "@Dm1n1str@D0r");
+        SeleniumUtils.textIsPresentOnPage(driver,"Email is already registered");
     }
 
     /**
@@ -447,7 +447,9 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(5)
     public void PR05() {
-        Assertions.assertTrue(true, "PR05 sin hacer");
+        PO_PrivateView.click(driver, "text", "Login", 0);
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str@D0r", driver);
+        SeleniumUtils.textIsPresentOnPage(driver,"System users");
     }
 
     /**
@@ -457,7 +459,9 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(6)
     public void PR06() {
-        Assertions.assertTrue(true, "PR06 sin hacer");
+        PO_PrivateView.click(driver, "text", "Login", 0);
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
+        SeleniumUtils.textIsPresentOnPage(driver,"Social network users");
     }
 
     /**
@@ -467,7 +471,9 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(7)
     public void PR07() {
-        Assertions.assertTrue(true, "PR07 sin hacer");
+        PO_PrivateView.click(driver, "text", "Login", 0);
+        PO_PublicView.loginSpecificUser("user01@email.com", "XD", driver);
+        SeleniumUtils.textIsPresentOnPage(driver,"Incorrect user or password");
     }
 
     /**
@@ -477,7 +483,10 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(8)
     public void PR08() {
-        Assertions.assertTrue(true, "PR08 sin hacer");
+        PO_PrivateView.click(driver, "text", "Login", 0);
+        // El propio parser del formulario no dejará enviar datos vacíos
+        PO_PublicView.loginSpecificUser(" ", " ", driver);
+        SeleniumUtils.textIsPresentOnPage(driver,"Login");
     }
 
     /**
@@ -487,7 +496,10 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(9)
     public void PR09() {
-        Assertions.assertTrue(true, "PR09 sin hacer");
+        PO_PrivateView.click(driver, "text", "Login", 0);
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
+        PO_PrivateView.click(driver, "text", "Logout", 0);
+        SeleniumUtils.textIsPresentOnPage(driver,"Logged out successfully");
     }
 
     /**
@@ -497,7 +509,7 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(10)
     public void PR10() {
-        Assertions.assertTrue(true, "PR10 sin hacer");
+        SeleniumUtils.textIsNotPresentOnPage(driver, "Logout");
     }
 
     /**

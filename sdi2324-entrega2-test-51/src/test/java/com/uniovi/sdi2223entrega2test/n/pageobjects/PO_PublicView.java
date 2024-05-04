@@ -2,6 +2,7 @@ package com.uniovi.sdi2223entrega2test.n.pageobjects;
 
 import com.uniovi.sdi2223entrega2test.n.util.SeleniumUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -89,22 +90,29 @@ public class PO_PublicView extends PO_NavView {
         email.clear();
         email.sendKeys(emailp);
 
-        WebElement name = driver.findElement(By.name("name"));
+        WebElement name = driver.findElement(By.name("firstName"));
         name.click();
         name.clear();
         name.sendKeys(namep);
 
-        WebElement lastname = driver.findElement(By.name("surname"));
+        WebElement lastname = driver.findElement(By.name("lastName"));
         lastname.click();
         lastname.clear();
         lastname.sendKeys(lastnamep);
+
+        ((JavascriptExecutor)driver).executeScript ("document.getElementById('birthdate').removeAttribute('readonly',0);");
+
+        WebElement birth = driver.findElement(By.name("birthdate"));
+        birth.click();
+        birth.clear();
+        birth.sendKeys("2000-01-01");
 
         WebElement password = driver.findElement(By.name("password"));
         password.click();
         password.clear();
         password.sendKeys(passwordp);
 
-        WebElement passwordConfirm = driver.findElement(By.name("passwordConfirm"));
+        WebElement passwordConfirm = driver.findElement(By.name("passwordConfirmation"));
         passwordConfirm.click();
         passwordConfirm.clear();
         passwordConfirm.sendKeys(passwordconfp);
