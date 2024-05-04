@@ -383,6 +383,26 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
+     * @author Pedro
+    [Prueba18] Mostrar el listado de usuarios y comprobar que se muestran todos los que existen en el
+    sistema, excepto el propio usuario y aquellos que sean administradores.
+     */
+    @Test
+    @Order(18)
+    void PR18() {
+        //Inicio sesión como el user1
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
+        //Ir a la lista de usuarios de la red
+        PO_PrivateView.click(driver, "id", "mylistUsersSocial", 0);
+        // Compruebo que no se muestra el user1 (usuario actual) ni el admin
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user01@email.com");
+        SeleniumUtils.textIsNotPresentOnPage(driver, "admin@email.com");
+        //Ir a la última página, en este caso la tercera
+        PO_Pagination.clickPage(driver, 3);
+        SeleniumUtils.textIsPresentOnPage(driver, "user15@email.com");
+    }
+
+    /**
      * @author Samuel
      * [Prueba22] Desde el listado de usuarios de la aplicación, enviar una invitación de amistad a un usuario.
      * Comprobar que la solicitud de amistad aparece en el listado de invitaciones (punto siguiente).
