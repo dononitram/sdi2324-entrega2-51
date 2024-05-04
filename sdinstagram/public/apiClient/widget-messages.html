@@ -116,20 +116,4 @@
             }
         });
     }
-
-    const markAsRead = async (messageId) => {
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: URLbase + `/messages/read/${messageId}`,
-                type: "PUT",
-                success: response => {
-                    //On succes continue
-                },
-                error: error => {
-                    $("#widget-conversations")
-                        .prepend("<div class='alert alert-danger'>Error updating messages marking as read</div>");
-                }
-            });
-        });
-    };
 </script>
