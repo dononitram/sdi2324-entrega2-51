@@ -83,6 +83,8 @@ app.use("/api/v1.0/users/friendships", userTokenRouter);
 app.use("/api/v1.0/users/conversations", userTokenRouter);
 app.use("/api/v1.0/conversation", userTokenRouter);
 app.use("/api/v1.0/conversations", userTokenRouter);
+app.use("/api/v1.0/messages", userTokenRouter);
+
 
 
 // Add more routes that require a token
