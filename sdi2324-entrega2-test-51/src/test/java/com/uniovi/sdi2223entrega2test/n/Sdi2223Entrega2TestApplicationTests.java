@@ -47,7 +47,7 @@ class Sdi2223Entrega2TestApplicationTests {
     //Peter :(
     //static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
     //Teresa :)
-    //static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
+    static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
     //David
     //static String Geckodriver = "C:\\Users\\david\\Desktop\\Uni\\3\\2doSem\\SDI\\PL\\Spring\\PL6\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
 
@@ -371,7 +371,7 @@ class Sdi2223Entrega2TestApplicationTests {
     @Order(11)
     void PR11() {
         //Inicio sesión como el admin
-        PO_PublicView.loginSpecificUser("admin@email.com","@Dm1n1str@D0r",driver);
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str@D0r", driver);
         //Ir a la lista de usuarios del sistema
         PO_PrivateView.click(driver, "id", "mylistSystemUsers", 0);
         // Comprobar que se muestran todos los usuarios incluyendo el admin(que es el usuario actual)
@@ -380,6 +380,7 @@ class Sdi2223Entrega2TestApplicationTests {
         PO_Pagination.clickPage(driver, 3);
         PO_Pagination.clickPage(driver, 4);
         SeleniumUtils.textIsPresentOnPage(driver, "user15@email.com");
+    }
 
     /**
      * @author Samuel
