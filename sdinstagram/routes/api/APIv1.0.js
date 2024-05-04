@@ -125,7 +125,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                                         .then(conversation => {
 
                                             if (conversation === null || typeof conversation === "undefined") {
-                                                res.status(404);
+                                                res.status(200);
                                                 res.json({ error: "No exite conversación con el usuario especificado" })
                                             }
                                             else {

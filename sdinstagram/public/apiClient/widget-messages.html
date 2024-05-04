@@ -46,14 +46,13 @@
     function updateMessagesTable(conversation) {
         $("#messagesTableBody").empty(); // Vaciar la tabla
         var messageCount;
-        if (conversation.messages === undefined || conversation.messages === null)  {
+        if (typeof conversation === "undefined" || conversation === null)  {
             messageCount = 0;
         } else {
             messageCount = Object.keys(conversation.messages).length;
         }
         for (let i = 0; i < messageCount; i++) {
             if(conversation.messages[i].author.email===localStorage.getItem("friend_email")) {
-                console.log("MESSAGE ID: ",conversation.messages[i].messageId);
                 $("#messagesTableBody").append(
                     "<tr id=" +conversation.messages[i].messageId + ">" +
                     "<td>" + conversation.messages[i].author.firstName + "</td>" +
