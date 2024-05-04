@@ -23,7 +23,7 @@ module.exports = {
             await this.dbClient.connect();
             const database = this.dbClient.db(this.database);
             const friendshipCollection = database.collection(this.collectionName);
-            const friendships = await friendshipCollection.find(filter,options).toArray();
+            const friendships = await friendshipCollection.find(filter, options).toArray();
             return friendships;
         } catch (error) {
             throw (error);
@@ -58,12 +58,29 @@ module.exports = {
             const database = this.dbClient.db(this.database);
             const friendshipCollection = database.collection(this.collectionName);
             const friendshipCollectionCount = await friendshipCollection.countDocuments(filter, options);
-            const cursor = friendshipCollection.find(filter, options).skip((page-1) * limit).limit(limit);
+            const cursor = friendshipCollection.find(filter, options).skip((page - 1) * limit).limit(limit);
             const friendships = await cursor.toArray();
-            const result = { friendships:friendships, total: friendshipCollectionCount};
+            const result = { friendships: friendships, total: friendshipCollectionCount };
             return result;
         } catch (error) {
             throw (error);
         }
     },
+    deleteFriendshipOfUsers: async function (userIds) {
+        try {
+            await this.dbClient.connect();
+            const database = this.dbClient.db(this.database);
+            const friendshipCollection = database.collection(this.collectionName);
+            const filter = {
+                $or: [
+                    { 'user1._id': { $in: userIds } },
+                    { 'user2._id': { $in: userIds } }
+                ]
+            };
+            const result = await friendshipCollection.deleteMany(filter);
+            return result;
+        } catch (error) {
+            throw (error);
+        }
+    }
 };
