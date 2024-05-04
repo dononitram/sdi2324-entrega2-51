@@ -204,9 +204,10 @@ class Sdi2223Entrega2TestApplicationTests {
         database.getCollection("users").insertOne(admin1);
         database.getCollection("users").insertOne(user1);
         for(int i = 0; i < 10; i++) {
-            Document publication = new Document("title","Publication1"+i)
-                    .append("description","Publication1"+i)
-                    .append("author",database.getCollection("users").find(user1))
+
+            Document publication = new Document("title","Publication"+i)
+                    .append("description","Publication"+i)
+                    .append("author",database.getCollection("users").find(user1).first())
                     .append("date",getFormattedDate(i));
             database.getCollection("publications").insertOne(publication);
         }
@@ -443,6 +444,73 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
+     * @author Pedro
+    [Prueba19] Hacer una búsqueda con el campo vacío y comprobar que se muestra la página que
+    corresponde con el listado usuarios existentes en el sistema.
+     */
+    @Test
+    @Order(19)
+    void PR19() {
+        //Inicio sesión como el user1
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
+        //Ir a la lista de usuarios de la red
+        PO_PrivateView.click(driver, "id", "mylistUsersSocial", 0);
+        //Busco sin criterio
+        PO_PrivateView.click(driver, "id", "search-button", 0);
+        // Compruebo que no se muestra el user1 (usuario actual) ni el admin
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user01@email.com");
+        SeleniumUtils.textIsNotPresentOnPage(driver, "admin@email.com");
+        //Ir a la última página, en este caso la tercera
+        PO_Pagination.clickPage(driver, 3);
+        SeleniumUtils.textIsPresentOnPage(driver, "user15@email.com");
+    }
+
+    /**
+     * @author Pedro
+    [Prueba20] Hacer una búsqueda escribiendo en el campo un texto que no exista y comprobar que se
+    muestra la página que corresponde, con la lista de usuarios vacía.
+     */
+    @Test
+    @Order(20)
+    void PR20() {
+        //Inicio sesión como el user1
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
+        //Ir a la lista de usuarios de la red
+        PO_PrivateView.click(driver, "id", "mylistUsersSocial", 0);
+        //Busco por zzz que no debe salir nada
+        PO_PrivateView.searchBy(driver, "zzz");
+        // Compruebo que no se muestra el user1 (usuario actual) ni el admin
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user01@email.com");
+        SeleniumUtils.textIsNotPresentOnPage(driver, "admin@email.com");
+        // Tampoco sale el usuario 2
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user02@email.com");
+        //Está vacía la tabla
+    }
+
+    /**
+     * @author Pedro
+    [Prueba21] Hacer una búsqueda con un texto específico y comprobar que se muestra la página que
+    corresponde, con la lista de usuarios en los que el texto especificado sea parte de su nombre,
+    apellidos o de su email.
+     */
+    @Test
+    @Order(21)
+    void PR21() {
+        //Inicio sesión como el user1
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
+        //Ir a la lista de usuarios de la red
+        PO_PrivateView.click(driver, "id", "mylistUsersSocial", 0);
+        //Busco por 2 que debería salir el usuario 2 y 12
+        PO_PrivateView.searchBy(driver, "2");
+        // Compruebo que no se muestra el user1 (usuario actual) ni el admin
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user01@email.com");
+        SeleniumUtils.textIsNotPresentOnPage(driver, "admin@email.com");
+        // Salen el usuario 2 y el 12
+        SeleniumUtils.textIsPresentOnPage(driver, "user02@email.com");
+        SeleniumUtils.textIsPresentOnPage(driver, "user12@email.com");
+    }
+
+    /**
      * @author Samuel
      * [Prueba22] Desde el listado de usuarios de la aplicación, enviar una invitación de amistad a un usuario.
      * Comprobar que la solicitud de amistad aparece en el listado de invitaciones (punto siguiente).
@@ -555,6 +623,40 @@ class Sdi2223Entrega2TestApplicationTests {
         //Finalmente logeamos-cerramos sesión
         WebElement logout2 = driver.findElement(By.id("logout"));
         logout2.click();
+    }
+
+    /**
+     * @author Pedro
+    [Prueba26] Mostrar el listado de amigos de un usuario. Comprobar que el listado contiene los amigos
+    que deben ser.
+     */
+    @Test
+    @Order(26)
+    void PR26() {
+        //Inicio sesión como el user1
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
+        //Ir a la lista de amigos
+        PO_PrivateView.click(driver, "id", "myFriends", 0);
+        // Compruebo que salem el 4 y 5
+        SeleniumUtils.textIsPresentOnPage(driver, "user04@email.com");
+        SeleniumUtils.textIsPresentOnPage(driver, "user05@email.com");
+    }
+
+    /**
+     * @author Pedro
+    [Prueba27] Mostrar el listado de amigos de un usuario. Comprobar que se incluye la información
+    relacionada con la última publicación de cada usuario y la fecha de inicio de amistad.
+     */
+    @Test
+    @Order(27)
+    void PR27() {
+        //Inicio sesión como el user1
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
+        //Ir a la lista de amigos
+        PO_PrivateView.click(driver, "id", "myFriends", 0);
+        // Compruebo que salem el 4 y 5
+        SeleniumUtils.textIsPresentOnPage(driver, "user04@email.com");
+        SeleniumUtils.textIsPresentOnPage(driver, "user05@email.com");
     }
 
     /**

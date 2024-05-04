@@ -1,6 +1,7 @@
 package com.uniovi.sdi2223entrega2test.n.pageobjects;
 
 import com.uniovi.sdi2223entrega2test.n.util.SeleniumUtils;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -35,4 +36,13 @@ public class PO_PrivateView extends PO_NavView {
         SeleniumUtils.waitLoadElementsBy(driver, "free", "/html/body/div/form/button[1]", timeout).get(0).click();
     }
 
+    public static void searchBy(WebDriver driver, String searchText){
+        WebElement searchTextInput = driver.findElement(By.id("search"));
+        searchTextInput.click();
+        searchTextInput.clear();
+        searchTextInput.sendKeys(searchText);
+
+        WebElement searchButton = driver.findElement(By.id("search-button"));
+        searchButton.click();
+    }
 }
