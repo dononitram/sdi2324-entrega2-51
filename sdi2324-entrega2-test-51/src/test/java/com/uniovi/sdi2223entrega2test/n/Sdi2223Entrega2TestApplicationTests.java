@@ -11,6 +11,7 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.bson.codecs.jsr310.LocalDateCodec;
+import org.bson.types.ObjectId;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.*;
@@ -1325,7 +1326,6 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
-     * --PRUEBA FUNCIONAL--
      * @author Pedro
     [Prueba57] Identificarse en la aplicación y enviar tres mensajes a un amigo. Validar que los mensajes
     enviados aparecen en el chat. Identificarse después con el usuario que recibido el mensaje y validar
@@ -1348,35 +1348,116 @@ class Sdi2223Entrega2TestApplicationTests {
         //Saco el token
         String token = response.jsonPath().getString("token");
 
-        //Esto saca de la BD el atr read del mensaje que voy a marcar leido
-        Document firstConversation = database.getCollection("conversations").find().first();
-        List<Document> mensajes = firstConversation.getList("messages", Document.class);
-        Document mensaje = mensajes.get(1);
-        Boolean leido = mensaje.getBoolean("read");
-        assertEquals(false, leido);
+        //Envío 3 mensajes al amigo 4
+        String requestBody1 = "{\"friendEmail\":\"user04@email.com\", \"message\":\"Hola 1\"}";
+        String requestBody2 = "{\"friendEmail\":\"user04@email.com\", \"message\":\"Hola 2\"}";
+        String requestBody3 = "{\"friendEmail\":\"user04@email.com\", \"message\":\"Hola 3\"}";
 
-        //Lo marco como leido y veo que el put salió correcto
         RestAssured.baseURI = "http://localhost:8080";
         given().
-                pathParams("messageId", 2).
+                contentType("application/json").
+                body(requestBody1). // Incluir el cuerpo de la solicitud con el texto y el correo electrónico del destinatario
                 queryParam("token", token).
-                when().
-                put("/api/v1.0/messages/read/{messageId}").
-                then().
-                body("message", equalTo("Message marked as read correctly."));
-
+        when().
+                post("/api/v1.0/conversation");
+        //Otro
+        given().
+                contentType("application/json").
+                body(requestBody2). // Incluir el cuerpo de la solicitud con el texto y el correo electrónico del destinatario
+                queryParam("token", token).
+        when().
+                post("/api/v1.0/conversation");
+        //Último
+        given().
+                contentType("application/json").
+                body(requestBody3). // Incluir el cuerpo de la solicitud con el texto y el correo electrónico del destinatario
+                queryParam("token", token).
+        when().
+                post("/api/v1.0/conversation");
+        //Saco el id de la conversacion desde mongo
+        mongoClient = MongoClients.create("mongodb://localhost:27017");
+        database = mongoClient.getDatabase("sdinstagram");
+        Document firstConversation = database.getCollection("conversations").find().first();
+        String converId = firstConversation.getObjectId("_id").toString();
         mongoClient.close();
-        //Compruebo que ahora esa propiedad read está puesta a true, es decir se leyó
+        //Una vez con el id compruebo que hay 4 mensajes no leídos en esa conversación 1 que ya había que es "Mal, haciendo test" y los 3 nuevos que no fueron leídos
+        Response responseCount = given().
+                pathParams("converId", converId).
+                queryParam("token", token).
+        when().
+                get("/api/v1.0/messages/unread/{converId}").
+        then().extract().response();
+
+        List<String> messagesUnRead = responseCount.jsonPath().getList("messages");
+        int unreadCount = messagesUnRead.size();
+        assertEquals(4, unreadCount);
+    }
+
+    /**
+     * @author Pedro
+    [Prueba58] Identificarse en la aplicación y enviar tres mensajes a un amigo, validar que los mensajes
+    enviados aparecen en el chat. Identificarse después con el usuario amigo y validar que el número
+    de mensajes sin leer aparece.
+     */
+    @Test
+    @Order(58)
+    public void PR58() {
+        RestAssured.baseURI = "http://localhost:8080"; // Cambia esto por la URL de tu servicio
         mongoClient = MongoClients.create("mongodb://localhost:27017");
         database = mongoClient.getDatabase("sdinstagram");
 
-        firstConversation = database.getCollection("conversations").find().first();
-        mensajes = firstConversation.getList("messages", Document.class);
-        mensaje = mensajes.get(1);
-        leido = mensaje.getBoolean("read");
-        assertEquals(true, leido);//Esta vez a true
+        //Hago el login
+        Response response = given().
+                contentType("application/json").
+                body("{\"email\":\"user01@email.com\", \"password\":\"Us3r@1-PASSW\"}").
+                when().
+                post("/api/v1.0/users/login").
+                then().extract().response();
+        //Saco el token
+        String token = response.jsonPath().getString("token");
 
-        //cierra la conexión
+        //Envío 3 mensajes al amigo 4
+        String requestBody1 = "{\"friendEmail\":\"user04@email.com\", \"message\":\"Hola 1\"}";
+        String requestBody2 = "{\"friendEmail\":\"user04@email.com\", \"message\":\"Hola 2\"}";
+        String requestBody3 = "{\"friendEmail\":\"user04@email.com\", \"message\":\"Hola 3\"}";
+
+        RestAssured.baseURI = "http://localhost:8080";
+        given().
+                contentType("application/json").
+                body(requestBody1). // Incluir el cuerpo de la solicitud con el texto y el correo electrónico del destinatario
+                queryParam("token", token).
+                when().
+                post("/api/v1.0/conversation");
+        //Otro
+        given().
+                contentType("application/json").
+                body(requestBody2). // Incluir el cuerpo de la solicitud con el texto y el correo electrónico del destinatario
+                queryParam("token", token).
+                when().
+                post("/api/v1.0/conversation");
+        //Último
+        given().
+                contentType("application/json").
+                body(requestBody3). // Incluir el cuerpo de la solicitud con el texto y el correo electrónico del destinatario
+                queryParam("token", token).
+                when().
+                post("/api/v1.0/conversation");
+        //Saco el id de la conversacion desde mongo
+        mongoClient = MongoClients.create("mongodb://localhost:27017");
+        database = mongoClient.getDatabase("sdinstagram");
+        Document firstConversation = database.getCollection("conversations").find().first();
+        String converId = firstConversation.getObjectId("_id").toString();
         mongoClient.close();
+        //Una vez con el id compruebo que hay 4 mensajes no leídos en esa conversación 1 que ya había que es "Mal, haciendo test" y los 3 nuevos que no fueron leídos
+        Response responseCount = given().
+                pathParams("converId", converId).
+                queryParam("token", token).
+                when().
+                get("/api/v1.0/messages/unread/{converId}").
+                then().extract().response();
+
+        List<String> messagesUnRead = responseCount.jsonPath().getList("messages");
+        int unreadCount = messagesUnRead.size();
+        assertEquals(4, unreadCount);
     }
 }
