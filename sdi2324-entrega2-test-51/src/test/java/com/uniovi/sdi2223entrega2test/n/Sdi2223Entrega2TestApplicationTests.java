@@ -755,10 +755,10 @@ class Sdi2223Entrega2TestApplicationTests {
         SeleniumUtils.textIsPresentOnPage(driver, "user05@email.com");
         //Además sale la fecha de ambos y el texto de la últ publi del user 5 tanto como el de ninguna publi del 4
         //User 5
-        SeleniumUtils.textIsPresentOnPage(driver, "PublicationTest");
+        SeleniumUtils.textIsPresentOnPage(driver, "Publication 50");
         SeleniumUtils.textIsPresentOnPage(driver, "28 Apr 2024");
         //User 4
-        SeleniumUtils.textIsPresentOnPage(driver, "Nothing published");
+        SeleniumUtils.textIsPresentOnPage(driver, "Publication 40");
         SeleniumUtils.textIsPresentOnPage(driver, "29 Apr 2024");
     }
 
