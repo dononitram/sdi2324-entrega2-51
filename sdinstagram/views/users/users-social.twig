@@ -9,7 +9,7 @@
                 <input id="search" type="text" class="search-query form-control"
                        placeholder="Buscar por {{ busquedaStr }}" name="search"/>
                 <span class="input-group-btn">
-                    <button class="btn" type="submit">
+                    <button id="search-button" class="btn" type="submit">
                      <span class="glyphicon glyphicon-search"></span>
                     </button>
                 </span>
@@ -51,7 +51,7 @@
     <ul class="pagination">
         {%for page in pages%}
             <li class="page-item" id="pi-{{ page }}">
-                <a class="page-link" href="/users/social/?page={{ page }}&search={{ busquedaStr }}">{{ page }}</a>
+                <a id="page_{{page}}" class="page-link" href="/users/social/?page={{ page }}&search={{ busquedaStr }}">{{ page }}</a>
             </li>
         {%endfor%}
         <script>
