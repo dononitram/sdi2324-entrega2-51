@@ -1,5 +1,5 @@
 <div id="widget-friends" >
-    <button class="btn" onclick="loadFriends()" >Update</button>
+    <button class="btn" onclick="getFriends()" >Update</button>
     <table class="table table-hover">
         <thead>
         <tr>
@@ -16,8 +16,7 @@
 
 <script>
     window.history.pushState("", "", "/apiclient/client.html?w=friends");
-    let friend;
-    function loadFriends() {
+    function getFriends() {
         $.ajax({
             url: URLbase + "/users/friendships",
             type: "GET",
@@ -33,25 +32,8 @@
         });
     }
     function loadConversation(email) {
-        friend = email;
-        $( "#main-container" ).load("widget-messages.html");
-
-        /*$.ajax ({
-            url: URLbase + "/conversation/" + user,
-            type: "GET",
-            data: {},
-            dataType: 'json',
-            headers: {"token": token},
-            success: function (response) {
-                conversation = response.conversation;
-                console.log("Conversation: ",conversation);
-                updateMessagesTable(conversation);
-            },
-            error: function (error) {
-                console.log("token",token);
-                $("#main-container").load("widget-friends.html");
-            }
-        });*/
+        localStorage.setItem("friend_email", email);
+        $("#main-container").load("widget-messages.html");
     }
     function updateFriendsTable(friendships) {
         $("#friendsTableBody").empty(); // Vaciar la tabla
@@ -68,5 +50,5 @@
         }
     }
 
-    loadFriends();
+    getFriends();
 </script>

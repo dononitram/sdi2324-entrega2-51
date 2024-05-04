@@ -62,10 +62,11 @@ module.exports = {
     },
     deletePublicationsOfUsers : async function(userIds) {
         try {
+            const rawIds = userIds.map(id => id.toString());
             await this.dbClient.connect();
             const database = this.dbClient.db(this.database);
             const publicationsCollection = database.collection(this.collectionName);
-            const filter = {"author._id": { $in: userIds }};
+            const filter = {'author._id': { $in: rawIds }};
             const result = await publicationsCollection.deleteMany(filter);
             return result;
         } catch (error) {
