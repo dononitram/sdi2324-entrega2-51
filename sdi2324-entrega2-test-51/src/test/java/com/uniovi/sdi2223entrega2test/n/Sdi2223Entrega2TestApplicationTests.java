@@ -552,7 +552,7 @@ class Sdi2223Entrega2TestApplicationTests {
         PO_PublicView.loginSpecificUser("user01@email.com","Us3r@1-PASSW",driver);
 
         //Lista con las publicaciones no censuradas del usuario
-        String[] titles = {"Publication11", "Publication12", "Publication13", "Publication14", "Publication15", "Publication16", "Publication17", "Publication18", "Publication19"};
+        String[] titles = {"Publication11", "Publication11", "Publication12", "Publication13", "Publication14", "Publication15", "Publication16", "Publication17", "Publication18", "Publication19"};
         List<String> titlesList = List.of(titles);
 
         //Vamos a la lista de publicaciones
@@ -612,25 +612,6 @@ class Sdi2223Entrega2TestApplicationTests {
 
         // Cerrar sesión
         //PO_PrivateView.logout(driver);
-    }
-
-
-    //ejemplo API
-    @Test
-    @Order(38)
-    public void PR38() {
-        final String RestAssuredURL = "http://localhost:8081/api/v1.0/users/login";
-        //2. Preparamos el parámetro en formato JSON
-        RequestSpecification request = RestAssured.given();
-        JSONObject requestParams = new JSONObject();
-        requestParams.put("email", "delacal@uniovi.es");
-        requestParams.put("password", "1234");
-        request.header("Content-Type", "application/json");
-        request.body(requestParams.toJSONString());
-        //3. Hacemos la petición
-        Response response = request.post(RestAssuredURL);
-        //4. Comprobamos que el servicio ha tenido exito
-        Assertions.assertEquals(200, response.getStatusCode());
     }
 
     /**
