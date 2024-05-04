@@ -47,13 +47,13 @@ module.exports = function (app, publicationsRepository) {
         }
         if(req.body.title == null || typeof(req.body.title) == "undefined"
             || req.body.title.length <= 4) {
-            let error = "Error when inserting new publication: Title must be at least 4 characters long.";
+            let error = "Error when inserting new publication: Title must be at least 5 characters long.";
             res.redirect("/publications/add" + "?message=" + error + "&messageType=alert-danger");
             return;
         }
         if(req.body.description == null || typeof(req.body.description) == "undefined"
             || req.body.description.length <= 4) {
-            let error = "Error when inserting new publication: Description must be at least 4 characters long.";
+            let error = "Error when inserting new publication: Description must be at least 5 characters long.";
             res.redirect("/publications/add" + "?message=" + error + "&messageType=alert-danger");
             return;
         }

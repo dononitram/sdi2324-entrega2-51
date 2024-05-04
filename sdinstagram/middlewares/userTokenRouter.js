@@ -10,7 +10,7 @@ userTokenRouter.use(function (req, res, next) {
                 res.status(403); // Forbidden
                 res.json({
                     authorized: false,
-                    error: 'Token inválido o caducado'
+                    error: 'Invalid or caduced token'
                 });
             } else {
                 // dejamos correr la petición
@@ -22,7 +22,7 @@ userTokenRouter.use(function (req, res, next) {
         res.status(403); // Forbidden
         res.json({
             authorized: false,
-            error: 'No hay Token'
+            error: 'There is no token'
         });
     }
 });
