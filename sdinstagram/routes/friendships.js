@@ -1,86 +1,28 @@
-const {ObjectId} = require("mongodb");
-module.exports = function (app, friendshipRepository, friendshipRequestRepository, usersRepository, publicationsRepository) {
+const { ObjectId } = require("mongodb");
 
-    app.post('/friendships/request/send/:id', function (req, res) {
+module.exports = function(app, friendshipRepository, friendshipRequestRepository, usersRepository, publicationsRepository) {
+
+    /**
+     * POST /friendships/request/send/:id
+     * Sends a friendship request to the user specified by :id.
+     * Redirects with a message indicating success or failure of the request initiation.
+     */
+    app.post('/friendships/request/send/:id', function(req, res) {
         let receiverID = new ObjectId(req.params.id);
         let requester = req.session.user;
-        usersRepository.findUser({_id:receiverID},{}).then(receiver => {
+        usersRepository.findUser({ _id: receiverID }, {}).then(receiver => {
 
             let friendshipRequest = {
                 receiver: receiver,
                 requester: requester,
                 date: new Date()
             }
-            friendshipRequestRepository.insertFriendshipRequest(friendshipRequest).then(result =>{
-                if (result.insertedId === null || typeof (result.insertedId) === undefined){
-                    res.redirect("/users/social" + '?message=There was an error sending the friend request.'+
+            friendshipRequestRepository.insertFriendshipRequest(friendshipRequest).then(result => {
+                if (result.insertedId === null || typeof(result.insertedId) === undefined) {
+                    res.redirect("/users/social" + '?message=There was an error sending the friend request.' +
                         "&messageType=alert-danger");
-                }
-                else {
-                    res.redirect("/users/social" + '?message=Invitation successfully sent.'+
-                        "&messageType=alert-info");
-                }
-            });
-        });
-    });
-
-    app.get('/friendships/requests', function (req, res){
-        let page = parseInt(req.query.page);
-        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
-            page = 1;
-        }
-
-        let filter = {'receiver._id': new ObjectId(req.session.user._id)};
-        let options = {};
-        friendshipRequestRepository.getFriendshipRequestsPg(filter, options).then(result => {
-
-            let lastPage = result.total / 5;
-            if (result.total % 5 > 0) { // Sobran decimales
-                lastPage = lastPage + 1;
-            }
-            let pages = []; // paginas mostrar
-            for (let i = page - 2; i <= page + 2; i++) {
-                if (i > 0 && i <= lastPage) {
-                    pages.push(i);
-                }
-            }
-
-            res.render("friendships/requests.twig", {requests: result.requests, pages:pages, currentPage: page, user: req.session.user });
-        }).catch(error => {
-            res.redirect("/publications" + '?message=There has been an error listing the friendship requests.' +
-                "&messageType=alert-danger");
-        });
-    });
-
-    app.post('/friendships/request/accept/:id/:requester', function (req, res) {
-        let filter = {_id: new ObjectId(req.params.id)};
-        let options = {};
-        friendshipRequestRepository.deleteFriendshipRequest(filter, options).then(result => {
-            if (result === null || result.deletedCount === 0) {
-                res.redirect("/friendships/requests" + '?message=There has been an error accepting the friendship invitation.'+
-                    "&messageType=alert-danger");
-            }
-        }).catch(error => {
-            res.redirect("/friendships/requests" + '?message=There has been an error accepting the friendship invitation.'+ error +
-                "&messageType=alert-danger");
-        });
-
-        let requesterId = new ObjectId(req.params.requester);
-        usersRepository.findUser({_id:requesterId},{}).then(requester => {
-            let receiver = req.session.user;
-            receiver._id = new ObjectId(receiver._id);
-            let friendship = {
-                user1: receiver,
-                user2: requester,
-                date: new Date()
-            }
-            friendshipRepository.insertFriendship(friendship).then(result =>{
-                console.log(result)
-                if (result.insertedId === null || typeof (result.insertedId) === undefined){
-                    res.redirect("/friendships/requests" + '?message=There was an error accepting the friendship request.'+
-                        "&messageType=alert-danger"); //completar con ruta al listado de usuarios
                 } else {
-                    res.redirect("/friendships/requests" + '?message=Invitation correctly accepted.'+
+                    res.redirect("/users/social" + '?message=Invitation successfully sent.' +
                         "&messageType=alert-info");
                 }
             });
@@ -88,98 +30,158 @@ module.exports = function (app, friendshipRepository, friendshipRequestRepositor
     });
 
     /**
-     * Shows all the friends of the user in session
+     * GET /friendships/requests
+     * Lists the friendship requests for the logged-in user, with pagination support.
+     * Displays the list using the 'friendships/requests.twig' template.
      */
-    app.get('/friendships/', async function (req, res) {
+    app.get('/friendships/requests', function(req, res) {
+        let page = parseInt(req.query.page);
+        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
+            page = 1;
+        }
+
+        let filter = { 'receiver._id': new ObjectId(req.session.user._id) };
+        let options = {};
+        friendshipRequestRepository.getFriendshipRequestsPg(filter, options).then(result => {
+
+            let lastPage = Math.ceil(result.total / 5);
+            let pages = [];
+            for (let i = page - 2; i <= page + 2; i++) {
+                if (i > 0 && i <= lastPage) {
+                    pages.push(i);
+                }
+            }
+
+            res.render("friendships/requests.twig", { requests: result.requests, pages: pages, currentPage: page, user: req.session.user });
+        }).catch(error => {
+            res.redirect("/publications" + '?message=There has been an error listing the friendship requests.' +
+                "&messageType=alert-danger");
+        });
+    });
+
+    /**
+     * POST /friendships/request/accept/:id/:requester
+     * Accepts a friendship request identified by :id and :requester.
+     * Redirects with a message indicating whether the acceptance was successful or failed.
+     */
+    app.post('/friendships/request/accept/:id/:requester', function(req, res) {
+        let filter = { _id: new ObjectId(req.params.id) };
+        let options = {};
+        friendshipRequestRepository.deleteFriendshipRequest(filter, options).then(result => {
+            if (result === null || result.deletedCount === 0) {
+                res.redirect("/friendships/requests" + '?message=There has been an error accepting the friendship invitation.' +
+                    "&messageType=alert-danger");
+            }
+        }).catch(error => {
+            res.redirect("/friendships/requests" + '?message=There has been an error accepting the friendship invitation.' + error +
+                "&messageType=alert-danger");
+        });
+
+        let requesterId = new ObjectId(req.params.requester);
+        usersRepository.findUser({ _id: requesterId }, {}).then(requester => {
+            let receiver = req.session.user;
+            receiver._id = new ObjectId(receiver._id);
+            let friendship = {
+                user1: receiver,
+                user2: requester,
+                date: new Date()
+            }
+            friendshipRepository.insertFriendship(friendship).then(result => {
+                if (result.insertedId === null || typeof(result.insertedId) === undefined) {
+                    res.redirect("/friendships/requests" + '?message=There was an error accepting the friendship request.' +
+                        "&messageType=alert-danger");
+                } else {
+                    res.redirect("/friendships/requests" + '?message=Invitation correctly accepted.' +
+                        "&messageType=alert-info");
+                }
+            });
+        });
+    });
+
+    /**
+     * GET /friendships/
+     * Shows all the friends of the logged-in user, along with the start date of the friendship and the latest publication by each friend.
+     * Uses pagination and displays the list using the 'friendships/friends.twig' template.
+     */
+    app.get('/friendships/', async function(req, res) {
         try {
             let connectedUser = req.session.user;
             if (!connectedUser || !connectedUser._id) {
                 res.send("Error you have to be logged to see users");
                 return;
             }
-        let userId = new ObjectId(connectedUser._id);
-        let filter =
-            {
+            let userId = new ObjectId(connectedUser._id);
+            let filter = {
                 $or: [
-                    {"user1._id": userId},
-                    {"user2._id": userId}
-                    ]
+                    { "user1._id": userId },
+                    { "user2._id": userId }
+                ]
             };
 
-        let page = parseInt(req.query.page); // Es String !!!
-        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") { //
-            //Puede no venir el param
-            page = 1;
-        }
-        const result = await friendshipRepository.getFriendshipsPg(filter, {}, page);
-
-        let lastPage = result.total / 5;
-        if (result.total % 5 > 0) { // Sobran decimales
-            lastPage = lastPage + 1;
-        }
-        let pages = []; // paginas mostrar
-        for (let i = page - 2; i <= page + 2; i++) {
-            if (i > 0 && i <= lastPage) {
-                pages.push(i);
+            let page = parseInt(req.query.page);
+            if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
+                page = 1;
             }
-        }
+            const result = await friendshipRepository.getFriendshipsPg(filter, {}, page);
 
-        //Converts to list of one
-        let filteredFriendship = [];
-
-        result.friendships.forEach(friendRelation => {
-            let str = friendRelation.user1._id.toString();
-            if(str === connectedUser._id){
-                let day = friendRelation.date.getDate();
-                let month = friendRelation.date.toLocaleDateString('en-GB', { month: 'short' }); // Obtener el nombre abreviado del mes
-                let year = friendRelation.date.getFullYear();
-
-                friendRelation.user2.initFriendship = `${day} ${month} ${year}`;
-                filteredFriendship.push(friendRelation.user2)
-            }else{
-                let day = friendRelation.date.getDate();
-                let month = friendRelation.date.toLocaleDateString('en-GB', { month: 'short' }); // Obtener el nombre abreviado del mes
-                let year = friendRelation.date.getFullYear();
-
-                friendRelation.user1.initFriendship = `${day} ${month} ${year}`;
-                filteredFriendship.push(friendRelation.user1)
+            let lastPage = Math.ceil(result.total / 5);
+            let pages = [];
+            for (let i = page - 2; i <= page + 2; i++) {
+                if (i > 0 && i <= lastPage) {
+                    pages.push(i);
+                }
             }
-        })
-        //Search last publication for each friend
-        for (const friend of filteredFriendship) {
-            let filter2 = {
-                "author._id": friend._id.toString()
-            };
-            const publication = await publicationsRepository.getLastPublicationOf(filter2, {});
-            if(publication.length === 0){
-                friend.lastPublicationTitle = "Nothing published";
-            }else{
-                friend.lastPublicationTitle = publication[0].title;
+
+            let filteredFriendship = [];
+            result.friendships.forEach(friendRelation => {
+                let str = friendRelation.user1._id.toString();
+                if (str === connectedUser._id) {
+                    let day = friendRelation.date.getDate();
+                    let month = friendRelation.date.toLocaleDateString('en-GB', { month: 'short' });
+                    let year = friendRelation.date.getFullYear();
+
+                    friendRelation.user2.initFriendship = `${day} ${month} ${year}`;
+                    filteredFriendship.push(friendRelation.user2)
+                } else {
+                    let day = friendRelation.date.getDate();
+                    let month = friendRelation.date.toLocaleDateString('en-GB', { month: 'short' });
+                    let year = friendRelation.date.getFullYear();
+
+                    friendRelation.user1.initFriendship = `${day} ${month} ${year}`;
+                    filteredFriendship.push(friendRelation.user1)
+                }
+            })
+            for (const friend of filteredFriendship) {
+                let filter2 = {
+                    "author._id": friend._id.toString()
+                };
+                const publication = await publicationsRepository.getLastPublicationOf(filter2, {});
+                if (publication.length === 0) {
+                    friend.lastPublicationTitle = "Nothing published";
+                } else {
+                    friend.lastPublicationTitle = publication[0].title;
+                }
             }
-        }
 
             let response = {
-            friends: filteredFriendship,
-            pages: pages,
-            currentPage: page,
-            user: req.session.user
-        };
+                friends: filteredFriendship,
+                pages: pages,
+                currentPage: page,
+                user: req.session.user
+            };
 
-        //Buscar su última publicación
+            res.render("friendships/friends.twig", response);
 
-            /**
-        filter2 = {
-            "author._id":
-        }
-            */
-        //.sort({ date: -1 }).limit(1);
-        res.render("friendships/friends.twig", response);
-
-        }catch (error) {
+        } catch (error) {
             res.send("Error when making the user friend's list")
         }
     });
 
+    /**
+     * GET /friendships/:email
+     * Retrieves the friendship information and the publications of the user identified by :email.
+     * Displays the details using the 'friendships/friend.twig' template or redirects with an error message if no friendship is found.
+     */
     app.get('/friendships/:email', function (req, res) {
         let connectedUser = req.session.user;
         if (!connectedUser || !connectedUser._id) {
