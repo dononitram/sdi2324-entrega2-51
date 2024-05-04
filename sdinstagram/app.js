@@ -90,7 +90,7 @@ app.use("/api/v1.0/messages", userTokenRouter);
 // Add more routes that require a token
 
 const notAdminSessionRouter = require('./middlewares/notAdminSessionRouter');
-// TODO: fill with the routes an administrator can't access
+app.use("/users/social", notAdminSessionRouter);
 
 const userFriendRouter = require('./middlewares/userFriendRouter');
 //app.use("/friendships", userFriendRouter);
