@@ -243,7 +243,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                                             let message = {
                                                 messageId: uuid(),
                                                 author: user1,
-                                                date: new Date(),
+                                                date: getFormattedDate(),
                                                 text: req.body.message,
                                                 read: false
                                             }
@@ -269,7 +269,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                                             let message = {
                                                 messageId: uuid(),
                                                 author: user1,
-                                                date: new Date(),
+                                                date: getFormattedDate(),
                                                 text: req.body.message,
                                                 read: false
                                             }
@@ -324,6 +324,23 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
         }
 
     });
+
+    function getFormattedDate() {
+        // Current Date
+        const currentDate = new Date();
+
+        // Obtiene los componentes de la fecha
+        const day = currentDate.getDate();
+        const month = currentDate.getMonth() + 1; // Los meses son base 0, por lo que se suma 1
+        const year = currentDate.getFullYear();
+
+        // Obtiene los componentes de la hora
+        const hours = currentDate.getHours();
+        const minutes = currentDate.getMinutes();
+        const seconds = currentDate.getSeconds();
+
+        return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+    }
 
     app.delete('/api/v1.0/conversation/:id', async function (req, res) {
 
