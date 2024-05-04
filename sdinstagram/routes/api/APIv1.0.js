@@ -157,21 +157,19 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                 return;
             }
 
-            usersRepository.findUser({ email: res.user }, {}).then(user => {
-                conversationsRepository.getConversations({ user1: user }, {}).then(conversations => {
+            usersRepository.findUser({ email: res.user }, {}).then(async user => {
+                const conversations1 = await conversationsRepository.getConversations({ user1: user }, {});
+                const conversations2 = await conversationsRepository.getConversations({ user2: user }, {});
 
-                    if (conversations === null || typeof conversations === "undefined" || conversations.length === 0) {
-                        conversationsRepository.findConversation({ user2: user }, {}).then(conversations => {
+                const allConversations = [...conversations1, ...conversations2];
 
-                            res.status(200);
-                            res.json({ conversations: conversations });
-                        });
-                    }
-                    else {
-                        res.status(200);
-                        res.json({ conversations: conversations });
-                    }
-                });
+                if (allConversations.length === 0) {
+                    res.status(200);
+                    res.json({ conversations: {} });
+                } else {
+                    res.status(200);
+                    res.json({ conversations: allConversations });
+                }
             });
         } catch (e) {
             console.log(e);
