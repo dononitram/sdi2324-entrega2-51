@@ -1,20 +1,9 @@
-/**
- * Defines the routes and handlers for user-related operations.
- * @param {Object} app - The Express application object.
- * @param {Object} usersRepository - The repository object for user data access.
- */
 const { ObjectId } = require("mongodb");
 const friendshipRepository = require("../repositories/friendshipsRepository");
+
 module.exports = function (app, usersRepository, logsRepository) {
 
-
-  /**
-   * GET /users/system
-   * Returns all system users.
-   * @param {Object} req - The request object.
-   * @param {Object} res - The response object.
-   * @param {int} res - The page number.
-   */
+  // Route to retrieve system users
   app.get('/users/system', async function (req, res) {
     let page = parseInt(req.query.page);
     if (!page || page < 1)
@@ -32,12 +21,7 @@ module.exports = function (app, usersRepository, logsRepository) {
     res.render('users/users-system.twig', { users: usersResponse.users, pages: pages, currentPage: page, user: req.session.user });
   })
 
-  /**
-   * GET /users/social
-   * Returns a list of users except admins and the user logged in.
-   * @param {Object} req - The request object.
-   * @param {Object} res - The response object.
-   */
+  // Route to retrieve social users
   app.get('/users/social', async function (req, res) {
     try {
       let connectedUser = req.session.user;
@@ -47,10 +31,10 @@ module.exports = function (app, usersRepository, logsRepository) {
       }
       let userId = new ObjectId(connectedUser._id);
       let filter =
-      {
-        role: { $ne: "admin" },
-        _id: { $ne: userId },
-      };
+          {
+            role: { $ne: "admin" },
+            _id: { $ne: userId },
+          };
       //Búsqueda
       let busquedaStr = "";//Vacía por defecto
       if (req.query.search != null && typeof (req.query.search) != "undefined" && req.query.search != "") {
@@ -119,23 +103,14 @@ module.exports = function (app, usersRepository, logsRepository) {
     }
   });
 
-  /**
- * GET /users/edit
- * Renders edit user form view.
- * @param {Object} req - The request object.
- * @param {Object} res - The response object.
- */
+  // Route to render user edit form
   app.get('/users/edit/:id', async function (req, res) {
     const user = await usersRepository.findUser({ _id: new ObjectId(req.params.id) }, {});
     res.render('users/users-edit.twig', { user: user, admin: admin(req) }); // TODO: change user to userEdit
   });
 
-  /**
-   * POST /users/edit
-   * Edits an user.
-   * @param {Object} req - The request object.
-   * @param {Object} res - The response object.
-   */
+
+  // Route to handle user edit form submission
   app.post('/users/edit/:id', async function (req, res) {
 
     // Validate fields
@@ -156,25 +131,15 @@ module.exports = function (app, usersRepository, logsRepository) {
   });
 
 
-  /**
- * GET /users/roles
- * Returns all roles available in the system.
- * @param {Object} req - The request object.
- * @param {Object} res - The response object.
- */
+  // Route to retrieve available user roles
   app.get('/users/roles', async function (req, res) {
     res.json({ roles: ["admin", "user"] });
   });
 
-  /**
-   * POST /users/delete
-   * Deletes several users.
-   * @param {Object} req - The request object.
-   * @param {Object} res - The response object.
-   */
+  // Route to delete user
   app.post('/users/delete', async function (req, res) {
 
-    if(!admin(req)){
+    if (!admin(req)) {
       res.json({ message: 'You don\'t have permission to delete users', messageType: 'alert-danger' });
       return;
     }
@@ -202,26 +167,15 @@ module.exports = function (app, usersRepository, logsRepository) {
 
   });
 
-  /**
-   * GET /users/signup
-   * Renders the signup page.
-   * @param {Object} req - The request object.
-   * @param {Object} res - The response object.
-   */
+  // Route to render signup form
   app.get('/users/signup', function (req, res) {
     res.render("signup.twig", { user: req.session.user });
   });
 
-  /**
-   * POST /users/signup
-   * Handles user signup.
-   * @param {Object} req - The request object.
-   * @param {Object} res - The response object.
-   */
+  // Route to handle user signup form submission
   app.post('/users/signup', function (req, res) {
 
     // Validate fields
-
     validateSignup(req, res).then(errors => {
 
       if (errors.length > 0) {
@@ -231,7 +185,7 @@ module.exports = function (app, usersRepository, logsRepository) {
       }
 
       let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
-        .update(req.body.password).digest('hex');
+          .update(req.body.password).digest('hex');
 
       let user = {
         email: req.body.email,
@@ -276,22 +230,12 @@ module.exports = function (app, usersRepository, logsRepository) {
 
   });
 
-  /**
-   * GET /users/login
-   * Renders the login page.
-   * @param {Object} req - The request object.
-   * @param {Object} res - The response object.
-   */
+  // Route to render login form
   app.get('/users/login', function (req, res) {
-    res.render("login.twig", { user: req.session.user});
+    res.render("login.twig", { user: req.session.user });
   })
 
-  /**
-   * POST /users/login
-   * Handles user login.
-   * @param {Object} req - The request object.
-   * @param {Object} res - The response object.
-   */
+  // Route to handle user login form submission
   app.post('/users/login', function (req, res) {
 
     validateLogin(req, res).then(errors => {
@@ -303,7 +247,7 @@ module.exports = function (app, usersRepository, logsRepository) {
       }
 
       let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
-        .update(req.body.password).digest('hex');
+          .update(req.body.password).digest('hex');
 
       let filter = {
         email: req.body.email,
@@ -313,13 +257,13 @@ module.exports = function (app, usersRepository, logsRepository) {
 
       usersRepository.findUser(filter, options).then(user => {
 
-          req.session.user = user;
-          
-          logsRepository.insertLog({ date: Date.now(), type: "LOGIN-EX", description: "User " + user.email + " logged in" }).catch(error => {
-            console.log(error);
-          });
+        req.session.user = user;
 
-          (user.role === "admin") ? res.redirect("/users/system") : res.redirect("/users/social");
+        logsRepository.insertLog({ date: Date.now(), type: "LOGIN-EX", description: "User " + user.email + " logged in" }).catch(error => {
+          console.log(error);
+        });
+
+        (user.role === "admin") ? res.redirect("/users/system") : res.redirect("/users/social");
 
       }).catch(error => {
         req.session.user = null;
@@ -337,12 +281,7 @@ module.exports = function (app, usersRepository, logsRepository) {
 
   })
 
-  /**
-   * GET /users/logout
-   * Logs out the user.
-   * @param {Object} req - The request object.
-   * @param {Object} res - The response object.
-   */
+  // Route to handle user logout
   app.get('/users/logout', function (req, res) {
     logsRepository.insertLog({ date: Date.now(), type: "LOGOUT", description: "User " + req.session.user.email + " logged out" }).catch(error => {
       console.log(error);
@@ -353,12 +292,7 @@ module.exports = function (app, usersRepository, logsRepository) {
 
 }
 
-function validate(errors, condition, message) {
-  if (!condition) {
-    errors.push("- " + message);
-  }
-}
-
+// Function to validate form fields for signup
 async function validateSignup(req, res) {
 
   let errors = [];
@@ -375,6 +309,7 @@ async function validateSignup(req, res) {
 
 }
 
+// Function to validate form fields for login
 async function validateLogin(req, res) {
 
   let errors = [];
@@ -385,6 +320,7 @@ async function validateLogin(req, res) {
   return errors;
 }
 
+// Function to validate form fields for user edit
 function validateUserEdit(req, res) {
   let errors = [];
 
@@ -396,6 +332,7 @@ function validateUserEdit(req, res) {
   return errors;
 }
 
+// Function to check if user is admin
 function admin(req) {
   try {
     const role = req.session.user.role;
@@ -404,4 +341,3 @@ function admin(req) {
     return false;
   }
 }
-

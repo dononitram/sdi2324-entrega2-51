@@ -1,6 +1,12 @@
 const {ObjectId} = require("mongodb");
 module.exports = function (app, logsRepository) {
 
+    /**
+     * GET /logs
+     * Retrieves and displays logs filtered by type, with pagination and sorting by date in descending order.
+     * If no specific type is provided or if 'ALL' is selected, it fetches all logs.
+     * Renders the logs using the 'logs.twig' template with appropriate messaging.
+     */
     app.get("/logs", function(req, res) {
         
         let filter = {type: req.query.type};
@@ -21,6 +27,11 @@ module.exports = function (app, logsRepository) {
         });
     });
 
+    /**
+     * GET /logs/delete/:type
+     * Deletes logs of a specified type. If the type is 'ALL' or not specified, it deletes all logs.
+     * Redirects to the logs page with an appropriate message indicating the outcome.
+     */
     app.get("/logs/delete/:type", function(req, res) {
 
         let filter = {type: req.params.type};
