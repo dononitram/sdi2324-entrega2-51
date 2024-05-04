@@ -574,7 +574,30 @@ class Sdi2223Entrega2TestApplicationTests {
         SeleniumUtils.textIsPresentOnPage(driver, "System users");
     }
 
-
+    /**
+     * @author David
+     * [Prueba13] Editar un usuario introduciendo datos inválidos (email existente asignado a otro usuario
+     * del sistema, nombre y apellidos vacíos), comprobar que se devuelven los mensajes de error
+     * correctamente y que el usuario no se actualiza.
+     */
+    @Test
+    @Order(13)
+    void PR13() throws InterruptedException {
+        //Inicio sesión como el admin
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str@D0r", driver);
+        //Ir a la lista de usuarios del sistema
+        PO_PrivateView.click(driver, "id", "mylistSystemUsers", 0);
+        //Acceder a editar usuario
+        PO_PrivateView.click(driver, "id", "edit_user01@email.com", 0);
+        //Editar usuario
+        PO_EditUserView.editUser(driver, "user02@email.com", "edited", "edited", "admin");
+        //Verificar que se mostró el mensaje de error
+        Thread.sleep(1000);
+        SeleniumUtils.textIsPresentOnPage(driver, "Email already in use");
+        //Verificar que no se edito el usuario
+        driver.navigate().back();driver.navigate().back();
+        SeleniumUtils.textIsPresentOnPage(driver, "user01@email.com");
+    }
 
     /**
      * @author Pedro
