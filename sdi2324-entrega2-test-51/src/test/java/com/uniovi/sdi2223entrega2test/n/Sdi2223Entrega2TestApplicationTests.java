@@ -1323,6 +1323,50 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
+     * @author David
+     * [Prueba45] Eliminar una conversación de ID conocido. Esta prueba consistirá en comprobar que se
+     * elimina correctamente una conversación concreta. Por lo tanto, se tendrá primero que invocar al
+     * servicio de identificación (S1), eliminar la conversación ID (S6) y solicitar el listado de
+     * conversaciones a continuación (S5), comprobando que se retornan las conversaciones adecuadas.
+     */
+    @Test
+    @Order(45)
+    public void PR45() {
+        // Iniciamos sesión
+        final String RestAssuredURL = "http://localhost:8080/api/v1.0/users/login";
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("email", "user01@email.com");
+        requestParams.put("password", "Us3r@1-PASSW");
+        request.header("Content-Type", "application/json");
+        request.body(requestParams.toJSONString());
+        Response loginResponse = request.post(RestAssuredURL);
+        Assertions.assertEquals(200, loginResponse.getStatusCode());
+
+        String token = loginResponse.jsonPath().getString("token");
+        // Obtenemos conversación
+        final String RestAssuredURL2 = "http://localhost:8080/api/v1.0/conversations";
+        RequestSpecification conversationsRequest = RestAssured.given();
+        conversationsRequest.header("token", token); // Aquí configuramos el token en la cabecera
+        Response conversationsResponse = conversationsRequest.get(RestAssuredURL2);
+        Assertions.assertEquals(200, conversationsResponse.getStatusCode());
+
+        // Cogemos el id de la conversación
+        String conversationId = conversationsResponse.jsonPath().getString("conversations[0]._id");
+        //Lo utilizamos para borrar la conversación
+        final String RestAssuredURL3 = "http://localhost:8080/api/v1.0/conversation/" + conversationId;
+        RequestSpecification deleteRequest = RestAssured.given();
+        deleteRequest.header("token", token);
+        Response deleteResponse = deleteRequest.delete(RestAssuredURL3);
+        Assertions.assertEquals(200, deleteResponse.getStatusCode());
+
+        // Comprobamos que se ha eliminado la conversación
+        Response conversationsResponse2 = conversationsRequest.get(RestAssuredURL2);
+        String deletedId = conversationsResponse2.jsonPath().getString("conversations[0]._id");
+        Assertions.assertNull(deletedId);
+    }
+
+    /**
      * @author Pedro
      * [Prueba46] Marcar como leído un mensaje de ID conocido. Esta prueba consistirá en comprobar que
      * el mensaje marcado de ID conocido queda marcado correctamente a true como leído. Por lo tanto,
