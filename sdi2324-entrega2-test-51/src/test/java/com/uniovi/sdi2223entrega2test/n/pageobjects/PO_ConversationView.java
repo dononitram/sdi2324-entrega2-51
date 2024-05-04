@@ -12,6 +12,6 @@ public class PO_ConversationView extends PO_NavView{
         message.sendKeys(messagep);
 
         By btn = By.className("btn");
-        driver.findElement(btn).click();
+        driver.findElements(btn).get(1).click();
     }
 }

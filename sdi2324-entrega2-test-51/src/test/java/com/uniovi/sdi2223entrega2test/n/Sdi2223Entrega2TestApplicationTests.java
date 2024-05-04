@@ -271,7 +271,7 @@ class Sdi2223Entrega2TestApplicationTests {
         int minutes = currentDate.getMinute();
         int seconds = currentDate.getSecond();
 
-        return month+"/"+day+"/"+year+" "+hours+":"+minutes+":"+seconds;
+        return year+"/"+month+"/"+day+" "+hours+":"+minutes+":"+seconds;
     }
 
     private void restDatabase() {
@@ -359,18 +359,6 @@ class Sdi2223Entrega2TestApplicationTests {
     public void PR10() {
         Assertions.assertTrue(true, "PR10 sin hacer");
     }
-
-
-    /* Ejemplos de pruebas de llamada a una API-REST */
-    /* ---- Probamos a obtener lista de canciones sin token ---- */
-    @Test
-    @Order(11)
-    public void PR11() {
-        final String RestAssuredURL = "http://localhost:8081/api/v1.0/songs";
-        Response response = get(RestAssuredURL);
-        Assertions.assertEquals(403, response.getStatusCode());
-    }
-
 
     /**
      * @author Samuel
@@ -522,10 +510,11 @@ class Sdi2223Entrega2TestApplicationTests {
 
         //Comprobamos que se añadió correctamente
         PO_PublicationView.goToListPublication(driver);
-        PO_Pagination.clickPage(driver,3);
+        //PO_Pagination.clickPage(driver,1);
         //PO_Pagination.clickNextPage(driver);
         SeleniumUtils.textIsPresentOnPage(driver,"Publicación de prueba");
     }
+
     /**
      * @author Teresa
      * [Prueba34] Ir al formulario de crear publicaciones, rellenarla con datos inválidos (campos título y
@@ -835,10 +824,33 @@ class Sdi2223Entrega2TestApplicationTests {
 
         // Acceder al listado de amistades
         PO_PrivateView.click(driver, "id", "myFriends", 0);
-        PO_PrivateView.click(driver, "text", "Conversation", 0);
+        PO_PrivateView.click(driver, "text", "Conversation", 1);
 
+        // Send message
         PO_ConversationView.sendMessage(driver, "Hola!");
 
-        //TODO: Check that message is sent
+        // Check that it was sent and registered
+        SeleniumUtils.textIsPresentOnPage(driver, "Hola!");
+    }
+
+    /**
+     * [Prueba52] Sobre el listado de conversaciones enviar un mensaje a una conversación ya abierta.
+     * Comprobar que el mensaje aparece en el listado de mensajes
+     */
+    @Test
+    @Order(52)
+    public void PR52() {
+        driver.navigate().to(URL_API);
+        PO_PublicView.loginUser(driver);
+
+        // Acceder al listado de amistades
+        PO_PrivateView.click(driver, "id", "myFriends", 0);
+        PO_PrivateView.click(driver, "text", "Conversation", 0);
+
+        // Send message
+        PO_ConversationView.sendMessage(driver, "Hola!");
+
+        // Check that it was sent and registered
+        SeleniumUtils.textIsPresentOnPage(driver, "Hola!");
     }
 }
