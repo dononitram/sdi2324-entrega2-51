@@ -650,15 +650,7 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(41)
     public void PR41() {
-        driver.navigate().to(URL_API);
-        PO_PublicView.loginUser(driver);
 
-        // Acceder al listado de amistades
-        PO_PrivateView.click(driver, "id", "myFriends", 0);
-        SeleniumUtils.textIsPresentOnPage(driver, "user04@email.com");
-        SeleniumUtils.textIsPresentOnPage(driver, "user05@email.com");
-
-        //TODO: Check that message is sent
 
     }
 
@@ -704,9 +696,9 @@ class Sdi2223Entrega2TestApplicationTests {
         given().
                 contentType("application/json").
                 body("{\"email\":\"user01@email.com\", \"password\":\"Us3r@1-PASSW\"}").
-        when().
+                when().
                 post("/api/v1.0/users/login").
-        then().
+                then().
                 body("authenticated", equalTo(true));
         //Compruebo que el mensaje está no leido
 
@@ -721,9 +713,9 @@ class Sdi2223Entrega2TestApplicationTests {
         RestAssured.baseURI = "http://localhost:8080";
         given().
                 pathParams("messageId", 2).
-        when().
+                when().
                 put("/api/v1.0/messages/read/{messageId}").
-        then().
+                then().
                 body("message", equalTo("Message marked as read correctly."));
 
         mongoClient.close();
@@ -739,5 +731,22 @@ class Sdi2223Entrega2TestApplicationTests {
 
         //cierra la conexión
         mongoClient.close();
+    }
+
+    /**
+     * @author Teresa
+     * [Prueba50] Mostrar el listado de amigos para dicho usuario y comprobar que se muestran los amigos
+     * del usuario autenticado.
+     */
+    @Test
+    @Order(50)
+    public void PR50() {
+        driver.navigate().to(URL_API);
+        PO_PublicView.loginUser(driver);
+
+        // Acceder al listado de amistades
+        PO_PrivateView.click(driver, "id", "myFriends", 0);
+        SeleniumUtils.textIsPresentOnPage(driver, "user04@email.com");
+        SeleniumUtils.textIsPresentOnPage(driver, "user05@email.com");
     }
 }
