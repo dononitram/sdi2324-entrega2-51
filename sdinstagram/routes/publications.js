@@ -89,6 +89,6 @@ module.exports = function (app, publicationsRepository) {
         const minutes = currentDate.getMinutes();
         const seconds = currentDate.getSeconds();
 
-        return `${month}/${day}/${year} ${hours}:${minutes}:${seconds}`;
+        return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
     }
 }

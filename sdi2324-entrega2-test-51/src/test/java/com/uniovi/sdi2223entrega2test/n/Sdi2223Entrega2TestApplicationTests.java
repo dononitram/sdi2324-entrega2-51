@@ -1,55 +1,54 @@
 package com.uniovi.sdi2223entrega2test.n;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoDatabase;
-import com.uniovi.sdi2223entrega2test.n.pageobjects.*;
-import com.uniovi.sdi2223entrega2test.n.util.SeleniumUtils;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import io.restassured.path.json.JsonPath;
-import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
-import org.bson.codecs.jsr310.LocalDateCodec;
-import org.json.simple.JSONArray;
+import static io.restassured.RestAssured.*;
+import static io.restassured.matcher.RestAssuredMatchers.*;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.bson.Document;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
+import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_ConversationView;
+import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_Pagination;
+import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_PrivateView;
+import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_PublicView;
+import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_PublicationView;
+import com.uniovi.sdi2223entrega2test.n.pageobjects.PO_View;
+import com.uniovi.sdi2223entrega2test.n.util.SeleniumUtils;
 
-import org.bson.conversions.Bson;
-import com.mongodb.client.model.Filters;
-import static io.restassured.RestAssured.*;
-import static io.restassured.matcher.RestAssuredMatchers.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class Sdi2223Entrega2TestApplicationTests {
     static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
+    static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
     //Peter :(
     //static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
     //Teresa :)
     //static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
     //David
-    static String Geckodriver = "C:\\Users\\david\\Desktop\\Uni\\3\\2doSem\\SDI\\PL\\Spring\\PL6\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
+    //static String Geckodriver = "C:\\Users\\david\\Desktop\\Uni\\3\\2doSem\\SDI\\PL\\Spring\\PL6\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
+
     static WebDriver driver = getDriver(PathFirefox, Geckodriver);
     static String URL = "http://localhost:8080/users/login";
     static String URL_API = "http://localhost:8080/apiclient/client.html";
@@ -273,7 +272,7 @@ class Sdi2223Entrega2TestApplicationTests {
         int minutes = currentDate.getMinute();
         int seconds = currentDate.getSecond();
 
-        return month+"/"+day+"/"+year+" "+hours+":"+minutes+":"+seconds;
+        return year+"/"+month+"/"+day+" "+hours+":"+minutes+":"+seconds;
     }
 
     private void restDatabase() {
@@ -361,7 +360,7 @@ class Sdi2223Entrega2TestApplicationTests {
     public void PR10() {
         Assertions.assertTrue(true, "PR10 sin hacer");
     }
-
+    
     /**
      [Prueba11] Mostrar el listado de usuarios y comprobar que se muestran todos los que existen en el
      sistema, incluyendo el usuario actual y los usuarios administradores.
@@ -511,23 +510,6 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
-     * @author Samuel
-     * [Prueba25] Obtener los mensajes de una conversación.
-     */
-    //ejemplo API
-    @Test
-    @Order(43)
-    public void PR57() {
-        final String RestAssuredURL = "http://localhost:8081/api/v1.0/conversation/user01@email.com";
-        //2. Preparamos el parámetro en formato JSON
-        RequestSpecification request = RestAssured.given();
-        //3. Hacemos la petición
-        Response response = request.post(RestAssuredURL);
-        //4. Comprobamos que el servicio ha tenido exito
-        Assertions.assertEquals(200, response.getStatusCode());
-    }
-
-    /**
      * @author Teresa
      * [Prueba33] Ir al formulario crear publicaciones, rellenarla con datos válidos y pulsar el botón Submit.
      * Comprobar que la publicación sale en el listado de publicaciones de dicho usuario.
@@ -545,10 +527,11 @@ class Sdi2223Entrega2TestApplicationTests {
 
         //Comprobamos que se añadió correctamente
         PO_PublicationView.goToListPublication(driver);
-        PO_Pagination.clickPage(driver,3);
+        //PO_Pagination.clickPage(driver,1);
         //PO_Pagination.clickNextPage(driver);
         SeleniumUtils.textIsPresentOnPage(driver,"Publicación de prueba");
     }
+
     /**
      * @author Teresa
      * [Prueba34] Ir al formulario de crear publicaciones, rellenarla con datos inválidos (campos título y
@@ -586,7 +569,7 @@ class Sdi2223Entrega2TestApplicationTests {
         PO_PublicView.loginSpecificUser("user01@email.com","Us3r@1-PASSW",driver);
 
         //Lista con las publicaciones no censuradas del usuario
-        String[] titles = {"Publication11", "Publication12", "Publication13", "Publication14", "Publication15", "Publication16", "Publication17", "Publication18", "Publication19"};
+        String[] titles = {"Publication11", "Publication11", "Publication12", "Publication13", "Publication14", "Publication15", "Publication16", "Publication17", "Publication18", "Publication19"};
         List<String> titlesList = List.of(titles);
 
         //Vamos a la lista de publicaciones
@@ -646,25 +629,6 @@ class Sdi2223Entrega2TestApplicationTests {
 
         // Cerrar sesión
         //PO_PrivateView.logout(driver);
-    }
-
-
-    //ejemplo API
-    @Test
-    @Order(38)
-    public void PR38() {
-        final String RestAssuredURL = "http://localhost:8081/api/v1.0/users/login";
-        //2. Preparamos el parámetro en formato JSON
-        RequestSpecification request = RestAssured.given();
-        JSONObject requestParams = new JSONObject();
-        requestParams.put("email", "delacal@uniovi.es");
-        requestParams.put("password", "1234");
-        request.header("Content-Type", "application/json");
-        request.body(requestParams.toJSONString());
-        //3. Hacemos la petición
-        Response response = request.post(RestAssuredURL);
-        //4. Comprobamos que el servicio ha tenido exito
-        Assertions.assertEquals(200, response.getStatusCode());
     }
 
     /**
@@ -757,6 +721,10 @@ class Sdi2223Entrega2TestApplicationTests {
         request2.header("token", token); // Aquí configuramos el token en la cabecera
         Response response2 = request2.get(RestAssuredURL2);
         Assertions.assertEquals(200, response2.getStatusCode());
+
+        // Comprobamos que estan los mensajes esperados
+        Assertions.assertTrue(response2.getBody().asString().contains("Que tal estás?"));
+        Assertions.assertTrue(response2.getBody().asString().contains("Mal, haciendo tests"));
     }
 
     /**
@@ -769,7 +737,32 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(44)
     public void PR44() {
+        // Iniciamos sesión
+        final String RestAssuredURL = "http://localhost:8080/api/v1.0/users/login";
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("email", "user01@email.com");
+        requestParams.put("password", "Us3r@1-PASSW");
+        request.header("Content-Type", "application/json");
+        request.body(requestParams.toJSONString());
+        Response response = request.post(RestAssuredURL);
+        Assertions.assertEquals(200, response.getStatusCode());
 
+        // obtengo el token de inicio de sesión
+        String token = response.jsonPath().getString("token");
+
+        // Obtenemos conversación
+        final String RestAssuredURL2 = "http://localhost:8080/api/v1.0/conversations";
+        RequestSpecification request2 = RestAssured.given();
+        request2.header("token", token); // Aquí configuramos el token en la cabecera
+        Response response2 = request2.get(RestAssuredURL2);
+        Assertions.assertEquals(200, response2.getStatusCode());
+
+        System.out.println(response2.getBody().asString());
+
+        // Comprobamos que estan los mensajes esperados
+        Assertions.assertTrue(response2.getBody().asString().contains("Que tal estás?"));
+        Assertions.assertTrue(response2.getBody().asString().contains("Mal, haciendo tests"));
     }
 
     /**
@@ -858,10 +851,51 @@ class Sdi2223Entrega2TestApplicationTests {
 
         // Acceder al listado de amistades
         PO_PrivateView.click(driver, "id", "myFriends", 0);
-        PO_PrivateView.click(driver, "text", "Conversation", 0);
+        PO_PrivateView.click(driver, "text", "Conversation", 1);
 
+        // Send message
         PO_ConversationView.sendMessage(driver, "Hola!");
 
-        //TODO: Check that message is sent
+        // Check that it was sent and registered
+        SeleniumUtils.textIsPresentOnPage(driver, "Hola!");
+    }
+
+    /**
+     * [Prueba52] Sobre el listado de conversaciones enviar un mensaje a una conversación ya abierta.
+     * Comprobar que el mensaje aparece en el listado de mensajes
+     */
+    @Test
+    @Order(52)
+    public void PR52() {
+        driver.navigate().to(URL_API);
+        PO_PublicView.loginUser(driver);
+
+        // Acceder al listado de amistades
+        PO_PrivateView.click(driver, "id", "myFriends", 0);
+        PO_PrivateView.click(driver, "text", "Conversation", 0);
+
+        // Send message
+        PO_ConversationView.sendMessage(driver, "Hola!");
+
+        // Check that it was sent and registered
+        SeleniumUtils.textIsPresentOnPage(driver, "Hola!");
+    }
+
+    /**
+     * [Prueba53] Acceder a la lista de mensajes de un amigo.
+     */
+    @Test
+    @Order(53)
+    public void PR53() {
+        driver.navigate().to(URL_API);
+        PO_PublicView.loginUser(driver);
+
+        // Acceder al listado de amistades
+        PO_PrivateView.click(driver, "id", "myFriends", 0);
+        PO_PrivateView.click(driver, "text", "Conversation", 0);
+
+        // Check that it was sent and registered
+        SeleniumUtils.textIsPresentOnPage(driver, "Que tal estás?");
+        SeleniumUtils.textIsPresentOnPage(driver, "Mal, haciendo tests");
     }
 }

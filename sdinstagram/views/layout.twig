@@ -25,6 +25,7 @@
           </button>
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
+          {% if user != null %}
           <ul class="nav navbar-nav">
             <li id="myRequests" class=""><a href="/friendships/requests">Friendships Requests</a></li>
          </ul>
@@ -37,10 +38,10 @@
           <ul class="nav navbar-nav">
               <li id="addPublication" class=""><a href="/publications/add">New Post</a></li>
           </ul>
+         {% endif %}
           <ul class="nav navbar-nav">
             <li id="mylistUsersSocial" class=""><a href="/users/social">Social Network Users</a></li>
           </ul>
-
           {% if user.role == 'admin' %}
             <ul class="nav navbar-nav">
               <li id="mylistSystemUsers" class=""><a href="/users/system">System Users</a></li>
