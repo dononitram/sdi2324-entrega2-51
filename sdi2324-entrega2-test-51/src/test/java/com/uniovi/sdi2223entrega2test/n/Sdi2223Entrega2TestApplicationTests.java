@@ -47,7 +47,10 @@ class Sdi2223Entrega2TestApplicationTests {
     //Peter :(
     //static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
     //Teresa :)
-    static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
+    //static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
+    //David
+    //static String Geckodriver = "C:\\Users\\david\\Desktop\\Uni\\3\\2doSem\\SDI\\PL\\Spring\\PL6\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
+
     static WebDriver driver = getDriver(PathFirefox, Geckodriver);
     static String URL = "http://localhost:8080/users/login";
     static String URL_API = "http://localhost:8080/apiclient/client.html";
@@ -359,6 +362,24 @@ class Sdi2223Entrega2TestApplicationTests {
     public void PR10() {
         Assertions.assertTrue(true, "PR10 sin hacer");
     }
+
+    /**
+     [Prueba11] Mostrar el listado de usuarios y comprobar que se muestran todos los que existen en el
+     sistema, incluyendo el usuario actual y los usuarios administradores.
+     */
+    @Test
+    @Order(11)
+    void PR11() {
+        //Inicio sesión como el admin
+        PO_PublicView.loginSpecificUser("admin@email.com","@Dm1n1str@D0r",driver);
+        //Ir a la lista de usuarios del sistema
+        PO_PrivateView.click(driver, "id", "mylistSystemUsers", 0);
+        // Comprobar que se muestran todos los usuarios incluyendo el admin(que es el usuario actual)
+        SeleniumUtils.textIsPresentOnPage(driver, "admin@email.com");
+        //Ir a la última página
+        PO_Pagination.clickPage(driver, 3);
+        PO_Pagination.clickPage(driver, 4);
+        SeleniumUtils.textIsPresentOnPage(driver, "user15@email.com");
 
     /**
      * @author Samuel
