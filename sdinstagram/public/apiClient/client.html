@@ -111,6 +111,7 @@
             $.ajax({
                 url: URLbase + `/messages/unread/${id}`,
                 type: "GET",
+                headers: {"token": token},
                 success: response => {
                     resolve(response.messages.length);
                 },

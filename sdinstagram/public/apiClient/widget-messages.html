@@ -57,6 +57,7 @@
                     $.ajax({
                         url: URLbase + `/messages/read/${messageId}`,
                         type: "PUT",
+                        headers: {"token": token},
                         success: response => {
                             //On succes continue
                         },

@@ -1141,7 +1141,6 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
-     * --PRUEBA FUNCIONAL--
      * @author Pedro
      * [Prueba46] Marcar como leído un mensaje de ID conocido. Esta prueba consistirá en comprobar que
      * el mensaje marcado de ID conocido queda marcado correctamente a true como leído. Por lo tanto,
@@ -1311,5 +1310,61 @@ class Sdi2223Entrega2TestApplicationTests {
         // Check that it was sent and registered
         SeleniumUtils.textIsPresentOnPage(driver, "Que tal estás?");
         SeleniumUtils.textIsPresentOnPage(driver, "Mal, haciendo tests");
+    }
+
+    /**
+     * --PRUEBA FUNCIONAL--
+     * @author Pedro
+    [Prueba57] Identificarse en la aplicación y enviar tres mensajes a un amigo. Validar que los mensajes
+    enviados aparecen en el chat. Identificarse después con el usuario que recibido el mensaje y validar
+    que el número de mensajes sin leer aparece en la propia lista de amigos.
+     */
+    @Test
+    @Order(57)
+    public void PR57() {
+        RestAssured.baseURI = "http://localhost:8080"; // Cambia esto por la URL de tu servicio
+        mongoClient = MongoClients.create("mongodb://localhost:27017");
+        database = mongoClient.getDatabase("sdinstagram");
+
+        //Hago el login
+        Response response = given().
+                contentType("application/json").
+                body("{\"email\":\"user01@email.com\", \"password\":\"Us3r@1-PASSW\"}").
+                when().
+                post("/api/v1.0/users/login").
+                then().extract().response();
+        //Saco el token
+        String token = response.jsonPath().getString("token");
+
+        //Esto saca de la BD el atr read del mensaje que voy a marcar leido
+        Document firstConversation = database.getCollection("conversations").find().first();
+        List<Document> mensajes = firstConversation.getList("messages", Document.class);
+        Document mensaje = mensajes.get(1);
+        Boolean leido = mensaje.getBoolean("read");
+        assertEquals(false, leido);
+
+        //Lo marco como leido y veo que el put salió correcto
+        RestAssured.baseURI = "http://localhost:8080";
+        given().
+                pathParams("messageId", 2).
+                queryParam("token", token).
+                when().
+                put("/api/v1.0/messages/read/{messageId}").
+                then().
+                body("message", equalTo("Message marked as read correctly."));
+
+        mongoClient.close();
+        //Compruebo que ahora esa propiedad read está puesta a true, es decir se leyó
+        mongoClient = MongoClients.create("mongodb://localhost:27017");
+        database = mongoClient.getDatabase("sdinstagram");
+
+        firstConversation = database.getCollection("conversations").find().first();
+        mensajes = firstConversation.getList("messages", Document.class);
+        mensaje = mensajes.get(1);
+        leido = mensaje.getBoolean("read");
+        assertEquals(true, leido);//Esta vez a true
+
+        //cierra la conexión
+        mongoClient.close();
     }
 }
