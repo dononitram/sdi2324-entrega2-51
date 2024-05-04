@@ -204,9 +204,10 @@ class Sdi2223Entrega2TestApplicationTests {
         database.getCollection("users").insertOne(admin1);
         database.getCollection("users").insertOne(user1);
         for(int i = 0; i < 10; i++) {
-            Document publication = new Document("title","Publication1"+i)
-                    .append("description","Publication1"+i)
-                    .append("author",database.getCollection("users").find(user1))
+
+            Document publication = new Document("title","Publication"+i)
+                    .append("description","Publication"+i)
+                    .append("author",database.getCollection("users").find(user1).first())
                     .append("date",getFormattedDate(i));
             database.getCollection("publications").insertOne(publication);
         }
@@ -582,6 +583,40 @@ class Sdi2223Entrega2TestApplicationTests {
         //Finalmente logeamos-cerramos sesión
         WebElement logout2 = driver.findElement(By.id("logout"));
         logout2.click();
+    }
+
+    /**
+     * @author Pedro
+    [Prueba26] Mostrar el listado de amigos de un usuario. Comprobar que el listado contiene los amigos
+    que deben ser.
+     */
+    @Test
+    @Order(26)
+    void PR26() {
+        //Inicio sesión como el user1
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
+        //Ir a la lista de amigos
+        PO_PrivateView.click(driver, "id", "myFriends", 0);
+        // Compruebo que salem el 4 y 5
+        SeleniumUtils.textIsPresentOnPage(driver, "user04@email.com");
+        SeleniumUtils.textIsPresentOnPage(driver, "user05@email.com");
+    }
+
+    /**
+     * @author Pedro
+    [Prueba27] Mostrar el listado de amigos de un usuario. Comprobar que se incluye la información
+    relacionada con la última publicación de cada usuario y la fecha de inicio de amistad.
+     */
+    @Test
+    @Order(27)
+    void PR27() {
+        //Inicio sesión como el user1
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
+        //Ir a la lista de amigos
+        PO_PrivateView.click(driver, "id", "myFriends", 0);
+        // Compruebo que salem el 4 y 5
+        SeleniumUtils.textIsPresentOnPage(driver, "user04@email.com");
+        SeleniumUtils.textIsPresentOnPage(driver, "user05@email.com");
     }
 
     /**
