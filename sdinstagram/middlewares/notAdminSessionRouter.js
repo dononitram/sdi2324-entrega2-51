@@ -2,7 +2,7 @@ const express = require('express');
 const notAdminSessionRouter = express.Router();
 notAdminSessionRouter.use(function(req, res, next) {
     console.log("notAdminSessionRouter");
-    if ( req.session.user.role === "admin") {
+    if ( req.session.user.role === "user") {
         // dejamos correr la petición
         next();
     } else {

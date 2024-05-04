@@ -69,8 +69,9 @@ app.use("*", petLogger(logsRepository));
 
 const userSessionRouter = require('./middlewares/userSessionRouter');
 app.use("/friendships", userSessionRouter);
-app.use("/publications/add", userSessionRouter);
 app.use("/publications", userSessionRouter);
+app.use("/users/logout", userSessionRouter)
+app.use("/logs", userSessionRouter);
 
 const adminSessionRouter = require('./middlewares/adminSessionRouter');
 app.use("/logs", adminSessionRouter);
@@ -85,15 +86,9 @@ app.use("/api/v1.0/conversation", userTokenRouter);
 app.use("/api/v1.0/conversations", userTokenRouter);
 app.use("/api/v1.0/messages", userTokenRouter);
 
-
-
-// Add more routes that require a token
-
 const notAdminSessionRouter = require('./middlewares/notAdminSessionRouter');
-// TODO: fill with the routes an administrator can't access
-
-const userFriendRouter = require('./middlewares/userFriendRouter');
-//app.use("/friendships", userFriendRouter);
+app.use("/friendships", notAdminSessionRouter);
+app.use("/publications", notAdminSessionRouter);
 
 const friendshipRequestsRouter = require("./middlewares/friendshipRequestsRouter");
 app.use("/friendships/request/send", friendshipRequestsRouter);
