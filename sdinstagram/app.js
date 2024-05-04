@@ -89,6 +89,7 @@ app.use("/api/v1.0/messages", userTokenRouter);
 const notAdminSessionRouter = require('./middlewares/notAdminSessionRouter');
 app.use("/friendships", notAdminSessionRouter);
 app.use("/publications", notAdminSessionRouter);
+app.use("/users/social", notAdminSessionRouter);
 
 const friendshipRequestsRouter = require("./middlewares/friendshipRequestsRouter");
 app.use("/friendships/request/send", friendshipRequestsRouter);
