@@ -203,19 +203,24 @@ class Sdi2223Entrega2TestApplicationTests {
 
         database.getCollection("users").insertOne(admin1);
         database.getCollection("users").insertOne(user1);
+        database.getCollection("users").insertOne(user5);
         for(int i = 0; i < 10; i++) {
-
             Document publication = new Document("title","Publication"+i)
                     .append("description","Publication"+i)
                     .append("author",database.getCollection("users").find(user1).first())
                     .append("date",getFormattedDate(i));
             database.getCollection("publications").insertOne(publication);
         }
+        //Una publicación para el 5
+        Document publication = new Document("title","PublicationTest")
+                .append("description","Si va va")
+                .append("author",database.getCollection("users").find(user5).first())
+                .append("date",getFormattedDate(1));
+        database.getCollection("publications").insertOne(publication);
 
         database.getCollection("users").insertOne(user2);
         database.getCollection("users").insertOne(user3);
         database.getCollection("users").insertOne(user4);
-        database.getCollection("users").insertOne(user5);
         database.getCollection("users").insertOne(user6);
         database.getCollection("users").insertOne(user7);
         database.getCollection("users").insertOne(user8);
