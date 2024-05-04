@@ -16,12 +16,12 @@ public class PO_EditUserView extends PO_NavView{
      */
     public static void editUser(WebDriver driver, String email, String name,
                     String surname, String rol){
-        WebElement emailTxt = driver.findElement(By.id("email-input"));
+        WebElement emailTxt = driver.findElement(By.id("email"));
         emailTxt.click();
         emailTxt.clear();
         emailTxt.sendKeys(email);
 
-        WebElement nameTxt = driver.findElement(By.id("name-input"));
+        WebElement nameTxt = driver.findElement(By.id("name"));
         nameTxt.click();
         nameTxt.clear();
         nameTxt.sendKeys(name);
@@ -34,11 +34,10 @@ public class PO_EditUserView extends PO_NavView{
         WebElement rolDesplegable = driver.findElement(By.id("role"));
         rolDesplegable.click();
 
-        String idRol = "rol"+rol;
-        WebElement rolConcreto = driver.findElement(By.id(idRol));// Esto seleccionará la opción
+        WebElement rolConcreto = driver.findElement(By.id(rol));
         rolConcreto.click();
 
-        By btn = By.id("button-submit-edit");
+        By btn = By.id("submit");
         driver.findElement(btn).click();
     }
 
