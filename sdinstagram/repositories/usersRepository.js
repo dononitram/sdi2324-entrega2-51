@@ -104,9 +104,9 @@ module.exports = {
         try {
 
             //TODO:
-            //Delete friendships
             //Delete friendship requests
 
+            await this.friendshipRepository.deleteFriendshipOfUsers(userIds);
             await this.publicationRepository.deletePublicationsOfUsers(userIds);
             const response = await this.deleteUsers(userIds);
             return response;
