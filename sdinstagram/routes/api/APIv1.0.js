@@ -1,5 +1,6 @@
 const { ObjectId } = require('mongodb');
 const conversationsRepository = require("../../repositories/conversationsRepository");
+const uuid =require('uuid');
 module.exports = function (app, usersRepository, friendshipRepository, friendshipRequestRepository, publicationsRepository
     , conversationsRepository) {
 
@@ -124,7 +125,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                                         .then(conversation => {
 
                                             if (conversation === null || typeof conversation === "undefined") {
-                                                res.status(404);
+                                                res.status(200);
                                                 res.json({ error: "No exite conversación con el usuario especificado" })
                                             }
                                             else {
@@ -180,9 +181,8 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
     });
 
     app.post('/api/v1.0/conversation', function (req, res) {
+        console.log("POST CONVERSATION",res.user, req.body);
         try {
-            //let user1 = res.user;
-            console.log("USER: ", res.user);
             if (typeof res.user === "undefined" || res.user === null) {
                 res.status(409);
                 res.json({ error: "Cannot create conversation. User not present" });
@@ -241,6 +241,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                                         if (conversation === null || typeof conversation === "undefined") {
                                             //A new conversation is created
                                             let message = {
+                                                messageId: uuid(),
                                                 author: user1,
                                                 date: new Date(),
                                                 text: req.body.message,
@@ -266,6 +267,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
                                             })
                                         } else { // There is already a conversation between this users
                                             let message = {
+                                                messageId: uuid(),
                                                 author: user1,
                                                 date: new Date(),
                                                 text: req.body.message,

@@ -7,9 +7,11 @@ import com.uniovi.sdi2223entrega2test.n.pageobjects.*;
 import com.uniovi.sdi2223entrega2test.n.util.SeleniumUtils;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.bson.codecs.jsr310.LocalDateCodec;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -43,9 +45,9 @@ class Sdi2223Entrega2TestApplicationTests {
     //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
     //Peter :(
-    static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
+    //static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
     //Teresa :)
-    //static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
+    static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
     static WebDriver driver = getDriver(PathFirefox, Geckodriver);
     static String URL = "http://localhost:8080/users/login";
     static String URL_API = "http://localhost:8080/apiclient/client.html";
@@ -234,18 +236,18 @@ class Sdi2223Entrega2TestApplicationTests {
         //Mensajes
         List<Document> messages = new ArrayList<>();
         //Adding messages
-        Document message1 = new Document("author", database.getCollection("users").find(user1).first())
+        Document message1 = new Document("messageId", "1")
+                .append("author", database.getCollection("users").find(user1).first())
                 .append("date", LocalDateTime.now().minusDays(5))
                 .append("text", "Que tal estás?")
-                .append("read", true)
-                .append("messageId", "1");
+                .append("read", true);
         messages.add(message1);
 
-        Document message2 = new Document("author", database.getCollection("users").find(user4).first())
+        Document message2 = new Document("messageId","2")
+                .append("author", database.getCollection("users").find(user4).first())
                 .append("date", LocalDateTime.now().minusDays(4))
                 .append("text", "Mal, haciendo tests")
-                .append("read", false)
-                .append("messageId", "2");
+                .append("read", false);
         messages.add(message2);
 
         //Conversations
@@ -269,7 +271,7 @@ class Sdi2223Entrega2TestApplicationTests {
         int minutes = currentDate.getMinute();
         int seconds = currentDate.getSecond();
 
-        return day+"/"+month+"/"+year+" "+hours+":"+minutes+":"+seconds;
+        return month+"/"+day+"/"+year+" "+hours+":"+minutes+":"+seconds;
     }
 
     private void restDatabase() {
@@ -643,22 +645,14 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
-     * @author Teresa
+     *
      * [Prueba41] Mostrar el listado de amigos para dicho usuario y comprobar que se muestran los amigos
      * del usuario autenticado. Esta prueba implica invocar a dos servicios: S1 y S2
      */
     @Test
     @Order(41)
     public void PR41() {
-        driver.navigate().to(URL_API);
-        PO_PublicView.loginUser(driver);
 
-        // Acceder al listado de amistades
-        PO_PrivateView.click(driver, "id", "myFriends", 0);
-        SeleniumUtils.textIsPresentOnPage(driver, "user04@email.com");
-        SeleniumUtils.textIsPresentOnPage(driver, "user05@email.com");
-
-        //TODO: Check that message is sent
 
     }
 
@@ -672,16 +666,86 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(42)
     public void PR42() {
-        driver.navigate().to(URL_API);
-        PO_PublicView.loginUser(driver);
+        // S1: Start session and get autentificated
+        final String RestAssuredURL = "http://localhost:8080/api/v1.0/users/login";
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("email", "user01@email.com");
+        requestParams.put("password", "Us3r@1-PASSW");
+        request.header("Content-Type", "application/json");
+        request.body(requestParams.toJSONString());
+        Response response = request.post(RestAssuredURL);
+        Assertions.assertEquals(200, response.getStatusCode());
 
-        // Acceder al listado de amistades
-        PO_PrivateView.click(driver, "id", "myFriends", 0);
-        PO_PrivateView.click(driver, "text", "Conversation", 0);
+        // get session token
+        String token = response.jsonPath().getString("token");
 
-        PO_ConversationView.sendMessage(driver, "Hola!");
+        // S3: Send message to a friend
+        final String RestAssuredURL2 = "http://localhost:8080/api/v1.0/conversation";
+        RequestSpecification request2 = RestAssured.given();
+        request2.header("token", token); // Stablish token in header
+        request2.header("Content-Type", "application/json");
+        // Stablish body to send a message
+        requestParams = new JSONObject();
+        requestParams.put("friendEmail", "user05@email.com");
+        requestParams.put("message", "Testing");
+        request2.body(requestParams.toJSONString());
+        Response response2 = request2.post(RestAssuredURL2);
+        Assertions.assertEquals(201, response2.getStatusCode());
 
-        //TODO: Check that message is sent
+        // S4: Check that conversation is updated
+        final String RestAssuredURL3 = "http://localhost:8080/api/v1.0/conversation/user05@email.com";
+        RequestSpecification request3 = RestAssured.given();
+        request3.header("token", token); // Stablish session token in header
+        request3.header("Content-Type", "application/json");
+        Response response3 = request3.get(RestAssuredURL3);
+        Assertions.assertEquals(200, response3.getStatusCode());
+        Assertions.assertTrue(response3.getBody().asString().contains("Testing"));
+    }
+
+    /**
+     * @author Samuel
+     * [Prueba43] Obtener los mensajes de una conversación. Esta prueba consistirá en comprobar que el
+     * servicio retorna el número correcto de mensajes para una conversación. El ID de la conversación
+     * deberá conocerse a priori. Por lo tanto, se tendrá primero que invocar al servicio de identificación
+     * (S1), y solicitar el listado de mensajes de una conversación de ID conocido a continuación (S4),
+     * comprobando que se retornan los mensajes adecuados.
+     */
+    @Test
+    @Order(43)
+    public void PR43() {
+        // Iniciamos sesión
+        final String RestAssuredURL = "http://localhost:8080/api/v1.0/users/login";
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("email", "user01@email.com");
+        requestParams.put("password", "Us3r@1-PASSW");
+        request.header("Content-Type", "application/json");
+        request.body(requestParams.toJSONString());
+        Response response = request.post(RestAssuredURL);
+        Assertions.assertEquals(200, response.getStatusCode());
+
+        // obtengo el token de inicio de sesión
+        String token = response.jsonPath().getString("token");
+
+        // Obtenemos conversación
+        final String RestAssuredURL2 = "http://localhost:8080/api/v1.0/conversation/user04@email.com";
+        RequestSpecification request2 = RestAssured.given();
+        request2.header("token", token); // Aquí configuramos el token en la cabecera
+        Response response2 = request2.get(RestAssuredURL2);
+        Assertions.assertEquals(200, response2.getStatusCode());
+    }
+
+    /**
+     * @author Samuel
+     * [Prueba44] Obtener la lista de conversaciones de un usuario. Esta prueba consistirá en comprobar que
+     * el servicio retorna el número correcto de conversaciones para dicho usuario. Por lo tanto, se tendrá
+     * primero que invocar al servicio de identificación (S1), y solicitar el listado de conversaciones a
+     * continuación (S5) comprobando que se retornan las conversaciones adecuadas
+     */
+    @Test
+    @Order(44)
+    public void PR44() {
 
     }
 
@@ -704,9 +768,9 @@ class Sdi2223Entrega2TestApplicationTests {
         given().
                 contentType("application/json").
                 body("{\"email\":\"user01@email.com\", \"password\":\"Us3r@1-PASSW\"}").
-        when().
+                when().
                 post("/api/v1.0/users/login").
-        then().
+                then().
                 body("authenticated", equalTo(true));
         //Compruebo que el mensaje está no leido
 
@@ -721,9 +785,9 @@ class Sdi2223Entrega2TestApplicationTests {
         RestAssured.baseURI = "http://localhost:8080";
         given().
                 pathParams("messageId", 2).
-        when().
+                when().
                 put("/api/v1.0/messages/read/{messageId}").
-        then().
+                then().
                 body("message", equalTo("Message marked as read correctly."));
 
         mongoClient.close();
@@ -739,5 +803,42 @@ class Sdi2223Entrega2TestApplicationTests {
 
         //cierra la conexión
         mongoClient.close();
+    }
+
+    /**
+     * @author Teresa
+     * [Prueba50] Mostrar el listado de amigos para dicho usuario y comprobar que se muestran los amigos
+     * del usuario autenticado.
+     */
+    @Test
+    @Order(50)
+    public void PR50() {
+        driver.navigate().to(URL_API);
+        PO_PublicView.loginUser(driver);
+
+        // Acceder al listado de amistades
+        PO_PrivateView.click(driver, "id", "myFriends", 0);
+        SeleniumUtils.textIsPresentOnPage(driver, "user04@email.com");
+        SeleniumUtils.textIsPresentOnPage(driver, "user05@email.com");
+    }
+
+    /**
+     * [Prueba51] Sobre listado de amigos (a elección de desarrollador), enviar un mensaje a un amigo
+     * concreto. Se abriría dicha conversación por primera vez. Comprobar que el mensaje aparece en el
+     * listado de mensajes.
+     */
+    @Test
+    @Order(51)
+    public void PR51() {
+        driver.navigate().to(URL_API);
+        PO_PublicView.loginUser(driver);
+
+        // Acceder al listado de amistades
+        PO_PrivateView.click(driver, "id", "myFriends", 0);
+        PO_PrivateView.click(driver, "text", "Conversation", 0);
+
+        PO_ConversationView.sendMessage(driver, "Hola!");
+
+        //TODO: Check that message is sent
     }
 }

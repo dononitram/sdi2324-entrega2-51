@@ -1,11 +1,12 @@
 <div id="widget-messages" >
     <h2 id="friendEmail"></h2>
-    <button class="btn" onclick="loadConversation()" >Actualizar</button>
+    <button class="btn" onclick="loadConversation()" >Update</button>
     <table class="table table-hover">
         <thead>
         <tr>
-            <th>Emisario mensaje</th>
-            <th>Receptor mensaje</th>
+            <th></th>
+            <th></th>
+            <th></th>
         </tr>
         </thead>
         <tbody id="messagesTableBody"></tbody>
@@ -45,7 +46,7 @@
     function updateMessagesTable(conversation) {
         $("#messagesTableBody").empty(); // Vaciar la tabla
         var messageCount;
-        if (conversation.messages === undefined || conversation.messages === null)  {
+        if (typeof conversation === "undefined" || conversation === null)  {
             messageCount = 0;
         } else {
             messageCount = Object.keys(conversation.messages).length;
@@ -53,15 +54,17 @@
         for (let i = 0; i < messageCount; i++) {
             if(conversation.messages[i].author.email===localStorage.getItem("friend_email")) {
                 $("#messagesTableBody").append(
-                    "<tr id=" +conversation.messages[i].message.messageId + ">" +
-                    "<td>" + conversation.messages[i].message + "</td>" +
+                    "<tr id=" +conversation.messages[i].messageId + ">" +
+                    "<td>" + conversation.messages[i].author.firstName + "</td>" +
+                    "<td style=\"text-align: left;\">" + conversation.messages[i].text + "</td>" +
                     "<td>" + "</td>" +
                     "</tr>");
             } else {
                 $("#messagesTableBody").append(
-                    "<tr id=" +conversation.messages[i].message.messageId + ">" +
+                    "<tr id=" +conversation.messages[i].messageId + ">" +
                     "<td>" + "</td>" +
-                    "<td>" + conversation.messages[i].message + "</td>" +
+                    "<td style=\"text-align: right;\">" + conversation.messages[i].text + "</td>" +
+                    "<td>" + conversation.messages[i].author.firstName + "</td>" +
                     "</tr>");
             }
         }
@@ -85,11 +88,12 @@
             headers: {"token": token},
             success: function success(response) {
                 console.log(1);
+                $("#message").val('');
                 loadConversation();
             },
             error: function(error) {
                 console.log(2);
-                console.log("token",token);
+                console.log("2token: ",token);
                 $("#main-container").load("widget-friends.html");
             }
         });
