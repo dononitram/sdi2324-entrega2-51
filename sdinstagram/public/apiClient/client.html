@@ -107,18 +107,6 @@
     };
 
     const countUnreadMessagesIn = async (id) => {
-        $.ajax({
-            url: URLbase + `/messages/unread/${id}`,
-            type: "GET",
-
-            success: response => {
-                return response.messages.length;
-            },
-            error: error =>  {
-                $("#widget-conversations")
-                    .prepend("<div class='alert alert-danger'>Error counting conversations unread messages</div>");
-            }
-        });
         return new Promise((resolve, reject) => {
             $.ajax({
                 url: URLbase + `/messages/unread/${id}`,
