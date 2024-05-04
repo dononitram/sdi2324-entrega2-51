@@ -45,9 +45,9 @@ class Sdi2223Entrega2TestApplicationTests {
     //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
     //Peter :(
-    static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
+    //static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
     //Teresa :)
-    //static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
+    static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
     //David
     //static String Geckodriver = "C:\\Users\\david\\Desktop\\Uni\\3\\2doSem\\SDI\\PL\\Spring\\PL6\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
 
@@ -203,34 +203,125 @@ class Sdi2223Entrega2TestApplicationTests {
 
         database.getCollection("users").insertOne(admin1);
         database.getCollection("users").insertOne(user1);
-        database.getCollection("users").insertOne(user5);
-        for(int i = 0; i < 10; i++) {
-            Document publication = new Document("title","Publication"+i)
-                    .append("description","Publication"+i)
-                    .append("author",database.getCollection("users").find(user1).first())
-                    .append("date",getFormattedDate(i));
+        for (int i = 0; i < 10; i++) {
+                Document publication = new Document("title", "Publication 1" + i)
+                        .append("description", "Publication 1" + i)
+                        .append("author", database.getCollection("users").find(user1).first())
+                        .append("date", getFormattedDate(i));
+                database.getCollection("publications").insertOne(publication);
+        }
+        database.getCollection("users").insertOne(user2);
+        for (int i = 0; i < 10; i++) {
+            Document publication = new Document("title", "Publication 2" + i)
+                    .append("description", "Publication 2" + i)
+                    .append("author", database.getCollection("users").find(user2).first())
+                    .append("date", getFormattedDate(i));
             database.getCollection("publications").insertOne(publication);
         }
-        //Una publicación para el 5
-        Document publication = new Document("title","PublicationTest")
-                .append("description","Si va va")
-                .append("author",database.getCollection("users").find(user5).first())
-                .append("date",getFormattedDate(1));
-        database.getCollection("publications").insertOne(publication);
-
-        database.getCollection("users").insertOne(user2);
         database.getCollection("users").insertOne(user3);
+        for (int i = 0; i < 10; i++) {
+            Document publication = new Document("title", "Publication 3" + i)
+                    .append("description", "Publication 3" + i)
+                    .append("author", database.getCollection("users").find(user3).first())
+                    .append("date", getFormattedDate(i));
+            database.getCollection("publications").insertOne(publication);
+        }
         database.getCollection("users").insertOne(user4);
+        for (int i = 0; i < 10; i++) {
+            Document publication = new Document("title", "Publication 4" + i)
+                    .append("description", "Publication 4" + i)
+                    .append("author", database.getCollection("users").find(user4).first())
+                    .append("date", getFormattedDate(i));
+            database.getCollection("publications").insertOne(publication);
+        }
+        database.getCollection("users").insertOne(user5);
+        for (int i = 0; i < 10; i++) {
+            Document publication = new Document("title", "Publication 5" + i)
+                    .append("description", "Publication 5" + i)
+                    .append("author", database.getCollection("users").find(user5).first())
+                    .append("date", getFormattedDate(i));
+            database.getCollection("publications").insertOne(publication);
+        }
         database.getCollection("users").insertOne(user6);
+        for (int i = 0; i < 10; i++) {
+            Document publication = new Document("title", "Publication 6" + i)
+                    .append("description", "Publication 6" + i)
+                    .append("author", database.getCollection("users").find(user6).first())
+                    .append("date", getFormattedDate(i));
+            database.getCollection("publications").insertOne(publication);
+        }
         database.getCollection("users").insertOne(user7);
+        for (int i = 0; i < 10; i++) {
+            Document publication = new Document("title", "Publication 7" + i)
+                    .append("description", "Publication 7" + i)
+                    .append("author", database.getCollection("users").find(user7).first())
+                    .append("date", getFormattedDate(i));
+            database.getCollection("publications").insertOne(publication);
+        }
         database.getCollection("users").insertOne(user8);
+        for (int i = 0; i < 10; i++) {
+            Document publication = new Document("title", "Publication 8" + i)
+                    .append("description", "Publication 8" + i)
+                    .append("author", database.getCollection("users").find(user8).first())
+                    .append("date", getFormattedDate(i));
+            database.getCollection("publications").insertOne(publication);
+        }
         database.getCollection("users").insertOne(user9);
+        for (int i = 0; i < 10; i++) {
+            Document publication = new Document("title", "Publication 9" + i)
+                    .append("description", "Publication 9" + i)
+                    .append("author", database.getCollection("users").find(user9).first())
+                    .append("date", getFormattedDate(i));
+            database.getCollection("publications").insertOne(publication);
+        }
         database.getCollection("users").insertOne(user10);
+        for (int i = 0; i < 10; i++) {
+            Document publication = new Document("title", "Publication 10" + i)
+                    .append("description", "Publication 10" + i)
+                    .append("author", database.getCollection("users").find(user10).first())
+                    .append("date", getFormattedDate(i));
+            database.getCollection("publications").insertOne(publication);
+        }
         database.getCollection("users").insertOne(user11);
+        for (int i = 0; i < 10; i++) {
+            Document publication = new Document("title", "Publication 11" + i)
+                    .append("description", "Publication 11" + i)
+                    .append("author", database.getCollection("users").find(user11).first())
+                    .append("date", getFormattedDate(i));
+            database.getCollection("publications").insertOne(publication);
+        }
         database.getCollection("users").insertOne(user12);
+        for (int i = 0; i < 10; i++) {
+            Document publication = new Document("title", "Publication 12" + i)
+                    .append("description", "Publication 12" + i)
+                    .append("author", database.getCollection("users").find(user12).first())
+                    .append("date", getFormattedDate(i));
+            database.getCollection("publications").insertOne(publication);
+        }
         database.getCollection("users").insertOne(user13);
+        for (int i = 0; i < 10; i++) {
+            Document publication = new Document("title", "Publication 13" + i)
+                    .append("description", "Publication 13" + i)
+                    .append("author", database.getCollection("users").find(user13).first())
+                    .append("date", getFormattedDate(i));
+            database.getCollection("publications").insertOne(publication);
+        }
         database.getCollection("users").insertOne(user14);
+        for (int i = 0; i < 10; i++) {
+            Document publication = new Document("title", "Publication 14" + i)
+                    .append("description", "Publication 14" + i)
+                    .append("author", database.getCollection("users").find(user14).first())
+                    .append("date", getFormattedDate(i));
+            database.getCollection("publications").insertOne(publication);
+        }
         database.getCollection("users").insertOne(user15);
+        for (int i = 0; i < 10; i++) {
+            Document publication = new Document("title", "Publication 15" + i)
+                    .append("description", "Publication 15" + i)
+                    .append("author", database.getCollection("users").find(user15).first())
+                    .append("date", getFormattedDate(i));
+            database.getCollection("publications").insertOne(publication);
+        }
 
         //Friendships
         Document friendship = new Document("user1", database.getCollection("users").find(user1).first())
@@ -272,7 +363,7 @@ class Sdi2223Entrega2TestApplicationTests {
 
         // Obtiene los componentes de la fecha
         int day = currentDate.getDayOfMonth();
-        int month = currentDate.getMonthValue()+1; // Los meses son base 0, por lo que se suma 1
+        int month = currentDate.getMonthValue(); // Los meses son base 0, por lo que se suma 1
         int year = currentDate.getYear();
 
         // Obtiene los componentes de la hora
@@ -706,7 +797,9 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
-     * [Prueba31] Estando autenticado como usuario administrador visualizar todos los logs generados en una serie de interacciones. Esta prueba deberá generar al menos dos interacciones de cada tipo y comprobar que el listado incluye los logs correspondientes. 
+     * [Prueba31] Estando autenticado como usuario administrador visualizar todos los logs generados en
+     * una serie de interacciones. Esta prueba deberá generar al menos dos interacciones de cada tipo y
+     * comprobar que el listado incluye los logs correspondientes.
      * @author Donato
      */
     @Test
@@ -721,7 +814,9 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
-     * [Prueba32] Estando autenticado como usuario administrador, ir a visualización de logs y filtrar por un tipo, pulsar el botón/enlace borrar logs y comprobar que se eliminan los logs del tipo seleccionado, de la base de datos.
+     * [Prueba32] Estando autenticado como usuario administrador, ir a visualización de logs y
+     * filtrar por un tipo, pulsar el botón/enlace borrar logs y comprobar que se eliminan los logs
+     * del tipo seleccionado, de la base de datos.
      * @author Donato
      */
     @Test
@@ -775,7 +870,7 @@ class Sdi2223Entrega2TestApplicationTests {
         PO_PublicationView.fillForm(driver,"a","a");
 
         //Comprobamos que se se muestran los mensajes de error
-        SeleniumUtils.textIsPresentOnPage(driver,"Error when inserting new publication: Title must be at least 4 characters long.");
+        SeleniumUtils.textIsPresentOnPage(driver,"Error when inserting new publication: Title must be at least 5 characters long.");
         //SeleniumUtils.textIsPresentOnPage(driver,"Error when inserting new publication: Description must be at least 4 characters long.");
 
         // Cerrar sesión
@@ -795,7 +890,8 @@ class Sdi2223Entrega2TestApplicationTests {
         PO_PublicView.loginSpecificUser("user01@email.com","Us3r@1-PASSW",driver);
 
         //Lista con las publicaciones no censuradas del usuario
-        String[] titles = {"Publication11", "Publication11", "Publication12", "Publication13", "Publication14", "Publication15", "Publication16", "Publication17", "Publication18", "Publication19"};
+        String[] titles = {"Publication 10", "Publication 11", "Publication 12", "Publication 13", "Publication 14",
+                "Publication 15", "Publication 16", "Publication 17", "Publication 18", "Publication 19"};
         List<String> titlesList = List.of(titles);
 
         //Vamos a la lista de publicaciones
