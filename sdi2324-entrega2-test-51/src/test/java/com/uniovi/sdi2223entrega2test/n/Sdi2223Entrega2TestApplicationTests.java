@@ -600,6 +600,99 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
+     * @author David
+     * [Prueba14] Ir a la lista de usuarios, borrar el primer usuario de la lista, comprobar que la lista se actualiza
+     * y dicho usuario desaparece.
+     */
+    @Test
+    @Order(14)
+    void PR14() throws InterruptedException {
+        //Inicio sesión como el admin
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str@D0r", driver);
+        //Ir a la lista de usuarios del sistema
+        PO_PrivateView.click(driver, "id", "mylistSystemUsers", 0);
+        //Seleccionar primer usuario
+        PO_PrivateView.click(driver, "id", "cb_user01@email.com",0);
+        //Borrar usuario
+        PO_PrivateView.click(driver, "id", "button_delete",0);
+        //Verificar que se borró correctamente
+        Thread.sleep(1000);
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user01@email.com");
+    }
+
+    /**
+     * @author David
+     * Prueba15] Ir a la lista de usuarios, borrar el último usuario de la lista, comprobar que la lista se actualiza
+     * y dicho usuario desaparece.
+     */
+    @Test
+    @Order(15)
+    void PR15() throws InterruptedException {
+        //Inicio sesión como el admin
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str@D0r", driver);
+        //Ir a la lista de usuarios del sistema
+        PO_PrivateView.click(driver, "id", "mylistSystemUsers", 0);
+        //Ir a la última página
+        PO_Pagination.clickPage(driver, 3);
+        PO_Pagination.clickPage(driver, 4);
+        //Seleccionar primer usuario
+        PO_PrivateView.click(driver, "id", "cb_user15@email.com", 0);
+        //Borrar usuario
+        PO_PrivateView.click(driver, "id", "button_delete", 0);
+        //Verificar que se borró correctamente
+        Thread.sleep(1000);
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user15@email.com");
+    }
+
+    /**
+     * @author David
+     * [Prueba16] Ir a la lista de usuarios, borrar 3 usuarios, comprobar que la lista se actualiza y dichos
+     * usuarios desaparecen.
+     */
+    @Test
+    @Order(16)
+    void PR16() throws InterruptedException {
+        //Inicio sesión como el admin
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str@D0r", driver);
+        //Ir a la lista de usuarios del sistema
+        PO_PrivateView.click(driver, "id", "mylistSystemUsers", 0);
+        //Seleccionar tres usuarios usuario
+        PO_PrivateView.click(driver, "id", "cb_user01@email.com",0);
+        PO_PrivateView.click(driver, "id", "cb_user02@email.com",0);
+        PO_PrivateView.click(driver, "id", "cb_user03@email.com",0);
+        //Borrar usuarios
+        PO_PrivateView.click(driver, "id", "button_delete",0);
+        //Verificar que se borró correctamente
+        Thread.sleep(1000);
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user01@email.com");
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user02@email.com");
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user03@email.com");
+    }
+
+    /**
+     * @author David
+     * [Prueba17] Intentar borrar el usuario que se encuentra en sesión y comprobar que no ha sido borrado
+     * (porque no es un usuario administrador o bien, porque, no se puede borrar a sí mismo, si esta
+     * autenticado).
+     */
+    @Test
+    @Order(17)
+    void PR17() throws InterruptedException {
+        //Inicio sesión como el admin
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str@D0r", driver);
+        //Ir a la lista de usuarios del sistema
+        PO_PrivateView.click(driver, "id", "mylistSystemUsers", 0);
+        //Seleccionar tres usuarios usuario
+        PO_PrivateView.click(driver, "id", "cb_admin@email.com",0);
+        //Borrar usuarios
+        PO_PrivateView.click(driver, "id", "button_delete",0);
+        //Verificar que se borró correctamente
+        Thread.sleep(1000);
+        SeleniumUtils.textIsPresentOnPage(driver, "admin@email.com");
+        SeleniumUtils.textIsPresentOnPage(driver, "You cannot delete yourself");
+    }
+
+    /**
      * @author Pedro
      * [Prueba18] Mostrar el listado de usuarios y comprobar que se muestran todos los que existen en el
      * sistema, excepto el propio usuario y aquellos que sean administradores.
