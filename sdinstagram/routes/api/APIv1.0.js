@@ -386,7 +386,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
     });
 
     /**
-     * Mark as read the message indicated by the id  >><<<>>><<>>><<<<<>>><<>>><<<<<>>><<>>><<>>CAMBIAR A PUT
+     * Marks as read the message passed by it's id
      */
     app.put('/api/v1.0/messages/read/:id', async function (req, res) {
         try {
@@ -432,7 +432,7 @@ module.exports = function (app, usersRepository, friendshipRepository, friendshi
         }
     });
     /**
-     * Mensajes no leídos de una conversación dado su id
+     * No read messages passed the conversation id
      */
     app.get('/api/v1.0/messages/unread/:id/', async function (req, res) {
         try {
