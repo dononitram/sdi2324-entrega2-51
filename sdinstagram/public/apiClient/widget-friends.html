@@ -38,15 +38,42 @@
     function updateFriendsTable(friendships) {
         $("#friendsTableBody").empty(); // Vaciar la tabla
         for (let i = 0; i < friendships.length; i++) {
-            $("#friendsTableBody").append(
-                "<tr id=" + friendships[i]._id + ">" +
-                "<td>" + friendships[i].email + "</td>" +
-                "<td>" + friendships[i].firstName + "</td>" +
-                "<td>" + friendships[i].lastName + "</td>" +
-                "<td>" +
-                "<a onclick=\"loadConversation('"+friendships[i].email+"')\">Conversation</a><br>" +
-                "</td>" +
-                "</tr>");
+            $.ajax ({
+                url: URLbase + "/conversation/" + friendships[i].email,
+                type: "GET",
+                data: {},
+                dataType: 'json',
+                headers: {"token": token},
+                success: function (response) {
+                    if (response.conversation === undefined || response.conversation === null){
+                        $("#friendsTableBody").append(
+                            "<tr id=" + friendships[i]._id + ">" +
+                            "<td>" + friendships[i].email + "</td>" +
+                            "<td>" + friendships[i].firstName + "</td>" +
+                            "<td>" + friendships[i].lastName + "</td>" +
+                            "<td>" +
+                            "<a onclick=\"loadConversation('"+friendships[i].email+"')\">Conversation</a><br>" +
+                            "</td>" +
+                            "</tr>");
+                    } else {
+                        $("#friendsTableBody").append(
+                            "<tr id=" + friendships[i]._id + ">" +
+                            "<td>" + friendships[i].email + "</td>" +
+                            "<td>" + friendships[i].firstName + "</td>" +
+                            "<td>" + friendships[i].lastName + "</td>" +
+                            "<td>" +
+                            "<a onclick=\"loadConversation('"+friendships[i].email+"')\">Conversation</a><br>" +
+                            "<p>" + response.conversation.messages[Object.keys(response.conversation.messages).length - 1].date + "</p>" +
+                            "<p>" + response.conversation.messages[Object.keys(response.conversation.messages).length - 1].text + "</p>" +
+                            "</td>" +
+                            "</tr>");
+                    }
+                },
+                error: function (error) {
+                    console.log("token",token);
+                    $("#main-container").load("widget-friends.html");
+                }
+            });
         }
     }
 

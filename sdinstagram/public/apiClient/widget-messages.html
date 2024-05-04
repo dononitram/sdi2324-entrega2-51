@@ -1,6 +1,5 @@
 <div id="widget-messages" >
     <h2 id="friendEmail"></h2>
-    <button class="btn" onclick="loadConversation()" >Update</button>
     <table class="table table-hover">
         <thead>
         <tr>
@@ -34,7 +33,6 @@
             headers: {"token": token},
             success: function (response) {
                 conversation = response.conversation;
-                console.log("Conversation: ",conversation);
                 updateMessagesTable(conversation);
             },
             error: function (error) {
@@ -55,7 +53,7 @@
             if(conversation.messages[i].author.email===localStorage.getItem("friend_email")) {
                 $("#messagesTableBody").append(
                     "<tr id=" +conversation.messages[i].messageId + ">" +
-                    "<td>" + conversation.messages[i].author.firstName + "</td>" +
+                    "<td style=\"text-align: right;\">" + conversation.messages[i].author.firstName + ":" + "</td>" +
                     "<td style=\"text-align: left;\">" + conversation.messages[i].text + "</td>" +
                     "<td>" + "</td>" +
                     "</tr>");
@@ -64,7 +62,7 @@
                     "<tr id=" +conversation.messages[i].messageId + ">" +
                     "<td>" + "</td>" +
                     "<td style=\"text-align: right;\">" + conversation.messages[i].text + "</td>" +
-                    "<td>" + conversation.messages[i].author.firstName + "</td>" +
+                    "<td style=\"text-align: left;\">" + ":" + conversation.messages[i].author.firstName + "</td>" +
                     "</tr>");
             }
         }
@@ -73,6 +71,7 @@
 
     loadConversation();
 
+    setInterval(loadConversation, 1000);
 
     function sendMessage() {
         email = localStorage.getItem("friend_email");
