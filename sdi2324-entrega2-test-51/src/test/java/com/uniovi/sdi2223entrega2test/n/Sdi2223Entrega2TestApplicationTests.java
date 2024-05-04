@@ -42,12 +42,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class Sdi2223Entrega2TestApplicationTests {
     static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
+    //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
     //Peter :(
     //static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
     //Teresa :)
-    //static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
+    static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
     static WebDriver driver = getDriver(PathFirefox, Geckodriver);
     static String URL = "http://localhost:8080/users/login";
     static String URL_API = "http://localhost:8080/apiclient/client.html";
@@ -805,6 +805,7 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
+     * @author Teresa
      * [Prueba51] Sobre listado de amigos (a elección de desarrollador), enviar un mensaje a un amigo
      * concreto. Se abriría dicha conversación por primera vez. Comprobar que el mensaje aparece en el
      * listado de mensajes.
@@ -827,6 +828,7 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
+     * @author Teresa
      * [Prueba52] Sobre el listado de conversaciones enviar un mensaje a una conversación ya abierta.
      * Comprobar que el mensaje aparece en el listado de mensajes
      */
