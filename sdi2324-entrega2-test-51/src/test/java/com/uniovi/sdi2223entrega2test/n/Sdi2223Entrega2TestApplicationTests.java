@@ -42,12 +42,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class Sdi2223Entrega2TestApplicationTests {
     static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
+    static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
     //Peter :(
     //static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
     //Teresa :)
-    static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
+    //static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
     static WebDriver driver = getDriver(PathFirefox, Geckodriver);
     static String URL = "http://localhost:8080/users/login";
     static String URL_API = "http://localhost:8080/apiclient/client.html";
@@ -476,23 +476,6 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
-     * @author Samuel
-     * [Prueba25] Obtener los mensajes de una conversación.
-     */
-    //ejemplo API
-    @Test
-    @Order(43)
-    public void PR57() {
-        final String RestAssuredURL = "http://localhost:8081/api/v1.0/conversation/user01@email.com";
-        //2. Preparamos el parámetro en formato JSON
-        RequestSpecification request = RestAssured.given();
-        //3. Hacemos la petición
-        Response response = request.post(RestAssuredURL);
-        //4. Comprobamos que el servicio ha tenido exito
-        Assertions.assertEquals(200, response.getStatusCode());
-    }
-
-    /**
      * @author Teresa
      * [Prueba33] Ir al formulario crear publicaciones, rellenarla con datos válidos y pulsar el botón Submit.
      * Comprobar que la publicación sale en el listado de publicaciones de dicho usuario.
@@ -704,6 +687,10 @@ class Sdi2223Entrega2TestApplicationTests {
         request2.header("token", token); // Aquí configuramos el token en la cabecera
         Response response2 = request2.get(RestAssuredURL2);
         Assertions.assertEquals(200, response2.getStatusCode());
+
+        // Comprobamos que estan los mensajes esperados
+        Assertions.assertTrue(response2.getBody().asString().contains("Que tal estás?"));
+        Assertions.assertTrue(response2.getBody().asString().contains("Mal, haciendo tests"));
     }
 
     /**
@@ -716,7 +703,32 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(44)
     public void PR44() {
+        // Iniciamos sesión
+        final String RestAssuredURL = "http://localhost:8080/api/v1.0/users/login";
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("email", "user01@email.com");
+        requestParams.put("password", "Us3r@1-PASSW");
+        request.header("Content-Type", "application/json");
+        request.body(requestParams.toJSONString());
+        Response response = request.post(RestAssuredURL);
+        Assertions.assertEquals(200, response.getStatusCode());
 
+        // obtengo el token de inicio de sesión
+        String token = response.jsonPath().getString("token");
+
+        // Obtenemos conversación
+        final String RestAssuredURL2 = "http://localhost:8080/api/v1.0/conversations";
+        RequestSpecification request2 = RestAssured.given();
+        request2.header("token", token); // Aquí configuramos el token en la cabecera
+        Response response2 = request2.get(RestAssuredURL2);
+        Assertions.assertEquals(200, response2.getStatusCode());
+
+        System.out.println(response2.getBody().asString());
+
+        // Comprobamos que estan los mensajes esperados
+        Assertions.assertTrue(response2.getBody().asString().contains("Que tal estás?"));
+        Assertions.assertTrue(response2.getBody().asString().contains("Mal, haciendo tests"));
     }
 
     /**
@@ -833,5 +845,23 @@ class Sdi2223Entrega2TestApplicationTests {
 
         // Check that it was sent and registered
         SeleniumUtils.textIsPresentOnPage(driver, "Hola!");
+    }
+
+    /**
+     * [Prueba53] Acceder a la lista de mensajes de un amigo.
+     */
+    @Test
+    @Order(53)
+    public void PR53() {
+        driver.navigate().to(URL_API);
+        PO_PublicView.loginUser(driver);
+
+        // Acceder al listado de amistades
+        PO_PrivateView.click(driver, "id", "myFriends", 0);
+        PO_PrivateView.click(driver, "text", "Conversation", 0);
+
+        // Check that it was sent and registered
+        SeleniumUtils.textIsPresentOnPage(driver, "Que tal estás?");
+        SeleniumUtils.textIsPresentOnPage(driver, "Mal, haciendo tests");
     }
 }
