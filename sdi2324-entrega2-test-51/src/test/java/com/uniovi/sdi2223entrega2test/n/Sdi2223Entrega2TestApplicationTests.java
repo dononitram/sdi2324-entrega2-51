@@ -347,6 +347,10 @@ class Sdi2223Entrega2TestApplicationTests {
                 .append("user2", database.getCollection("users").find(user4).first())
                 .append("messages", messages);
         database.getCollection("conversations").insertOne(conversation);
+        Document conversation2 = new Document("user1", database.getCollection("users").find(user1).first())
+                .append("user2", database.getCollection("users").find(user3).first())
+                .append("messages", messages);
+        database.getCollection("conversations").insertOne(conversation2);
     }
 
     public String getFormattedDate(int i) {
@@ -1540,6 +1544,73 @@ class Sdi2223Entrega2TestApplicationTests {
         SeleniumUtils.textIsPresentOnPage(driver, "Que tal estás?");
         SeleniumUtils.textIsPresentOnPage(driver, "Mal, haciendo tests");
     }
+
+    /**
+     * @author David
+     * [Prueba54] Mostrar el listado de conversaciones ya abiertas. Comprobar que el listado contiene la
+     * cantidad correcta de conversaciones.
+     */
+    @Test
+    @Order(54)
+    public void PR54() {
+        driver.navigate().to(URL_API);
+        PO_PublicView.loginUser(driver);
+
+        // Acceder al listado de conversaciones
+        PO_PrivateView.click(driver, "id", "myChats", 0);
+
+        // Comprobar que se muestra el usuario con el que se ha hablado
+        SeleniumUtils.textIsPresentOnPage(driver, "user04");
+    }
+
+    /**
+     * @author David
+     * [Prueba55] Sobre el listado de conversaciones ya abiertas. Pinchar el enlace Eliminar en la primera y
+     * comprobar que el listado se actualiza correctamente.
+     */
+    @Test
+    @Order(55)
+    public void PR55() {
+        driver.navigate().to(URL_API);
+        PO_PublicView.loginUser(driver);
+
+        // Acceder al listado de conversaciones
+        PO_PrivateView.click(driver, "id", "myChats", 0);
+
+        // Comprobar que se muestra el usuario con el que se ha hablado
+        SeleniumUtils.textIsPresentOnPage(driver, "user04");
+
+        // Eliminar conversación
+        PO_PrivateView.click(driver, "id", "with_user04@email.com", 0);
+
+        // Comprobar que ya no se muestra el usuario con el que se ha hablado
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user04");
+    }
+
+    /**
+     * @author David
+     * [Prueba56] Sobre el listado de conversaciones ya abiertas. Pinchar el enlace Eliminar en la última y
+     * comprobar que el listado se actualiza correctamente.
+     */
+    @Test
+    @Order(56)
+    public void PR56() {
+        driver.navigate().to(URL_API);
+        PO_PublicView.loginUser(driver);
+
+        // Acceder al listado de conversaciones
+        PO_PrivateView.click(driver, "id", "myChats", 0);
+
+        // Comprobar que se muestra el usuario con el que se ha hablado
+        SeleniumUtils.textIsPresentOnPage(driver, "user03");
+
+        // Eliminar conversación
+        PO_PrivateView.click(driver, "id", "with_user03@email.com", 0);
+
+        // Comprobar que ya no se muestra el usuario con el que se ha hablado
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user03");
+    }
+
 
     /**
      * @author Pedro
