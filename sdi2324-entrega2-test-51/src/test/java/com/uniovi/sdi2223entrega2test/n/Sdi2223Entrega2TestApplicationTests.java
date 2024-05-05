@@ -21,14 +21,13 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Locale;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
@@ -108,97 +107,96 @@ class Sdi2223Entrega2TestApplicationTests {
                 .append("password", hashPassword("Us3r@2-PASSW", "abcdefg"))
                 .append("firstName", "User02")
                 .append("lastName", "Surname02")
-                .append("birthdate","2024-04-30")
+                .append("birthdate", "2024-04-30")
                 .append("role", "user");
         Document user3 = new Document("email", "user03@email.com")
                 .append("password", hashPassword("Us3r@3-PASSW", "abcdefg"))
                 .append("firstName", "User03")
                 .append("lastName", "Surname03")
-                .append("birthdate","2024-04-30")
+                .append("birthdate", "2024-04-30")
                 .append("role", "user");
         Document user4 = new Document("email", "user04@email.com")
                 .append("password", hashPassword("Us3r@4-PASSW", "abcdefg"))
                 .append("firstName", "User04")
                 .append("lastName", "Surname04")
-                .append("birthdate","2024-04-30")
+                .append("birthdate", "2024-04-30")
                 .append("role", "user");
         Document user5 = new Document("email", "user05@email.com")
                 .append("password", hashPassword("Us3r@5-PASSW", "abcdefg"))
                 .append("firstName", "User05")
                 .append("lastName", "Surname05")
-                .append("birthdate","2024-04-30")
+                .append("birthdate", "2024-04-30")
                 .append("role", "user");
         Document user6 = new Document("email", "user06@email.com")
                 .append("password", hashPassword("Us3r@6-PASSW", "abcdefg"))
                 .append("firstName", "User06")
                 .append("lastName", "Surname06")
-                .append("birthdate","2024-04-30")
+                .append("birthdate", "2024-04-30")
                 .append("role", "user");
         Document user7 = new Document("email", "user07@email.com")
                 .append("password", hashPassword("Us3r@7-PASSW", "abcdefg"))
                 .append("firstName", "User07")
                 .append("lastName", "Surname07")
-                .append("birthdate","2024-04-30")
+                .append("birthdate", "2024-04-30")
                 .append("role", "user");
         Document user8 = new Document("email", "user08@email.com")
                 .append("password", hashPassword("Us3r@8-PASSW", "abcdefg"))
                 .append("firstName", "User08")
                 .append("lastName", "Surname08")
-                .append("birthdate","2024-04-30")
+                .append("birthdate", "2024-04-30")
                 .append("role", "user");
         Document user9 = new Document("email", "user09@email.com")
                 .append("password", hashPassword("Us3r@9-PASSW", "abcdefg"))
                 .append("firstName", "User09")
                 .append("lastName", "Surname09")
-                .append("birthdate","2024-04-30")
+                .append("birthdate", "2024-04-30")
                 .append("role", "user");
         Document user10 = new Document("email", "user10@email.com")
                 .append("password", hashPassword("Us3r@10-PASSW", "abcdefg"))
                 .append("firstName", "User10")
                 .append("lastName", "Surname10")
-                .append("birthdate","2024-04-30")
+                .append("birthdate", "2024-04-30")
                 .append("role", "user");
         Document user11 = new Document("email", "user11@email.com")
                 .append("password", hashPassword("Us3r@11-PASSW", "abcdefg"))
                 .append("firstName", "User11")
                 .append("lastName", "Surname11")
-                .append("birthdate","2024-04-30")
+                .append("birthdate", "2024-04-30")
                 .append("role", "user");
         Document user12 = new Document("email", "user12@email.com")
                 .append("password", hashPassword("Us3r@12-PASSW", "abcdefg"))
                 .append("firstName", "User12")
                 .append("lastName", "Surname12")
-                .append("birthdate","2024-04-30")
+                .append("birthdate", "2024-04-30")
                 .append("role", "user");
         Document user13 = new Document("email", "user13@email.com")
                 .append("password", hashPassword("Us3r@13-PASSW", "abcdefg"))
                 .append("firstName", "User13")
                 .append("lastName", "Surname13")
-                .append("birthdate","2024-04-30")
+                .append("birthdate", "2024-04-30")
                 .append("role", "user");
         Document user14 = new Document("email", "user14@email.com")
                 .append("password", hashPassword("Us3r@14-PASSW", "abcdefg"))
                 .append("firstName", "User14")
                 .append("lastName", "Surname14")
-                .append("birthdate","2024-04-30")
+                .append("birthdate", "2024-04-30")
                 .append("role", "user");
         Document user15 = new Document("email", "user15@email.com")
                 .append("password", hashPassword("Us3r@15-PASSW", "abcdefg"))
                 .append("firstName", "User15")
                 .append("lastName", "Surname15")
-                .append("birthdate","2024-04-30")
+                .append("birthdate", "2024-04-30")
                 .append("role", "user");
-
 
 
         database.getCollection("users").insertOne(admin1);
         database.getCollection("users").insertOne(user1);
         for (int i = 0; i < 10; i++) {
-                Document publication = new Document("title", "Publication 1" + i)
-                        .append("description", "Publication 1" + i)
-                        .append("author", database.getCollection("users").find(user1).first())
-                        .append("date", getFormattedDate(i));
-                database.getCollection("publications").insertOne(publication);
+            Document publication = new Document("title", "Publication 1" + i)
+                    .append("description", "Publication 1" + i)
+                    .append("author", database.getCollection("users").find(user1).first())
+                    .append("date", getFormattedDate(i));
+            database.getCollection("publications").insertOne(publication);
         }
         database.getCollection("users").insertOne(user2);
         for (int i = 0; i < 10; i++) {
@@ -315,11 +313,11 @@ class Sdi2223Entrega2TestApplicationTests {
 
         //Friendships
         Document friendship = new Document("user1", database.getCollection("users").find(user1).first())
-                .append("user2",database.getCollection("users").find(user4).first())
+                .append("user2", database.getCollection("users").find(user4).first())
                 .append("date", LocalDateTime.now().minusDays(5));
         database.getCollection("friendship").insertOne(friendship);
         friendship = new Document("user1", database.getCollection("users").find(user1).first())
-                .append("user2",database.getCollection("users").find(user5).first())
+                .append("user2", database.getCollection("users").find(user5).first())
                 .append("date", LocalDateTime.now().minusDays(6));
         database.getCollection("friendship").insertOne(friendship);
 
@@ -333,7 +331,7 @@ class Sdi2223Entrega2TestApplicationTests {
                 .append("read", true);
         messages.add(message1);
 
-        Document message2 = new Document("messageId","2")
+        Document message2 = new Document("messageId", "2")
                 .append("author", database.getCollection("users").find(user4).first())
                 .append("date", LocalDateTime.now().minusDays(4))
                 .append("text", "Mal, haciendo tests")
@@ -342,9 +340,13 @@ class Sdi2223Entrega2TestApplicationTests {
 
         //Conversations
         Document conversation = new Document("user1", database.getCollection("users").find(user1).first())
-                .append("user2",database.getCollection("users").find(user4).first())
-                .append("messages",messages);
+                .append("user2", database.getCollection("users").find(user4).first())
+                .append("messages", messages);
         database.getCollection("conversations").insertOne(conversation);
+        Document conversation2 = new Document("user1", database.getCollection("users").find(user1).first())
+                .append("user2", database.getCollection("users").find(user3).first())
+                .append("messages", messages);
+        database.getCollection("conversations").insertOne(conversation2);
     }
 
     public String getFormattedDate(int i) {
@@ -361,7 +363,7 @@ class Sdi2223Entrega2TestApplicationTests {
         int minutes = currentDate.getMinute();
         int seconds = currentDate.getSecond();
 
-        return year+"/"+month+"/"+day+" "+hours+":"+minutes+":"+seconds;
+        return year + "/" + month + "/" + day + " " + hours + ":" + minutes + ":" + seconds;
     }
 
     private void restDatabase() {
@@ -386,113 +388,145 @@ class Sdi2223Entrega2TestApplicationTests {
     //Al finalizar la última prueba
     @AfterAll
     static public void end() {
-    //Cerramos el navegador al finalizar las pruebas
-        //driver.quit();
+        //Cerramos el navegador al finalizar las pruebas
+        driver.quit();
     }
 
     /**
      * [Prueba01] Registro de Usuario con datos válidos.
+     *
      * @author Donato
      */
     @Test
     @Order(1)
     void PR01() {
-        Assertions.assertTrue(true, "PR01 sin hacer");
+        //Hacemos click es registrarnos
+        PO_PrivateView.click(driver, "text", "Signup", 0);
+        PO_PublicView.signupSuccess(driver);
+        SeleniumUtils.textIsPresentOnPage(driver, "User registered correctly");
     }
 
     /**
      * [Prueba02] Registro de Usuario con datos inválidos (email vacío, nombre vacío, apellidos vacíos).
+     *
      * @author Donato
      */
     @Test
     @Order(2)
     public void PR02() {
-        Assertions.assertTrue(true, "PR02 sin hacer");
+        PO_PrivateView.click(driver, "text", "Signup", 0);
+        PO_PublicView.signupAllError(driver);
+        SeleniumUtils.textIsPresentOnPage(driver, "Validation errors:");
     }
 
     /**
      * [Prueba03] Registro de Usuario con datos inválidos (repetición de contraseña inválida).
+     *
      * @author Donato
      */
     @Test
     @Order(3)
     public void PR03() {
-        Assertions.assertTrue(true, "PR03 sin hacer");
+        PO_PrivateView.click(driver, "text", "Signup", 0);
+        PO_PublicView.signupErrorPasswords(driver);
+        SeleniumUtils.textIsPresentOnPage(driver, "Passwords do not match");
     }
 
     /**
      * [Prueba04] Registro de Usuario con datos inválidos (email existente).
+     *
      * @author Donato
      */
     @Test
     @Order(4)
     public void PR04() {
-        Assertions.assertTrue(true, "PR04 sin hacer");
+        PO_PrivateView.click(driver, "text", "Signup", 0);
+        PO_PublicView.fillSingupForm(driver, "admin@email.com", "admin", "admin", "@Dm1n1str@D0r", "@Dm1n1str@D0r");
+        SeleniumUtils.textIsPresentOnPage(driver, "Email is already registered");
     }
 
     /**
      * [Prueba05] Inicio de sesión con datos válidos (administrador).
+     *
      * @author Donato
      */
     @Test
     @Order(5)
     public void PR05() {
-        Assertions.assertTrue(true, "PR05 sin hacer");
+        PO_PrivateView.click(driver, "text", "Login", 0);
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str@D0r", driver);
+        SeleniumUtils.textIsPresentOnPage(driver, "System users");
     }
 
     /**
      * [Prueba06] Inicio de sesión con datos válidos (usuario estándar).
+     *
      * @author Donato
      */
     @Test
     @Order(6)
     public void PR06() {
-        Assertions.assertTrue(true, "PR06 sin hacer");
+        PO_PrivateView.click(driver, "text", "Login", 0);
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
+        SeleniumUtils.textIsPresentOnPage(driver, "Social network users");
     }
 
     /**
      * [Prueba07] Inicio de sesión con datos inválidos (usuario estándar, email existente y contraseña incorrecta).
+     *
      * @author Donato
      */
     @Test
     @Order(7)
     public void PR07() {
-        Assertions.assertTrue(true, "PR07 sin hacer");
+        PO_PrivateView.click(driver, "text", "Login", 0);
+        PO_PublicView.loginSpecificUser("user01@email.com", "XD", driver);
+        SeleniumUtils.textIsPresentOnPage(driver, "Incorrect user or password");
     }
 
     /**
      * [Prueba08] Inicio de sesión con datos inválidos (usuario estándar, campo email y contraseña vacíos).
+     *
      * @author Donato
      */
     @Test
     @Order(8)
     public void PR08() {
-        Assertions.assertTrue(true, "PR08 sin hacer");
+        PO_PrivateView.click(driver, "text", "Login", 0);
+        // El propio parser del formulario no dejará enviar datos vacíos
+        PO_PublicView.loginSpecificUser(" ", " ", driver);
+        SeleniumUtils.textIsPresentOnPage(driver, "Login");
     }
 
     /**
      * [Prueba09] Hacer click en la opción de salir de sesión y comprobar que se muestra el mensaje "Ha cerrado sesión correctamente" y se redirige a la página de inicio de sesión (Login).
+     *
      * @author Donato
      */
     @Test
     @Order(9)
     public void PR09() {
-        Assertions.assertTrue(true, "PR09 sin hacer");
+        PO_PrivateView.click(driver, "text", "Login", 0);
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
+        PO_PrivateView.click(driver, "text", "Logout", 0);
+        SeleniumUtils.textIsPresentOnPage(driver, "Logged out successfully");
     }
 
     /**
      * [Prueba10] Comprobar que el botón de cerrar sesión no está visible si el usuario no está autenticado.
+     *
      * @author Donato
      */
     @Test
     @Order(10)
     public void PR10() {
-        Assertions.assertTrue(true, "PR10 sin hacer");
+        SeleniumUtils.textIsNotPresentOnPage(driver, "Logout");
     }
 
     /**
-     [Prueba11] Mostrar el listado de usuarios y comprobar que se muestran todos los que existen en el
-     sistema, incluyendo el usuario actual y los usuarios administradores.
+     * @author David
+     * [Prueba11] Mostrar el listado de usuarios y comprobar que se muestran todos los que existen en el
+     * sistema, incluyendo el usuario actual y los usuarios administradores.
      */
     @Test
     @Order(11)
@@ -510,9 +544,158 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
+     * @author David
+     * [Prueba12] Autenticarse como administrador, editar un usuario estándar, cambiando su rol a
+     * administrador, email, nombre y apellidos, comprobar que los datos se han actualizados
+     * correctamente. Salir de sesión como administrador y autenticarse como el usuario modificado y
+     * acceder a la funcionalidad de listado de usuarios del sistema para probar el nuevo rol de
+     * administrador.
+     */
+    @Test
+    @Order(12)
+    void PR12() throws InterruptedException {
+        //Inicio sesión como el admin
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str@D0r", driver);
+        //Ir a la lista de usuarios del sistema
+        PO_PrivateView.click(driver, "id", "mylistSystemUsers", 0);
+        //Acceder a editar usuario
+        PO_PrivateView.click(driver, "id", "edit_user01@email.com", 0);
+        //Editar usuario
+        PO_EditUserView.editUser(driver, "edited@edited.com", "edited", "edited", "admin");
+        //Verificar que se edito correctamente
+        Thread.sleep(1000);
+        SeleniumUtils.textIsPresentOnPage(driver, "User updated successfully");
+        //Salir de sesión
+        PO_PrivateView.click(driver, "text", "Logout", 0);
+        //Inicio sesión como el usuario modificado
+        PO_PublicView.loginSpecificUser("edited@edited.com", "Us3r@1-PASSW", driver);
+        //Comrpobar que ya puede acceder a la lsita de usuarios de sistema
+        PO_PrivateView.click(driver, "id", "mylistSystemUsers", 0);
+        SeleniumUtils.textIsPresentOnPage(driver, "System users");
+    }
+
+    /**
+     * @author David
+     * [Prueba13] Editar un usuario introduciendo datos inválidos (email existente asignado a otro usuario
+     * del sistema, nombre y apellidos vacíos), comprobar que se devuelven los mensajes de error
+     * correctamente y que el usuario no se actualiza.
+     */
+    @Test
+    @Order(13)
+    void PR13() throws InterruptedException {
+        //Inicio sesión como el admin
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str@D0r", driver);
+        //Ir a la lista de usuarios del sistema
+        PO_PrivateView.click(driver, "id", "mylistSystemUsers", 0);
+        //Acceder a editar usuario
+        PO_PrivateView.click(driver, "id", "edit_user01@email.com", 0);
+        //Editar usuario
+        PO_EditUserView.editUser(driver, "user02@email.com", "edited", "edited", "admin");
+        //Verificar que se mostró el mensaje de error
+        Thread.sleep(1000);
+        SeleniumUtils.textIsPresentOnPage(driver, "Email already in use");
+        //Verificar que no se edito el usuario
+        driver.navigate().back();driver.navigate().back();
+        SeleniumUtils.textIsPresentOnPage(driver, "user01@email.com");
+    }
+
+    /**
+     * @author David
+     * [Prueba14] Ir a la lista de usuarios, borrar el primer usuario de la lista, comprobar que la lista se actualiza
+     * y dicho usuario desaparece.
+     */
+    @Test
+    @Order(14)
+    void PR14() throws InterruptedException {
+        //Inicio sesión como el admin
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str@D0r", driver);
+        //Ir a la lista de usuarios del sistema
+        PO_PrivateView.click(driver, "id", "mylistSystemUsers", 0);
+        //Seleccionar primer usuario
+        PO_PrivateView.click(driver, "id", "cb_user01@email.com",0);
+        //Borrar usuario
+        PO_PrivateView.click(driver, "id", "button_delete",0);
+        //Verificar que se borró correctamente
+        Thread.sleep(1000);
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user01@email.com");
+    }
+
+    /**
+     * @author David
+     * Prueba15] Ir a la lista de usuarios, borrar el último usuario de la lista, comprobar que la lista se actualiza
+     * y dicho usuario desaparece.
+     */
+    @Test
+    @Order(15)
+    void PR15() throws InterruptedException {
+        //Inicio sesión como el admin
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str@D0r", driver);
+        //Ir a la lista de usuarios del sistema
+        PO_PrivateView.click(driver, "id", "mylistSystemUsers", 0);
+        //Ir a la última página
+        PO_Pagination.clickPage(driver, 3);
+        PO_Pagination.clickPage(driver, 4);
+        //Seleccionar primer usuario
+        PO_PrivateView.click(driver, "id", "cb_user15@email.com", 0);
+        //Borrar usuario
+        PO_PrivateView.click(driver, "id", "button_delete", 0);
+        //Verificar que se borró correctamente
+        Thread.sleep(1000);
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user15@email.com");
+    }
+
+    /**
+     * @author David
+     * [Prueba16] Ir a la lista de usuarios, borrar 3 usuarios, comprobar que la lista se actualiza y dichos
+     * usuarios desaparecen.
+     */
+    @Test
+    @Order(16)
+    void PR16() throws InterruptedException {
+        //Inicio sesión como el admin
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str@D0r", driver);
+        //Ir a la lista de usuarios del sistema
+        PO_PrivateView.click(driver, "id", "mylistSystemUsers", 0);
+        //Seleccionar tres usuarios usuario
+        PO_PrivateView.click(driver, "id", "cb_user01@email.com",0);
+        PO_PrivateView.click(driver, "id", "cb_user02@email.com",0);
+        PO_PrivateView.click(driver, "id", "cb_user03@email.com",0);
+        //Borrar usuarios
+        PO_PrivateView.click(driver, "id", "button_delete",0);
+        //Verificar que se borró correctamente
+        Thread.sleep(1000);
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user01@email.com");
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user02@email.com");
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user03@email.com");
+    }
+
+    /**
+     * @author David
+     * [Prueba17] Intentar borrar el usuario que se encuentra en sesión y comprobar que no ha sido borrado
+     * (porque no es un usuario administrador o bien, porque, no se puede borrar a sí mismo, si esta
+     * autenticado).
+     */
+    @Test
+    @Order(17)
+    void PR17() throws InterruptedException {
+        //Inicio sesión como el admin
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str@D0r", driver);
+        //Ir a la lista de usuarios del sistema
+        PO_PrivateView.click(driver, "id", "mylistSystemUsers", 0);
+        //Seleccionar tres usuarios usuario
+        PO_PrivateView.click(driver, "id", "cb_admin@email.com",0);
+        //Borrar usuarios
+        PO_PrivateView.click(driver, "id", "button_delete",0);
+        //Verificar que se borró correctamente
+        Thread.sleep(1000);
+        SeleniumUtils.textIsPresentOnPage(driver, "admin@email.com");
+        SeleniumUtils.textIsPresentOnPage(driver, "You cannot delete yourself");
+    }
+
+    /**
      * @author Pedro
-    [Prueba18] Mostrar el listado de usuarios y comprobar que se muestran todos los que existen en el
-    sistema, excepto el propio usuario y aquellos que sean administradores.
+     * [Prueba18] Mostrar el listado de usuarios y comprobar que se muestran todos los que existen en el
+     * sistema, excepto el propio usuario y aquellos que sean administradores.
      */
     @Test
     @Order(18)
@@ -531,8 +714,8 @@ class Sdi2223Entrega2TestApplicationTests {
 
     /**
      * @author Pedro
-    [Prueba19] Hacer una búsqueda con el campo vacío y comprobar que se muestra la página que
-    corresponde con el listado usuarios existentes en el sistema.
+     * [Prueba19] Hacer una búsqueda con el campo vacío y comprobar que se muestra la página que
+     * corresponde con el listado usuarios existentes en el sistema.
      */
     @Test
     @Order(19)
@@ -553,8 +736,8 @@ class Sdi2223Entrega2TestApplicationTests {
 
     /**
      * @author Pedro
-    [Prueba20] Hacer una búsqueda escribiendo en el campo un texto que no exista y comprobar que se
-    muestra la página que corresponde, con la lista de usuarios vacía.
+     * [Prueba20] Hacer una búsqueda escribiendo en el campo un texto que no exista y comprobar que se
+     * muestra la página que corresponde, con la lista de usuarios vacía.
      */
     @Test
     @Order(20)
@@ -575,9 +758,9 @@ class Sdi2223Entrega2TestApplicationTests {
 
     /**
      * @author Pedro
-    [Prueba21] Hacer una búsqueda con un texto específico y comprobar que se muestra la página que
-    corresponde, con la lista de usuarios en los que el texto especificado sea parte de su nombre,
-    apellidos o de su email.
+     * [Prueba21] Hacer una búsqueda con un texto específico y comprobar que se muestra la página que
+     * corresponde, con la lista de usuarios en los que el texto especificado sea parte de su nombre,
+     * apellidos o de su email.
      */
     @Test
     @Order(21)
@@ -605,19 +788,19 @@ class Sdi2223Entrega2TestApplicationTests {
     @Order(22)
     void PR22() {
         //Inicio sesión como el usuario2
-        PO_PublicView.loginSpecificUser("user02@email.com","Us3r@2-PASSW",driver);
+        PO_PublicView.loginSpecificUser("user02@email.com", "Us3r@2-PASSW", driver);
         //Envío solicitud al usuario 3
         WebElement botonEnviarSolicitud = driver.findElement(By.id("btn_user03@email.com"));
         botonEnviarSolicitud.click();
         // Cerrar sesión e inicio con el usuario 3
         WebElement logout = driver.findElement(By.id("logout"));
         logout.click();
-        PO_PublicView.loginSpecificUser("user03@email.com","Us3r@3-PASSW",driver);
+        PO_PublicView.loginSpecificUser("user03@email.com", "Us3r@3-PASSW", driver);
         //Voy a la ventana de ver solicitudes de amistad recibidas friendshipRequests
         WebElement myRequests = driver.findElement(By.id("myRequests"));
         myRequests.click();
         //Y comprobamos que llegó la solicitud de amistad  email_user02@email.com
-        SeleniumUtils.textIsPresentOnPage(driver,"user02@email.com");
+        SeleniumUtils.textIsPresentOnPage(driver, "user02@email.com");
         //Finalmente logeamos-cerramos sesión
         WebElement logout2 = driver.findElement(By.id("logout"));
         logout2.click();
@@ -633,7 +816,7 @@ class Sdi2223Entrega2TestApplicationTests {
     @Order(23)
     void PR23() {
         //Inicio sesión como usuario 1
-        PO_PublicView.loginSpecificUser("user01@email.com","Us3r@1-PASSW",driver);
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
         //Y pruebo a enviarle 2 veces la solicitud de amistad al usuario 2
         WebElement botonEnviarSolicitud1 = driver.findElement(By.id("btn_user02@email.com"));
         botonEnviarSolicitud1.click();
@@ -654,27 +837,27 @@ class Sdi2223Entrega2TestApplicationTests {
     @Order(24)
     void PR24() {
         //Inicio sesión como el usuario1
-        PO_PublicView.loginSpecificUser("user01@email.com","Us3r@1-PASSW",driver);
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
         //Envío solicitud al usuario 3
         WebElement botonEnviarSolicitud = driver.findElement(By.id("btn_user03@email.com"));
         botonEnviarSolicitud.click();
         // Cerrar sesión e inicio con el usuario 2
         WebElement logout = driver.findElement(By.id("logout"));
         logout.click();
-        PO_PublicView.loginSpecificUser("user02@email.com","Us3r@2-PASSW",driver);
+        PO_PublicView.loginSpecificUser("user02@email.com", "Us3r@2-PASSW", driver);
         //Envío solicitud al usuario 3
         WebElement botonEnviarSolicitud2 = driver.findElement(By.id("btn_user03@email.com"));
         botonEnviarSolicitud2.click();
         // Cerrar sesión e inicio con el usuario 3
         WebElement logout2 = driver.findElement(By.id("logout"));
         logout2.click();
-        PO_PublicView.loginSpecificUser("user03@email.com","Us3r@3-PASSW",driver);
+        PO_PublicView.loginSpecificUser("user03@email.com", "Us3r@3-PASSW", driver);
         //Voy a la ventana de ver solicitudes de amistad recibidas friendshipRequests
         WebElement myRequests = driver.findElement(By.id("myRequests"));
         myRequests.click();
         //Y comprobamos que llegaron las solicitudes de amistad
-        SeleniumUtils.textIsPresentOnPage(driver,"user01@email.com");
-        SeleniumUtils.textIsPresentOnPage(driver,"user02@email.com");
+        SeleniumUtils.textIsPresentOnPage(driver, "user01@email.com");
+        SeleniumUtils.textIsPresentOnPage(driver, "user02@email.com");
         //Finalmente logeamos-cerramos sesión
         WebElement logout3 = driver.findElement(By.id("logout"));
         logout3.click();
@@ -689,23 +872,23 @@ class Sdi2223Entrega2TestApplicationTests {
     @Order(25)
     void PR25() {
         //Inicio sesión como el usuario2
-        PO_PublicView.loginSpecificUser("user02@email.com","Us3r@2-PASSW",driver);
+        PO_PublicView.loginSpecificUser("user02@email.com", "Us3r@2-PASSW", driver);
         //Envío solicitud al usuario 3
         WebElement botonEnviarSolicitud = driver.findElement(By.id("btn_user03@email.com"));
         botonEnviarSolicitud.click();
         // Cerrar sesión e inicio con el usuario 3
         WebElement logout = driver.findElement(By.id("logout"));
         logout.click();
-        PO_PublicView.loginSpecificUser("user03@email.com","Us3r@3-PASSW",driver);
+        PO_PublicView.loginSpecificUser("user03@email.com", "Us3r@3-PASSW", driver);
         //Voy a la ventana de ver solicitudes de amistad recibidas friendshipRequests
         WebElement myRequests = driver.findElement(By.id("myRequests"));
         myRequests.click();
         //Y comprobamos que llegó la solicitud de amistad  email_user02@email.com y la aceptamos
-        SeleniumUtils.textIsPresentOnPage(driver,"user02@email.com");
+        SeleniumUtils.textIsPresentOnPage(driver, "user02@email.com");
         WebElement botonAceptar = driver.findElement(By.id("btn_user02@email.com"));
         botonAceptar.click();
         //Comprobamos que ya no aparece la solicitud
-        SeleniumUtils.textIsNotPresentOnPage(driver,"user02@email.com");
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user02@email.com");
         //Finalmente logeamos-cerramos sesión
         WebElement logout2 = driver.findElement(By.id("logout"));
         logout2.click();
@@ -713,8 +896,8 @@ class Sdi2223Entrega2TestApplicationTests {
 
     /**
      * @author Pedro
-    [Prueba26] Mostrar el listado de amigos de un usuario. Comprobar que el listado contiene los amigos
-    que deben ser.
+     * [Prueba26] Mostrar el listado de amigos de un usuario. Comprobar que el listado contiene los amigos
+     * que deben ser.
      */
     @Test
     @Order(26)
@@ -783,21 +966,22 @@ class Sdi2223Entrega2TestApplicationTests {
         SeleniumUtils.textIsPresentOnPage(driver, fechaRes2);
     }
 
-    /**
-     * [Prueba28] Intentar acceder sin estar autenticado a la opción de listado de usuarios. Se deberá volver al formulario de login.
-     * @author Donato
-     */
+        /**
+         * [Prueba28] Intentar acceder sin estar autenticado a la opción de listado de usuarios. Se deberá volver al formulario de login.
+         *
+         * @author Donato
+         */
     @Test
     @Order(28)
     public void PR28() {
         //Intento acceder a la lista de usuarios sin estar autenticado
         driver.navigate().to("http://localhost:8080/users/list");
-        //Compruebo que me redirige al login
         SeleniumUtils.textIsPresentOnPage(driver, "Login");
     }
 
     /**
      * [Prueba29] Intentar acceder sin estar autenticado a la opción de listado de invitaciones de amistad recibida de un usuario estandar. Se deverá voler al formulario de login.
+     *
      * @author Donato
      */
     @Test
@@ -805,57 +989,156 @@ class Sdi2223Entrega2TestApplicationTests {
     public void PR29() {
         //Intento acceder a la lista de invitaciones de amistad sin estar autenticado
         driver.navigate().to("http://localhost:8080/friendships/list");
-        //Compruebo que me redirige al login
         SeleniumUtils.textIsPresentOnPage(driver, "Login");
     }
 
     /**
-     * [Prueba30]  Estando autenticado como usuario estándar intentar acceder a una opción disponible solo para usuarios administradores (Añadir menú de auditoria (visualizar logs)). Se deberá indicar un mensaje de acción prohibida. 
+     * [Prueba30]  Estando autenticado como usuario estándar intentar acceder a una opción disponible solo para usuarios administradores (Añadir menú de auditoria (visualizar logs)). Se deberá indicar un mensaje de acción prohibida.
+     *
      * @author Donato
      */
     @Test
     @Order(30)
     public void PR30() {
         //Inicio sesión como usuario estándar
-        PO_PublicView.loginSpecificUser("", "", driver);
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
         //Intento acceder a la opción de añadir menú de auditoria
-        driver.navigate().to("http://localhost:8080/auditor/list");
+        driver.navigate().to("http://localhost:8080/logs");
         //Compruebo que me indica que no tengo permisos
-        SeleniumUtils.textIsPresentOnPage(driver, "You do not have permission to access this page.");
+        SeleniumUtils.textIsPresentOnPage(driver, "You are not an administrator.");
     }
 
     /**
      * [Prueba31] Estando autenticado como usuario administrador visualizar todos los logs generados en
      * una serie de interacciones. Esta prueba deberá generar al menos dos interacciones de cada tipo y
      * comprobar que el listado incluye los logs correspondientes.
+     *
      * @author Donato
      */
     @Test
     @Order(31)
     public void PR31() {
         //Inicio sesión como usuario administrador
-        PO_PublicView.loginSpecificUser("", "", driver);
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str", driver);
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str", driver);
+
+        PO_PrivateView.click(driver, "text", "Signup", 0);
+        PO_PublicView.fillSingupForm(driver, "usertest1@gmail.com", "a", "a", "password", "password");
+
+        PO_PrivateView.click(driver, "text", "Signup", 0);
+        PO_PublicView.fillSingupForm(driver, "usertest2@gmail.com", "a", "a", "password", "password");
+
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
+        PO_PrivateView.click(driver, "text", "Logout", 0);
+
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
+        PO_PrivateView.click(driver, "text", "Logout", 0);
+
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str@D0r", driver);
+
         //Intento acceder a la opción de añadir menú de auditoria
-        driver.navigate().to("http://localhost:8080/auditor/list");
-        //Compruebo que me indica que no tengo permisos
-        SeleniumUtils.textIsPresentOnPage(driver, "You do not have permission to access this page.");
+        driver.navigate().to("http://localhost:8080/logs");
+
+        // Compruebo que se muestran 2 logs de cada tipo
+        int countPET = 0;
+        int countLOGIN_EX = 0;
+        int countLOGOUT = 0;
+        int countALTA = 0;
+        int countLOGIN_ERR = 0;
+
+        String text = driver.getPageSource();
+
+        // Count PET logs
+        String patternPET = "\\bPET\\b";
+        Pattern pPET = Pattern.compile(patternPET, Pattern.CASE_INSENSITIVE);
+        Matcher mPET = pPET.matcher(text);
+        while (mPET.find()) {
+            countPET++;
+        }
+
+        // Count LOGIN-EX logs
+        String patternLOGIN_EX = "\\bLOGIN-EX\\b";
+        Pattern pLOGIN_EX = Pattern.compile(patternLOGIN_EX, Pattern.CASE_INSENSITIVE);
+        Matcher mLOGIN_EX = pLOGIN_EX.matcher(text);
+        while (mLOGIN_EX.find()) {
+            countLOGIN_EX++;
+        }
+
+        // Count LOGOUT logs
+        String patternLOGOUT = "\\bLOGOUT\\b";
+        Pattern pLOGOUT = Pattern.compile(patternLOGOUT, Pattern.CASE_INSENSITIVE);
+        Matcher mLOGOUT = pLOGOUT.matcher(text);
+        while (mLOGOUT.find()) {
+            countLOGOUT++;
+        }
+
+        // Count ALTA logs
+        String patternALTA = "\\bALTA\\b";
+        Pattern pALTA = Pattern.compile(patternALTA, Pattern.CASE_INSENSITIVE);
+        Matcher mALTA = pALTA.matcher(text);
+        while (mALTA.find()) {
+            countALTA++;
+        }
+
+        // Count LOGIN-ERR logs
+        String patternLOGIN_ERR = "\\bLOGIN-ERR\\b";
+        Pattern pLOGIN_ERR = Pattern.compile(patternLOGIN_ERR, Pattern.CASE_INSENSITIVE);
+        Matcher mLOGIN_ERR = pLOGIN_ERR.matcher(text);
+        while (mLOGIN_ERR.find()) {
+            countLOGIN_ERR++;
+        }
+
+        Assertions.assertTrue(countPET >= 2);
+        Assertions.assertTrue(countLOGIN_EX >= 2);
+        Assertions.assertTrue(countLOGOUT >= 2);
+        Assertions.assertTrue(countALTA >= 2);
+        Assertions.assertTrue(countLOGIN_ERR >= 2);
+
     }
 
     /**
      * [Prueba32] Estando autenticado como usuario administrador, ir a visualización de logs y
      * filtrar por un tipo, pulsar el botón/enlace borrar logs y comprobar que se eliminan los logs
      * del tipo seleccionado, de la base de datos.
+     *
      * @author Donato
      */
     @Test
     @Order(32)
     public void PR32() {
-        //Inicio sesión como usuario estándar
-        PO_PublicView.loginSpecificUser("", "", driver);
-        //Intento acceder a la opción de añadir menú de auditoria
-        driver.navigate().to("http://localhost:8080/publications/list");
-        //Compruebo que me indica que no tengo permisos
-        SeleniumUtils.textIsPresentOnPage(driver, "You do not have permission to access this page.");
+        //Inicio sesión como usuario admin
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str@D0r", driver);
+
+        driver.navigate().to("http://localhost:8080/logs");
+
+        int countLOGIN_EX = 0;
+
+        String text = driver.getPageSource();
+
+        // Count LOGIN-EX logs
+        String patternLOGIN_EX = "\\bLOGIN-EX\\b";
+        Pattern pLOGIN_EX = Pattern.compile(patternLOGIN_EX, Pattern.CASE_INSENSITIVE);
+        Matcher mLOGIN_EX = pLOGIN_EX.matcher(text);
+        while (mLOGIN_EX.find()) {
+            countLOGIN_EX++;
+        }
+
+        Assertions.assertTrue(countLOGIN_EX >= 1);
+
+        PO_PrivateView.click(driver, "free", "/html/body/div/form/select/option[4]", 0);
+
+        PO_PrivateView.click(driver, "text", "Delete Logs", 0);
+
+        countLOGIN_EX = 0;
+
+        text = driver.getPageSource();
+
+        while (mLOGIN_EX.find()) {
+            countLOGIN_EX++;
+        }
+
+        assertEquals(0, countLOGIN_EX);
+
     }
 
     /**
@@ -868,17 +1151,17 @@ class Sdi2223Entrega2TestApplicationTests {
     public void PR33() {
 
         //Login como usuario
-        PO_PublicView.loginSpecificUser("user01@email.com","Us3r@1-PASSW",driver);
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
 
         //Creamos publicación
         PO_PublicationView.goToAddPublication(driver);
-        PO_PublicationView.fillForm(driver,"Publicación de prueba","Descripción de prueba");
+        PO_PublicationView.fillForm(driver, "Publicación de prueba", "Descripción de prueba");
 
         //Comprobamos que se añadió correctamente
         PO_PublicationView.goToListPublication(driver);
         //PO_Pagination.clickPage(driver,1);
         //PO_Pagination.clickNextPage(driver);
-        SeleniumUtils.textIsPresentOnPage(driver,"Publicación de prueba");
+        SeleniumUtils.textIsPresentOnPage(driver, "Publicación de prueba");
     }
 
     /**
@@ -891,14 +1174,14 @@ class Sdi2223Entrega2TestApplicationTests {
     @Order(34)
     public void PR34() {
         //Login como usuario
-        PO_PublicView.loginSpecificUser("user01@email.com","Us3r@1-PASSW",driver);
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
 
         //Creamos publicación con datos inválidos
         PO_PublicationView.goToAddPublication(driver);
-        PO_PublicationView.fillForm(driver,"a","a");
+        PO_PublicationView.fillForm(driver, "a", "a");
 
         //Comprobamos que se se muestran los mensajes de error
-        SeleniumUtils.textIsPresentOnPage(driver,"Error when inserting new publication: Title must be at least 5 characters long.");
+        SeleniumUtils.textIsPresentOnPage(driver, "Error when inserting new publication: Title must be at least 5 characters long.");
         //SeleniumUtils.textIsPresentOnPage(driver,"Error when inserting new publication: Description must be at least 4 characters long.");
 
         // Cerrar sesión
@@ -915,7 +1198,7 @@ class Sdi2223Entrega2TestApplicationTests {
     public void PR35() {
 
         //Login como usuario
-        PO_PublicView.loginSpecificUser("user01@email.com","Us3r@1-PASSW",driver);
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
 
         //Lista con las publicaciones no censuradas del usuario
         String[] titles = {"Publication 10", "Publication 11", "Publication 12", "Publication 13", "Publication 14",
@@ -926,11 +1209,12 @@ class Sdi2223Entrega2TestApplicationTests {
         PO_PublicationView.goToListPublication(driver);
 
         //Comprobamos que se muestran todas las publicaciones
-        PO_PublicationView.checkPublications(driver,titlesList);
+        PO_PublicationView.checkPublications(driver, titlesList);
 
         // Cerrar sesión
         //PO_PrivateView.logout(driver);
     }
+
     /**
      * @author Teresa
      * [Prueba36] Mostrar el perfil del usuario y comprobar que se muestran sus datos y el listado de sus
@@ -940,7 +1224,7 @@ class Sdi2223Entrega2TestApplicationTests {
     @Order(36)
     public void PR36() {
         // Inicio de sesión como usuario
-        PO_PublicView.loginSpecificUser("user01@email.com","Us3r@1-PASSW",driver);
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
 
         // Acceder al listado de amistades
         PO_PrivateView.click(driver, "id", "myFriends", 0);
@@ -983,60 +1267,104 @@ class Sdi2223Entrega2TestApplicationTests {
 
     /**
      * [Prueba38] Inicio de sesión con datos válidos.
+     *
      * @author Donato
      */
+    @SuppressWarnings("unchecked")
     @Test
     @Order(38)
     public void PR38() {
-        //Intento de inicio de sesión con datos inválidos
-        PO_PublicView.loginSpecificUser("", "", driver);
-        //Compruebo que no se ha iniciado sesión
-        SeleniumUtils.textIsPresentOnPage(driver, "Login");
+
+        final String RestAssuredURL = "http://localhost:8080/api/v1.0/users/login";
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("email", "user01@email.com");
+        requestParams.put("password", "Us3r@1-PASSW");
+        request.header("Content-Type", "application/json");
+        request.body(requestParams.toJSONString());
+        Response response = request.post(RestAssuredURL);
+        Assertions.assertEquals(200, response.getStatusCode());
+
+        // get session token
+        String token = response.jsonPath().getString("token");
+
+        // Check that the token is not empty
+        Assertions.assertFalse(token.isEmpty());
+
     }
 
     /**
-     *
      * [Prueba39] Inicio de sesión con datos inválidos (email existente, pero contraseña incorrecta).
+     *
      * @author Donato
      */
     @Test
     @Order(39)
     public void PR39() {
-        //Intento de inicio de sesión con datos inválidos
-        PO_PublicView.loginSpecificUser("", "", driver);
-        //Compruebo que no se ha iniciado sesión
-        SeleniumUtils.textIsPresentOnPage(driver, "Login");
+        final String RestAssuredURL = "http://localhost:8080/api/v1.0/users/login";
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("email", "user01@email.com");
+        requestParams.put("password", "Wrong");
+        request.header("Content-Type", "application/json");
+        request.body(requestParams.toJSONString());
+        Response response = request.post(RestAssuredURL);
+        Assertions.assertEquals(401, response.getStatusCode());
+
     }
 
     /**
      * [Prueba40] Inicio de sesión con datos inválidos (campo email o contraseña vacíos).
+     *
      * @author Donato
      */
     @Test
     @Order(40)
     public void PR40() {
-        //Intento de inicio de sesión con datos inválidos
-        PO_PublicView.loginSpecificUser("", "", driver);
-        //Compruebo que no se ha iniciado sesión
-        SeleniumUtils.textIsPresentOnPage(driver, "Login");
+        final String RestAssuredURL = "http://localhost:8080/api/v1.0/users/login";
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("email", "");
+        requestParams.put("password", "");
+        request.header("Content-Type", "application/json");
+        request.body(requestParams.toJSONString());
+        Response response = request.post(RestAssuredURL);
+        Assertions.assertEquals(401, response.getStatusCode());
     }
 
     /**
      * [Prueba41] Mostrar el listado de amigos para dicho usuario y comprobar que se muestran los amigos del usuario autenticado. Esta prueba implica invocar a dos servicios: S1 y S2.
+     *
      * @author Donato
      */
     @Test
     @Order(41)
     public void PR41() {
-        //Inicio sesión como el usuario1
-        PO_PublicView.loginSpecificUser("", "", driver);
-        //Ir a la lista de amigos
-        driver.navigate().to("http://localhost:8080/friendships/list");
-        // Comprobar que se muestran todos los amigos
-        SeleniumUtils.textIsPresentOnPage(driver, "user04");
-        SeleniumUtils.textIsPresentOnPage(driver, "user05");
-        // Cerrar sesión
-        //PO_PrivateView.logout(driver);
+
+        final String RestAssuredURL = "http://localhost:8080/api/v1.0/users/login";
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("email", "user01@email.com");
+        requestParams.put("password", "Us3r@1-PASSW");
+        request.header("Content-Type", "application/json");
+        request.body(requestParams.toJSONString());
+        Response response = request.post(RestAssuredURL);
+        Assertions.assertEquals(200, response.getStatusCode());
+
+        // get session token
+        String token = response.jsonPath().getString("token");
+
+        final String RestAssuredURL2 = "http://localhost:8080/api/v1.0/users/friendships";
+        RequestSpecification request2 = RestAssured.given();
+        request2.header("token", token); // Stablish token in header
+        request2.header("Content-Type", "application/json");
+        request2.body(requestParams.toJSONString());
+        Response response2 = request2.get(RestAssuredURL2);
+        Assertions.assertEquals(200, response2.getStatusCode());
+
+        // Check that the response contains the friends
+        Assertions.assertTrue(response2.getBody().asString().contains("user04"));
+
     }
 
     /**
@@ -1162,6 +1490,50 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
+     * @author David
+     * [Prueba45] Eliminar una conversación de ID conocido. Esta prueba consistirá en comprobar que se
+     * elimina correctamente una conversación concreta. Por lo tanto, se tendrá primero que invocar al
+     * servicio de identificación (S1), eliminar la conversación ID (S6) y solicitar el listado de
+     * conversaciones a continuación (S5), comprobando que se retornan las conversaciones adecuadas.
+     */
+    @Test
+    @Order(45)
+    public void PR45() {
+        // Iniciamos sesión
+        final String RestAssuredURL = "http://localhost:8080/api/v1.0/users/login";
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("email", "user01@email.com");
+        requestParams.put("password", "Us3r@1-PASSW");
+        request.header("Content-Type", "application/json");
+        request.body(requestParams.toJSONString());
+        Response loginResponse = request.post(RestAssuredURL);
+        Assertions.assertEquals(200, loginResponse.getStatusCode());
+
+        String token = loginResponse.jsonPath().getString("token");
+        // Obtenemos conversación
+        final String RestAssuredURL2 = "http://localhost:8080/api/v1.0/conversations";
+        RequestSpecification conversationsRequest = RestAssured.given();
+        conversationsRequest.header("token", token); // Aquí configuramos el token en la cabecera
+        Response conversationsResponse = conversationsRequest.get(RestAssuredURL2);
+        Assertions.assertEquals(200, conversationsResponse.getStatusCode());
+
+        // Cogemos el id de la conversación
+        String firstConversationId = conversationsResponse.jsonPath().getString("conversations[0]._id");
+        //Lo utilizamos para borrar la conversación
+        final String RestAssuredURL3 = "http://localhost:8080/api/v1.0/conversation/" + firstConversationId;
+        RequestSpecification deleteRequest = RestAssured.given();
+        deleteRequest.header("token", token);
+        Response deleteResponse = deleteRequest.delete(RestAssuredURL3);
+        Assertions.assertEquals(200, deleteResponse.getStatusCode());
+
+        // Comprobamos que se ha eliminado la conversación
+        Response conversationsResponse2 = conversationsRequest.get(RestAssuredURL2);
+        String firstConversationId2 = conversationsResponse2.jsonPath().getString("conversations[0]._id");
+        Assertions.assertNotEquals(firstConversationId2,firstConversationId);
+    }
+
+    /**
      * @author Pedro
      * [Prueba46] Marcar como leído un mensaje de ID conocido. Esta prueba consistirá en comprobar que
      * el mensaje marcado de ID conocido queda marcado correctamente a true como leído. Por lo tanto,
@@ -1197,9 +1569,9 @@ class Sdi2223Entrega2TestApplicationTests {
         given().
                 pathParams("messageId", 2).
                 queryParam("token", token).
-        when().
+                when().
                 put("/api/v1.0/messages/read/{messageId}").
-        then().
+                then().
                 body("message", equalTo("Message marked as read correctly."));
 
         mongoClient.close();
@@ -1219,6 +1591,7 @@ class Sdi2223Entrega2TestApplicationTests {
 
     /**
      * [Prueba47] Inicio de sesión con datos válidos.
+     *
      * @author Donato
      */
     @Test
@@ -1226,31 +1599,33 @@ class Sdi2223Entrega2TestApplicationTests {
     public void PR47() {
         driver.navigate().to(URL_API);
         PO_PublicView.loginUser(driver);
-        SeleniumUtils.textIsPresentOnPage(driver, "My friends");
+        SeleniumUtils.textIsPresentOnPage(driver, "Update");
     }
 
     /**
      * [Prueba48] Inicio de sesión con datos inválidos (email existente, pero contraseña incorrecta).
+     *
      * @author Donato
      */
     @Test
     @Order(48)
     public void PR48() {
         driver.navigate().to(URL_API);
-        PO_PublicView.loginUser(driver);
-        SeleniumUtils.textIsPresentOnPage(driver, "Login");
+        PO_PublicView.loginFailIncorrect(driver);
+        SeleniumUtils.textIsPresentOnPage(driver, "Accept");
     }
 
     /**
      * [Prueba49] Inicio de sesión con datos inválidos (campo email o contraseña vacíos).
+     *
      * @author Donato
      */
     @Test
     @Order(49)
     public void PR49() {
         driver.navigate().to(URL_API);
-        PO_PublicView.loginUser(driver);
-        SeleniumUtils.textIsPresentOnPage(driver, "Login");
+        PO_PublicView.loginFailEmpty(driver);
+        SeleniumUtils.textIsPresentOnPage(driver, "Accept");
     }
 
     /**
@@ -1334,10 +1709,76 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
+     * @author David
+     * [Prueba54] Mostrar el listado de conversaciones ya abiertas. Comprobar que el listado contiene la
+     * cantidad correcta de conversaciones.
+     */
+    @Test
+    @Order(54)
+    public void PR54() {
+        driver.navigate().to(URL_API);
+        PO_PublicView.loginUser(driver);
+
+        // Acceder al listado de conversaciones
+        PO_PrivateView.click(driver, "id", "myChats", 0);
+
+        // Comprobar que se muestra el usuario con el que se ha hablado
+        SeleniumUtils.textIsPresentOnPage(driver, "user04");
+    }
+
+    /**
+     * @author David
+     * [Prueba55] Sobre el listado de conversaciones ya abiertas. Pinchar el enlace Eliminar en la primera y
+     * comprobar que el listado se actualiza correctamente.
+     */
+    @Test
+    @Order(55)
+    public void PR55() {
+        driver.navigate().to(URL_API);
+        PO_PublicView.loginUser(driver);
+
+        // Acceder al listado de conversaciones
+        PO_PrivateView.click(driver, "id", "myChats", 0);
+
+        // Comprobar que se muestra el usuario con el que se ha hablado
+        SeleniumUtils.textIsPresentOnPage(driver, "user04");
+
+        // Eliminar conversación
+        PO_PrivateView.click(driver, "id", "with_user04@email.com", 0);
+
+        // Comprobar que ya no se muestra el usuario con el que se ha hablado
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user04");
+    }
+
+    /**
+     * @author David
+     * Prueba56] Sobre el listado de conversaciones ya abiertas. Pinchar el enlace Eliminar en la última y
+     * comprobar que el listado se actualiza correctamente.
+     */
+    @Test
+    @Order(56)
+    public void PR56() {
+        driver.navigate().to(URL_API);
+        PO_PublicView.loginUser(driver);
+
+        // Acceder al listado de conversaciones
+        PO_PrivateView.click(driver, "id", "myChats", 0);
+
+        // Comprobar que se muestra el usuario con el que se ha hablado
+        SeleniumUtils.textIsPresentOnPage(driver, "user03");
+
+        // Eliminar conversación
+        PO_PrivateView.click(driver, "id", "with_user03@email.com", 0);
+
+        // Comprobar que ya no se muestra el usuario con el que se ha hablado
+        SeleniumUtils.textIsNotPresentOnPage(driver, "user03");
+    }
+
+    /**
      * @author Pedro
-    [Prueba57] Identificarse en la aplicación y enviar tres mensajes a un amigo. Validar que los mensajes
-    enviados aparecen en el chat. Identificarse después con el usuario que recibido el mensaje y validar
-    que el número de mensajes sin leer aparece en la propia lista de amigos.
+     * [Prueba57] Identificarse en la aplicación y enviar tres mensajes a un amigo. Validar que los mensajes
+     * enviados aparecen en el chat. Identificarse después con el usuario que recibido el mensaje y validar
+     * que el número de mensajes sin leer aparece en la propia lista de amigos.
      */
     @Test
     @Order(57)
@@ -1366,21 +1807,21 @@ class Sdi2223Entrega2TestApplicationTests {
                 contentType("application/json").
                 body(requestBody1). // Incluir el cuerpo de la solicitud con el texto y el correo electrónico del destinatario
                 queryParam("token", token).
-        when().
+                when().
                 post("/api/v1.0/conversation");
         //Otro
         given().
                 contentType("application/json").
                 body(requestBody2). // Incluir el cuerpo de la solicitud con el texto y el correo electrónico del destinatario
                 queryParam("token", token).
-        when().
+                when().
                 post("/api/v1.0/conversation");
         //Último
         given().
                 contentType("application/json").
                 body(requestBody3). // Incluir el cuerpo de la solicitud con el texto y el correo electrónico del destinatario
                 queryParam("token", token).
-        when().
+                when().
                 post("/api/v1.0/conversation");
         //Saco el id de la conversacion desde mongo
         mongoClient = MongoClients.create("mongodb://localhost:27017");
@@ -1392,9 +1833,9 @@ class Sdi2223Entrega2TestApplicationTests {
         Response responseCount = given().
                 pathParams("converId", converId).
                 queryParam("token", token).
-        when().
+                when().
                 get("/api/v1.0/messages/unread/{converId}").
-        then().extract().response();
+                then().extract().response();
 
         List<String> messagesUnRead = responseCount.jsonPath().getList("messages");
         int unreadCount = messagesUnRead.size();
@@ -1403,9 +1844,9 @@ class Sdi2223Entrega2TestApplicationTests {
 
     /**
      * @author Pedro
-    [Prueba58] Identificarse en la aplicación y enviar tres mensajes a un amigo, validar que los mensajes
-    enviados aparecen en el chat. Identificarse después con el usuario amigo y validar que el número
-    de mensajes sin leer aparece.
+     * [Prueba58] Identificarse en la aplicación y enviar tres mensajes a un amigo, validar que los mensajes
+     * enviados aparecen en el chat. Identificarse después con el usuario amigo y validar que el número
+     * de mensajes sin leer aparece.
      */
     @Test
     @Order(58)
