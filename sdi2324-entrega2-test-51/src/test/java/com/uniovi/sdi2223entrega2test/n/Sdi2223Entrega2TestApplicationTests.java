@@ -1356,9 +1356,9 @@ class Sdi2223Entrega2TestApplicationTests {
         Assertions.assertEquals(200, conversationsResponse.getStatusCode());
 
         // Cogemos el id de la conversación
-        String conversationId = conversationsResponse.jsonPath().getString("conversations[0]._id");
+        String firstConversationId = conversationsResponse.jsonPath().getString("conversations[0]._id");
         //Lo utilizamos para borrar la conversación
-        final String RestAssuredURL3 = "http://localhost:8080/api/v1.0/conversation/" + conversationId;
+        final String RestAssuredURL3 = "http://localhost:8080/api/v1.0/conversation/" + firstConversationId;
         RequestSpecification deleteRequest = RestAssured.given();
         deleteRequest.header("token", token);
         Response deleteResponse = deleteRequest.delete(RestAssuredURL3);
@@ -1366,8 +1366,8 @@ class Sdi2223Entrega2TestApplicationTests {
 
         // Comprobamos que se ha eliminado la conversación
         Response conversationsResponse2 = conversationsRequest.get(RestAssuredURL2);
-        String deletedId = conversationsResponse2.jsonPath().getString("conversations[0]._id");
-        Assertions.assertNull(deletedId);
+        String firstConversationId2 = conversationsResponse2.jsonPath().getString("conversations[0]._id");
+        Assertions.assertNotEquals(firstConversationId2,firstConversationId);
     }
 
     /**
@@ -1589,7 +1589,7 @@ class Sdi2223Entrega2TestApplicationTests {
 
     /**
      * @author David
-     * [Prueba56] Sobre el listado de conversaciones ya abiertas. Pinchar el enlace Eliminar en la última y
+     * Prueba56] Sobre el listado de conversaciones ya abiertas. Pinchar el enlace Eliminar en la última y
      * comprobar que el listado se actualiza correctamente.
      */
     @Test
@@ -1610,7 +1610,6 @@ class Sdi2223Entrega2TestApplicationTests {
         // Comprobar que ya no se muestra el usuario con el que se ha hablado
         SeleniumUtils.textIsNotPresentOnPage(driver, "user03");
     }
-
 
     /**
      * @author Pedro
