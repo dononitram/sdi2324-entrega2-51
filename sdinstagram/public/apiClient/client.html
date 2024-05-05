@@ -123,6 +123,11 @@
         });
     };
 
+    const openChat = email => {
+        localStorage.setItem("friend_email", email);
+        $("#main-container").load("widget-messages.html");
+    }
+
     const generateTable = async conversations => {
         $("#conversationsTableBody").empty();
 
@@ -141,14 +146,15 @@
                         <td>${name}</td>
                         <td>${surname}</td>
                         <td>${unreadMessagesCount}</td>
-                        <td><button class="btn btn-primary">Open</button></td>
-                        <td><button id="with_${email}" class="btn btn-danger" onClick="(deleteConversation('${id}'))">Delete</button></td>
+                        <td><button class="btn btn-primary" onClick="(openChat('${email}'))">Open</button></td>
+                        <td><button class="btn btn-danger" onClick="(deleteConversation('${id}'))">Delete</button></td>
 
                     </tr>`;
 
             $("#conversationsTableBody").append(row);
         }
-    };    
+        
+    };
 </script>
 
 </body>
