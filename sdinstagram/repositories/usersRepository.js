@@ -3,12 +3,13 @@ module.exports = {
     app: null,
     database: "sdinstagram",
     collectionName: "users",
-    init: function (app, dbClient, publicationRepository, friendshipRepository, friendshipRequestRepository) {
+    init: function (app, dbClient, publicationRepository, friendshipRepository, friendshipRequestRepository, conversationsRepository) {
         this.dbClient = dbClient;
         this.app = app;
         this.publicationRepository = publicationRepository;
         this.friendshipRepository = friendshipRepository;
         this.friendshipRequestRepository = friendshipRequestRepository;
+        this.conversationsRepository = conversationsRepository;
     },
     findUser: async function (filter, options) {
         try {
@@ -102,10 +103,8 @@ module.exports = {
     },
     deleteUsersData: async function (userIds) {
         try {
-
-            //TODO:
-            //Delete friendship requests
-
+            await this.conversationsRepository.deleteConversationsOfUsers(userIds);
+            await this.friendshipRequestRepository.deleteFriendshipRequestsFromUsers(userIds);
             await this.friendshipRepository.deleteFriendshipOfUsers(userIds);
             await this.publicationRepository.deletePublicationsOfUsers(userIds);
             const response = await this.deleteUsers(userIds);
