@@ -68,7 +68,7 @@ class Sdi2223Entrega2TestApplicationTests {
 
     private void initDatabase() {
         //establecer conexión con la bbdd
-        mongoClient = MongoClients.create("mongodb://localhost:27018");
+        mongoClient = MongoClients.create("mongodb://localhost:27017");
         database = mongoClient.getDatabase("sdinstagram");
         restDatabase();
         insertTestsData();
