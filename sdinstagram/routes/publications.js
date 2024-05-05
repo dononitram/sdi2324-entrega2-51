@@ -4,7 +4,7 @@ module.exports = function (app, publicationsRepository) {
 
     // Route to retrieve publications
     app.get("/publications", function(req, res) {
-        let filter = {};
+        let filter = { "author.email" : req.session.user.email};
         let options = { sort: { title: 1 } };
 
         // Check if there's a search query parameter
