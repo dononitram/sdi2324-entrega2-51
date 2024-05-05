@@ -26,11 +26,13 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.bson.conversions.Bson;
 import com.mongodb.client.model.Filters;
@@ -755,12 +757,43 @@ class Sdi2223Entrega2TestApplicationTests {
         SeleniumUtils.textIsPresentOnPage(driver, "user04@email.com");
         SeleniumUtils.textIsPresentOnPage(driver, "user05@email.com");
         //Además sale la fecha de ambos y el texto de la últ publi del user 5 tanto como el de ninguna publi del 4
+
+        // Obtener la fecha actual
+        Date currentDate = new Date();
+
+        // Obtener la fecha de hace 6 días
+        long sixDaysInMillis = 6 * 24 * 60 * 60 * 1000; // 7 días en milisegundos
+        Date sixDaysAgo = new Date(currentDate.getTime() - sixDaysInMillis);
+
+        // Obtener la fecha de hace 5 días
+        long fiveDaysInMillis = 5 * 24 * 60 * 60 * 1000; // 7 días en milisegundos
+        Date fiveDaysAgo = new Date(currentDate.getTime() - fiveDaysInMillis);
+        // Formato para obtener el día
+        SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.ENGLISH);
+        String day = dayFormat.format(sixDaysAgo);
+        String day2 = dayFormat.format(fiveDaysAgo);
+
+        // Formato para obtener el mes en formato corto (short)
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MMM", Locale.ENGLISH);
+        String month = monthFormat.format(sixDaysAgo);
+        String month2 = monthFormat.format(fiveDaysAgo);
+
+        // Formato para obtener el año
+        SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+        String year = yearFormat.format(sixDaysAgo);
+        String year2 = yearFormat.format(fiveDaysAgo);
+
+        // Combinar los valores para formar la cadena final
+        String fechaRes1 = day + " " + month + " " + year;
+        String fechaRes2 = day2 + " " + month2 + " " + year2;
+
+
         //User 5
         SeleniumUtils.textIsPresentOnPage(driver, "Publication 50");
-        SeleniumUtils.textIsPresentOnPage(driver, "28 Apr 2024");
+        SeleniumUtils.textIsPresentOnPage(driver, fechaRes1);
         //User 4
         SeleniumUtils.textIsPresentOnPage(driver, "Publication 40");
-        SeleniumUtils.textIsPresentOnPage(driver, "29 Apr 2024");
+        SeleniumUtils.textIsPresentOnPage(driver, fechaRes2);
     }
 
     /**
