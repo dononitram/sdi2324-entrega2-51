@@ -31,10 +31,10 @@ module.exports = function (app, usersRepository, logsRepository) {
       }
       let userId = new ObjectId(connectedUser._id);
       let filter =
-          {
-            role: { $ne: "admin" },
-            _id: { $ne: userId },
-          };
+      {
+        role: { $ne: "admin" },
+        _id: { $ne: userId },
+      };
       //Búsqueda
       let busquedaStr = "";//Vacía por defecto
       if (req.query.search != null && typeof (req.query.search) != "undefined" && req.query.search != "") {
@@ -122,6 +122,14 @@ module.exports = function (app, usersRepository, logsRepository) {
       return;
     }
 
+    // Check if email is already in use
+    const emailUser = await usersRepository.findUser({ email: req.body.email }, {});
+
+    if (emailUser) {
+      res.redirect('/users/edit/' + req.params.id + `?message=Email already in use&messageType=alert-danger`);
+      return;
+    }
+
     // Check role
     if (admin(req)) {
       await usersRepository.updateUser({ _id: new ObjectId(req.params.id) }, req.body);
@@ -185,7 +193,7 @@ module.exports = function (app, usersRepository, logsRepository) {
       }
 
       let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
-          .update(req.body.password).digest('hex');
+        .update(req.body.password).digest('hex');
 
       let user = {
         email: req.body.email,
@@ -247,7 +255,7 @@ module.exports = function (app, usersRepository, logsRepository) {
       }
 
       let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
-          .update(req.body.password).digest('hex');
+        .update(req.body.password).digest('hex');
 
       let filter = {
         email: req.body.email,

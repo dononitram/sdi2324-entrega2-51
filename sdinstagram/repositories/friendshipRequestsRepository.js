@@ -65,5 +65,16 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
+    },
+    deleteFriendshipRequestsFromUsers: async function (userIds) {
+        try {
+            await this.dbClient.connect();
+            const database = this.dbClient.db(this.database);
+            const friendshipRequestsCollection = database.collection(this.collectionName);
+            const result = await friendshipRequestsCollection.deleteMany({$or: [{'receiver._id': {$in: userIds}}, {'requester._id': {$in: userIds}}]});
+            return result;
+        } catch (error) {
+            throw (error);
+        }
     }
 };

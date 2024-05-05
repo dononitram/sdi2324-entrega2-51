@@ -54,14 +54,14 @@ friendshipRepository.init(app, dbClient);
 let friendshipRequestRepository = require("./repositories/friendshipRequestsRepository");
 friendshipRequestRepository.init(app, dbClient);
 
-let usersRepository = require("./repositories/usersRepository");
-usersRepository.init(app, dbClient, publicationsRepository, friendshipRepository, friendshipRequestRepository);
-
 let logsRepository = require("./repositories/logsRepository");
 logsRepository.init(app, dbClient);
 
 let conversationsRepository = require("./repositories/conversationsRepository");
 conversationsRepository.init(app, dbClient);
+
+let usersRepository = require("./repositories/usersRepository");
+usersRepository.init(app, dbClient, publicationsRepository, friendshipRepository, friendshipRequestRepository, conversationsRepository);
 
 // MiddleWares
 const petLogger = require('./middlewares/petLogger');

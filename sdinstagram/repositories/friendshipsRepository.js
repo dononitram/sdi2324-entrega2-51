@@ -71,13 +71,7 @@ module.exports = {
             await this.dbClient.connect();
             const database = this.dbClient.db(this.database);
             const friendshipCollection = database.collection(this.collectionName);
-            const filter = {
-                $or: [
-                    { 'user1._id': { $in: userIds } },
-                    { 'user2._id': { $in: userIds } }
-                ]
-            };
-            const result = await friendshipCollection.deleteMany(filter);
+            const result = await friendshipCollection.deleteMany({$or: [{'user1._id': {$in: userIds}}, {'user2._id': {$in: userIds}}]});
             return result;
         } catch (error) {
             throw (error);

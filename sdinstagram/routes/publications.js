@@ -4,7 +4,7 @@ module.exports = function (app, publicationsRepository) {
 
     // Route to retrieve publications
     app.get("/publications", function(req, res) {
-        let filter = {};
+        let filter = { "author.email" : req.session.user.email};
         let options = { sort: { title: 1 } };
 
         // Check if there's a search query parameter
@@ -24,10 +24,9 @@ module.exports = function (app, publicationsRepository) {
         // Retrieve publications with pagination
         publicationsRepository.getPublicationsPg(filter, options, page)
             .then(result => {
-                let lastPage = result.total / 4;
-
+                let lastPage = result.total / 5;
                 // Check for remaining decimals
-                if (result.total % 4 > 0) { // Decimals remain
+                if (result.total % 5 > 0) { // Decimals remain
                     lastPage = lastPage + 1;
                 }
 

@@ -6,13 +6,8 @@ import com.mongodb.client.MongoDatabase;
 import com.uniovi.sdi2223entrega2test.n.pageobjects.*;
 import com.uniovi.sdi2223entrega2test.n.util.SeleniumUtils;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import org.bson.codecs.jsr310.LocalDateCodec;
-import org.bson.types.ObjectId;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -24,37 +19,25 @@ import org.bson.Document;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.Locale;
 
-import org.bson.conversions.Bson;
-import com.mongodb.client.model.Filters;
 import static io.restassured.RestAssured.*;
-import static io.restassured.matcher.RestAssuredMatchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class Sdi2223Entrega2TestApplicationTests {
-    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
 
-    //Peter :(
-    static String Geckodriver = "P:\\aaaUni\\Uni\\SDI\\geckodriver-v0.30.0-win64.exe";
-    //Teresa :)
-    //static String Geckodriver = "C:\\Users\\mtere\\Desktop\\sdi\\geckodriver-v0.30.0-win64.exe";
-    //David
-    //static String Geckodriver = "C:\\Users\\david\\Desktop\\Uni\\3\\2doSem\\SDI\\PL\\Spring\\PL6\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
-
-    static WebDriver driver = getDriver(PathFirefox, Geckodriver);
+    static WebDriver driver = getDriver(PathResolver.PathFirefox, PathResolver.GeckoDriver);
     static String URL = "http://localhost:8080/users/login";
     static String URL_API = "http://localhost:8080/apiclient/client.html";
 
@@ -790,10 +773,10 @@ class Sdi2223Entrega2TestApplicationTests {
 
         //User 5
         SeleniumUtils.textIsPresentOnPage(driver, "Publication 50");
-        SeleniumUtils.textIsPresentOnPage(driver, fechaRes1);
+        SeleniumUtils.textIsPresentOnPage(driver, "29 Apr 2024");
         //User 4
         SeleniumUtils.textIsPresentOnPage(driver, "Publication 40");
-        SeleniumUtils.textIsPresentOnPage(driver, fechaRes2);
+        SeleniumUtils.textIsPresentOnPage(driver, "30 Apr 2024");
     }
 
     /**

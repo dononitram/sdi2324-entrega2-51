@@ -90,5 +90,16 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
+    },
+    deleteConversationsOfUsers: async function(userIds){
+        try {
+            await this.dbClient.connect();
+            const database = this.dbClient.db(this.database);
+            const conversationsCollection = database.collection(this.collectionName);
+            const result = await conversationsCollection.deleteMany({$or: [{'user1._id': {$in: userIds}}, {'user2._id': {$in: userIds}}]});
+            return result;
+        } catch (error) {
+            throw (error);
+        }
     }
 };

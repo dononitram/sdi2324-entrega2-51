@@ -19,7 +19,7 @@ public class PO_PrivateView extends PO_NavView {
     }
 
     public static void logout(WebDriver driver) {
-        PO_PrivateView.clickOption(driver, "/logout", "text", p.getString("login.logout", PO_Properties.SPANISH));
+        PO_PrivateView.clickOption(driver, "/logout", "text", "Logout");
     }
 
     public static void switchToLog(WebDriver driver) {

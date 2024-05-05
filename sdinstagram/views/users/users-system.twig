@@ -21,19 +21,19 @@
 				{% for user in users %}
 					<tr>
 						<td>
-							<input type="checkbox" id={{ user._id }} />
+							<input type="checkbox" id="cb_{{user.email}}" data-uid="{{ user._id }}">
 						</td>
 						<td>{{ user.email }}</td>
 						<td>{{ user.firstName }}</td>
 						<td>{{ user.lastName }}</td>
 						<td>
-							<a href="/users/edit/{{ user._id }}">Edit</a>
+							<a id="edit_{{user.email}}" href="/users/edit/{{ user._id }}">Edit</a>
 						</td>
 					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
-		<button class="btn btn-danger" id="delete" onclick="deleteUsers()">Delete</button>
+		<button class="btn btn-danger" id="button_delete" onclick="deleteUsers()">Delete</button>
 	</div>
 
 	<!-- Paginación mostrar la actual y 2 anteriores y dos siguientes -->
@@ -54,7 +54,7 @@
 		function deleteUsers() {
 			var ids = [];
 			$("input:checkbox:checked").each(function() {
-				ids.push($(this).attr('id'));
+				ids.push($(this).attr('data-uid'));
 			});
 			$.ajax({
 				url: '/users/delete',
