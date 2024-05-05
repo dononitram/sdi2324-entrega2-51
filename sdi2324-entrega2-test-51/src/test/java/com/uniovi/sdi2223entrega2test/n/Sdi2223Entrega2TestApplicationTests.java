@@ -6,13 +6,8 @@ import com.mongodb.client.MongoDatabase;
 import com.uniovi.sdi2223entrega2test.n.pageobjects.*;
 import com.uniovi.sdi2223entrega2test.n.util.SeleniumUtils;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import org.bson.codecs.jsr310.LocalDateCodec;
-import org.bson.types.ObjectId;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -24,21 +19,14 @@ import org.bson.Document;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.bson.conversions.Bson;
-import com.mongodb.client.model.Filters;
-
 import static io.restassured.RestAssured.*;
-import static io.restassured.matcher.RestAssuredMatchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -1112,7 +1100,7 @@ class Sdi2223Entrega2TestApplicationTests {
             countLOGIN_EX++;
         }
 
-        Assertions.assertTrue(countLOGIN_EX == 0);
+        assertEquals(0, countLOGIN_EX);
         
     }
 
