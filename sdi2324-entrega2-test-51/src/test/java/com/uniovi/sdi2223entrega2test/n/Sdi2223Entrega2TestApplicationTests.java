@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -773,10 +774,10 @@ class Sdi2223Entrega2TestApplicationTests {
 
         //User 5
         SeleniumUtils.textIsPresentOnPage(driver, "Publication 50");
-        SeleniumUtils.textIsPresentOnPage(driver, "29 Apr 2024");
+        SeleniumUtils.textIsPresentOnPage(driver, fechaRes1);
         //User 4
         SeleniumUtils.textIsPresentOnPage(driver, "Publication 40");
-        SeleniumUtils.textIsPresentOnPage(driver, "30 Apr 2024");
+        SeleniumUtils.textIsPresentOnPage(driver, fechaRes2);
     }
 
     /**
