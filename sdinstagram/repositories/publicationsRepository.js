@@ -28,7 +28,7 @@ module.exports = {
             await this.dbClient.connect();
             const database = this.dbClient.db(this.database);
             const publicationsCollection = database.collection(this.collectionName);
-            const publicationsCollectionCount = await publicationsCollection.count();
+            const publicationsCollectionCount = await publicationsCollection.countDocuments(filter, options);
             options.sort = { date: -1 };
             const cursor = publicationsCollection.find(filter, options).skip((page - 1) * limit).limit(limit)
             const publications = await cursor.toArray();

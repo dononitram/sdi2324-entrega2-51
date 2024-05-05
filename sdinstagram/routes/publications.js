@@ -24,10 +24,9 @@ module.exports = function (app, publicationsRepository) {
         // Retrieve publications with pagination
         publicationsRepository.getPublicationsPg(filter, options, page)
             .then(result => {
-                let lastPage = result.total / 4;
-
+                let lastPage = result.total / 5;
                 // Check for remaining decimals
-                if (result.total % 4 > 0) { // Decimals remain
+                if (result.total % 5 > 0) { // Decimals remain
                     lastPage = lastPage + 1;
                 }
 
