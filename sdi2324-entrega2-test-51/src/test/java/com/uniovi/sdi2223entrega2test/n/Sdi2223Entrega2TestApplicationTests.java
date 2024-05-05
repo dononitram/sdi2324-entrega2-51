@@ -31,6 +31,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bson.conversions.Bson;
 import com.mongodb.client.model.Filters;
@@ -784,7 +786,6 @@ class Sdi2223Entrega2TestApplicationTests {
     public void PR28() {
         //Intento acceder a la lista de usuarios sin estar autenticado
         driver.navigate().to("http://localhost:8080/users/list");
-        //Compruebo que me redirige al login
         SeleniumUtils.textIsPresentOnPage(driver, "Login");
     }
 
@@ -797,7 +798,6 @@ class Sdi2223Entrega2TestApplicationTests {
     public void PR29() {
         //Intento acceder a la lista de invitaciones de amistad sin estar autenticado
         driver.navigate().to("http://localhost:8080/friendships/list");
-        //Compruebo que me redirige al login
         SeleniumUtils.textIsPresentOnPage(driver, "Login");
     }
 
@@ -809,11 +809,11 @@ class Sdi2223Entrega2TestApplicationTests {
     @Order(30)
     public void PR30() {
         //Inicio sesión como usuario estándar
-        PO_PublicView.loginSpecificUser("", "", driver);
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
         //Intento acceder a la opción de añadir menú de auditoria
-        driver.navigate().to("http://localhost:8080/auditor/list");
+        driver.navigate().to("http://localhost:8080/logs");
         //Compruebo que me indica que no tengo permisos
-        SeleniumUtils.textIsPresentOnPage(driver, "You do not have permission to access this page.");
+        SeleniumUtils.textIsPresentOnPage(driver, "You are not an administrator.");
     }
 
     /**
@@ -826,11 +826,81 @@ class Sdi2223Entrega2TestApplicationTests {
     @Order(31)
     public void PR31() {
         //Inicio sesión como usuario administrador
-        PO_PublicView.loginSpecificUser("", "", driver);
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str", driver);
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str", driver);
+        
+        PO_PrivateView.click(driver, "text", "Signup", 0);
+        PO_PublicView.fillSingupForm(driver, "usertest1@gmail.com", "a", "a", "password", "password");
+
+        PO_PrivateView.click(driver, "text", "Signup", 0);
+        PO_PublicView.fillSingupForm(driver, "usertest2@gmail.com", "a", "a", "password", "password");
+        
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
+        PO_PrivateView.click(driver, "text", "Logout", 0);
+
+        PO_PublicView.loginSpecificUser("user01@email.com", "Us3r@1-PASSW", driver);
+        PO_PrivateView.click(driver, "text", "Logout", 0);
+
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str@D0r", driver);
+
         //Intento acceder a la opción de añadir menú de auditoria
-        driver.navigate().to("http://localhost:8080/auditor/list");
-        //Compruebo que me indica que no tengo permisos
-        SeleniumUtils.textIsPresentOnPage(driver, "You do not have permission to access this page.");
+        driver.navigate().to("http://localhost:8080/logs");
+
+        // Compruebo que se muestran 2 logs de cada tipo
+        int countPET = 0;
+        int countLOGIN_EX = 0;
+        int countLOGOUT = 0;
+        int countALTA = 0;
+        int countLOGIN_ERR = 0;
+        
+        String text = driver.getPageSource();
+        
+        // Count PET logs
+        String patternPET = "\\bPET\\b";
+        Pattern pPET = Pattern.compile(patternPET, Pattern.CASE_INSENSITIVE);
+        Matcher mPET = pPET.matcher(text);
+        while (mPET.find()) {
+            countPET++;
+        }
+        
+        // Count LOGIN-EX logs
+        String patternLOGIN_EX = "\\bLOGIN-EX\\b";
+        Pattern pLOGIN_EX = Pattern.compile(patternLOGIN_EX, Pattern.CASE_INSENSITIVE);
+        Matcher mLOGIN_EX = pLOGIN_EX.matcher(text);
+        while (mLOGIN_EX.find()) {
+            countLOGIN_EX++;
+        }
+        
+        // Count LOGOUT logs
+        String patternLOGOUT = "\\bLOGOUT\\b";
+        Pattern pLOGOUT = Pattern.compile(patternLOGOUT, Pattern.CASE_INSENSITIVE);
+        Matcher mLOGOUT = pLOGOUT.matcher(text);
+        while (mLOGOUT.find()) {
+            countLOGOUT++;
+        }
+        
+        // Count ALTA logs
+        String patternALTA = "\\bALTA\\b";
+        Pattern pALTA = Pattern.compile(patternALTA, Pattern.CASE_INSENSITIVE);
+        Matcher mALTA = pALTA.matcher(text);
+        while (mALTA.find()) {
+            countALTA++;
+        }
+        
+        // Count LOGIN-ERR logs
+        String patternLOGIN_ERR = "\\bLOGIN-ERR\\b";
+        Pattern pLOGIN_ERR = Pattern.compile(patternLOGIN_ERR, Pattern.CASE_INSENSITIVE);
+        Matcher mLOGIN_ERR = pLOGIN_ERR.matcher(text);
+        while (mLOGIN_ERR.find()) {
+            countLOGIN_ERR++;
+        }
+
+        Assertions.assertTrue(countPET >= 2);
+        Assertions.assertTrue(countLOGIN_EX >= 2);
+        Assertions.assertTrue(countLOGOUT >= 2);
+        Assertions.assertTrue(countALTA >= 2);
+        Assertions.assertTrue(countLOGIN_ERR >= 2);
+
     }
 
     /**
@@ -842,12 +912,39 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(32)
     public void PR32() {
-        //Inicio sesión como usuario estándar
-        PO_PublicView.loginSpecificUser("", "", driver);
-        //Intento acceder a la opción de añadir menú de auditoria
-        driver.navigate().to("http://localhost:8080/publications/list");
-        //Compruebo que me indica que no tengo permisos
-        SeleniumUtils.textIsPresentOnPage(driver, "You do not have permission to access this page.");
+        //Inicio sesión como usuario admin
+        PO_PublicView.loginSpecificUser("admin@email.com", "@Dm1n1str@D0r", driver);
+
+        driver.navigate().to("http://localhost:8080/logs");
+
+        int countLOGIN_EX = 0;
+
+        String text = driver.getPageSource();
+
+        // Count LOGIN-EX logs
+        String patternLOGIN_EX = "\\bLOGIN-EX\\b";
+        Pattern pLOGIN_EX = Pattern.compile(patternLOGIN_EX, Pattern.CASE_INSENSITIVE);
+        Matcher mLOGIN_EX = pLOGIN_EX.matcher(text);
+        while (mLOGIN_EX.find()) {
+            countLOGIN_EX++;
+        }
+
+        Assertions.assertTrue(countLOGIN_EX >= 1);
+
+        PO_PrivateView.click(driver, "free", "/html/body/div/form/select/option[4]", 0);
+
+        PO_PrivateView.click(driver, "text", "Delete Logs", 0);
+
+        countLOGIN_EX = 0;
+
+        text = driver.getPageSource();
+
+        while (mLOGIN_EX.find()) {
+            countLOGIN_EX++;
+        }
+
+        Assertions.assertTrue(countLOGIN_EX == 0);
+        
     }
 
     /**
@@ -977,13 +1074,27 @@ class Sdi2223Entrega2TestApplicationTests {
      * [Prueba38] Inicio de sesión con datos válidos.
      * @author Donato
      */
+    @SuppressWarnings("unchecked")
     @Test
     @Order(38)
     public void PR38() {
-        //Intento de inicio de sesión con datos inválidos
-        PO_PublicView.loginSpecificUser("", "", driver);
-        //Compruebo que no se ha iniciado sesión
-        SeleniumUtils.textIsPresentOnPage(driver, "Login");
+
+        final String RestAssuredURL = "http://localhost:8080/api/v1.0/users/login";
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("email", "user01@email.com");
+        requestParams.put("password", "Us3r@1-PASSW");
+        request.header("Content-Type", "application/json");
+        request.body(requestParams.toJSONString());
+        Response response = request.post(RestAssuredURL);
+        Assertions.assertEquals(200, response.getStatusCode());
+
+        // get session token
+        String token = response.jsonPath().getString("token");
+
+        // Check that the token is not empty
+        Assertions.assertFalse(token.isEmpty());
+
     }
 
     /**
@@ -994,10 +1105,16 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(39)
     public void PR39() {
-        //Intento de inicio de sesión con datos inválidos
-        PO_PublicView.loginSpecificUser("", "", driver);
-        //Compruebo que no se ha iniciado sesión
-        SeleniumUtils.textIsPresentOnPage(driver, "Login");
+        final String RestAssuredURL = "http://localhost:8080/api/v1.0/users/login";
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("email", "user01@email.com");
+        requestParams.put("password", "Wrong");
+        request.header("Content-Type", "application/json");
+        request.body(requestParams.toJSONString());
+        Response response = request.post(RestAssuredURL);
+        Assertions.assertEquals(401, response.getStatusCode());
+
     }
 
     /**
@@ -1007,10 +1124,15 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(40)
     public void PR40() {
-        //Intento de inicio de sesión con datos inválidos
-        PO_PublicView.loginSpecificUser("", "", driver);
-        //Compruebo que no se ha iniciado sesión
-        SeleniumUtils.textIsPresentOnPage(driver, "Login");
+        final String RestAssuredURL = "http://localhost:8080/api/v1.0/users/login";
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("email", "");
+        requestParams.put("password", "");
+        request.header("Content-Type", "application/json");
+        request.body(requestParams.toJSONString());
+        Response response = request.post(RestAssuredURL);
+        Assertions.assertEquals(401, response.getStatusCode());
     }
 
     /**
@@ -1020,15 +1142,31 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(41)
     public void PR41() {
-        //Inicio sesión como el usuario1
-        PO_PublicView.loginSpecificUser("", "", driver);
-        //Ir a la lista de amigos
-        driver.navigate().to("http://localhost:8080/friendships/list");
-        // Comprobar que se muestran todos los amigos
-        SeleniumUtils.textIsPresentOnPage(driver, "user04");
-        SeleniumUtils.textIsPresentOnPage(driver, "user05");
-        // Cerrar sesión
-        //PO_PrivateView.logout(driver);
+        
+        final String RestAssuredURL = "http://localhost:8080/api/v1.0/users/login";
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("email", "user01@email.com");
+        requestParams.put("password", "Us3r@1-PASSW");
+        request.header("Content-Type", "application/json");
+        request.body(requestParams.toJSONString());
+        Response response = request.post(RestAssuredURL);
+        Assertions.assertEquals(200, response.getStatusCode());
+
+        // get session token
+        String token = response.jsonPath().getString("token");
+
+        final String RestAssuredURL2 = "http://localhost:8080/api/v1.0/users/friendships";
+        RequestSpecification request2 = RestAssured.given();
+        request2.header("token", token); // Stablish token in header
+        request2.header("Content-Type", "application/json");
+        request2.body(requestParams.toJSONString());
+        Response response2 = request2.get(RestAssuredURL2);
+        Assertions.assertEquals(200, response2.getStatusCode());
+
+        // Check that the response contains the friends
+        Assertions.assertTrue(response2.getBody().asString().contains("user04"));
+
     }
 
     /**
@@ -1218,7 +1356,7 @@ class Sdi2223Entrega2TestApplicationTests {
     public void PR47() {
         driver.navigate().to(URL_API);
         PO_PublicView.loginUser(driver);
-        SeleniumUtils.textIsPresentOnPage(driver, "My friends");
+        SeleniumUtils.textIsPresentOnPage(driver, "Update");
     }
 
     /**
@@ -1229,8 +1367,8 @@ class Sdi2223Entrega2TestApplicationTests {
     @Order(48)
     public void PR48() {
         driver.navigate().to(URL_API);
-        PO_PublicView.loginUser(driver);
-        SeleniumUtils.textIsPresentOnPage(driver, "Login");
+        PO_PublicView.loginFailIncorrect(driver);
+        SeleniumUtils.textIsPresentOnPage(driver, "Accept");
     }
 
     /**
@@ -1241,8 +1379,8 @@ class Sdi2223Entrega2TestApplicationTests {
     @Order(49)
     public void PR49() {
         driver.navigate().to(URL_API);
-        PO_PublicView.loginUser(driver);
-        SeleniumUtils.textIsPresentOnPage(driver, "Login");
+        PO_PublicView.loginFailEmpty(driver);
+        SeleniumUtils.textIsPresentOnPage(driver, "Accept");
     }
 
     /**
