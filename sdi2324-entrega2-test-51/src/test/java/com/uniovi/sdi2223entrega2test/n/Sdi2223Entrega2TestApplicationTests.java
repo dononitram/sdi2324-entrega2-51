@@ -38,7 +38,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class Sdi2223Entrega2TestApplicationTests {
 
-    static WebDriver driver = getDriver(PathResolver.PathFirefox, PathResolver.GeckoDriver);
+    public static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    public static String GeckoDriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
+
+    static WebDriver driver = getDriver(PathFirefox, GeckoDriver);
     static String URL = "http://localhost:8080/users/login";
     static String URL_API = "http://localhost:8080/apiclient/client.html";
 
